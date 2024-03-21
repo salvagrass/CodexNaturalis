@@ -1,11 +1,15 @@
-public class ResourceCard extends DrawableCard {
-    public ResourceCard(Symbol[] syms, Symbol[] center, int points) {
-        this.frontCorners = syms;
-        this.center = center;
-        this.showingFace = false;
-        this.cardPoints = points;
-    }
+package it.polimi.ingsw.card;
 
+/**
+ * Class representing resource cards in the game.
+ */
+public class ResourceCard extends DrawableCard {
+
+    /**
+     * Constructs a card using information provided by the specified enum.
+     *
+     * @param e An enum containing all the necessary information to create the card.
+     */
     public ResourceCard(ResourceCardData e) {
         this.frontCorners = e.getFrontCorners();
         this.center = e.getCenter();

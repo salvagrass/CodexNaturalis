@@ -1,5 +1,15 @@
+package it.polimi.ingsw.card;
+
+/**
+ * Class representing gold cards that aim to cover corners during the game.
+ */
 public class GoldCardCorner extends GoldCard {
 
+    /**
+     * Constructs a card using information provided by the specified enum.
+     *
+     * @param e An enum containing all the necessary information to create the card.
+     */
     public GoldCardCorner(GoldCardData e){
         this.frontCorners = e.getFrontCorners();
         this.center = e.getCenter();
@@ -12,6 +22,19 @@ public class GoldCardCorner extends GoldCard {
         return this.cardPoints + " EACH CORNER";
     }
 
+    /**
+     * Returns the points awarded when placing the card face-up;
+     * returns 0 otherwise since cards do not have points on their back.
+     * Counts the number of adjacent positions occupied by a card,
+     * which represents the number of corners covered by the last card placed,
+     * and returns the product of this number multiplied by the points the card
+     * gives for each corner.
+     *
+     * @param g The state of the game board after placing the card.
+     * @param x The x-coordinate of the card placement.
+     * @param y The y-coordinate of the card placement.
+     * @return The points obtained by placing the card.
+     */
     public int givePoints(GameBoard g, int x, int y) {
         int points = 0;
         int i, j;
