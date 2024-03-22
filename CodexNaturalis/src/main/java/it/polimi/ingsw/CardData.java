@@ -1,13 +1,12 @@
 package it.polimi.ingsw;
 
+/**
+ * Enumeration with all the data for the different cards
+ */
+
 public enum CardData {
 
-    //(DATA_TYPE,FRONT_CORNER,CENTER,REQUIREMENTS(IF PRESENT),SYMBOL(IF PRESENT),CARD_POINTS)
-    C1(DataType.RESOURCE, new Symbol[] { Symbol.EMPTY, Symbol.EMPTY, Symbol.FUNGUS, Symbol.EMPTY}, new Symbol[] {Symbol.BUTTERFLY}, 0),
-    C2(DataType.GOLD, new Symbol[]{Symbol.FUNGUS,Symbol.EMPTY,Symbol.FUNGUS,Symbol.WOLF}, new Symbol[]{Symbol.FUNGUS}, new Symbol[]{Symbol.FUNGUS,Symbol.FUNGUS,Symbol.FUNGUS,Symbol.WOLF}, 5),
-    C3(DataType.GOLDSYMBOL, new Symbol[]{Symbol.FUNGUS,Symbol.EMPTY,Symbol.FUNGUS,Symbol.WOLF}, new Symbol[]{Symbol.FUNGUS}, new Symbol[]{Symbol.FUNGUS,Symbol.FUNGUS,Symbol.WOLF},Symbol.FEATHER, 2),
-    C4(DataType.GOLDCORNER, new Symbol[]{Symbol.WOLF,Symbol.NOTAVAILABLE,Symbol.FUNGUS,Symbol.WOLF}, new Symbol[]{Symbol.WOLF}, new Symbol[]{Symbol.WOLF,Symbol.WOLF,Symbol.WOLF}, 2),
-
+    //FOR DRAWABLE CARDS(DATA_TYPE,FRONT_CORNER,CENTER,REQUIREMENTS(IF PRESENT),SYMBOL(IF PRESENT),CARD_POINTS)
     CR1(DataType.RESOURCE, new Symbol[] {Symbol.FUNGUS, Symbol.EMPTY, Symbol.NOTAVAILABLE, Symbol.FUNGUS}, new Symbol[] {Symbol.FUNGUS}, 0),
     CR2(DataType.RESOURCE, new Symbol[] {Symbol.FUNGUS, Symbol.FUNGUS, Symbol.EMPTY, Symbol.NOTAVAILABLE}, new Symbol[] {Symbol.FUNGUS}, 0),
     CR3(DataType.RESOURCE, new Symbol[] {Symbol.EMPTY, Symbol.NOTAVAILABLE, Symbol.FUNGUS, Symbol.FUNGUS}, new Symbol[] {Symbol.FUNGUS}, 0),
@@ -47,55 +46,137 @@ public enum CardData {
     CR37(DataType.RESOURCE, new Symbol[] {Symbol.BUTTERFLY, Symbol.GRASS, Symbol.NOTAVAILABLE, Symbol.POTION}, new Symbol[] {Symbol.BUTTERFLY}, 0),
     CR38(DataType.RESOURCE, new Symbol[] {Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY, Symbol.EMPTY}, new Symbol[] {Symbol.BUTTERFLY}, 1),
     CR39(DataType.RESOURCE, new Symbol[] {Symbol.EMPTY, Symbol.EMPTY, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE}, new Symbol[] {Symbol.BUTTERFLY}, 1),
-    CR40(DataType.RESOURCE, new Symbol[] {Symbol.NOTAVAILABLE, Symbol.BUTTERFLY, Symbol.EMPTY, Symbol.EMPTY}, new Symbol[] {Symbol.BUTTERFLY}, 1),
+    CR40(DataType.RESOURCE, new Symbol[] {Symbol.NOTAVAILABLE, Symbol.BUTTERFLY, Symbol.EMPTY, Symbol.EMPTY}, new Symbol[] {Symbol.BUTTERFLY}, 1);
 
-
+    //FOR STARTING CARDS (FRONT CORNERS,BACK CORNERS,CENTER)
 
     private DataType type;
     private Symbol[] frontCorners;
+    private Symbol[] backCorners;
     private Symbol[] center;
     private int cardPoints;
     private Symbol[] requirements;
     private Symbol goldSymbol;
 
+
+
+    /**
+     * Retrieves the type of the card
+     * @return the type of the card
+     */
     public DataType getType() {
         return type;
     }
 
+
+    /**
+     * Retrieves the symbols on the front corners of the card.
+     * @return An array containing the symbols on the front corners of the card.
+     *         The index corresponds to the angle starting from the top-left corner and moving clockwise.
+     *         Index 0 represents the top-left corner, index 1 represents the top-right corner,
+     *         index 2 represents the bottom-right corner, and index 3 represents the bottom-left corner.
+     */
     public Symbol[] getFrontCorners() {
         return frontCorners.clone();
     }
 
+
+    /**
+     * Retrieves the symbols on the back corners of the card.
+     * @return An array containing the symbols on the back corners of the card.
+     *         The index corresponds to the angle starting from the top-left corner and moving clockwise.
+     *         Index 0 represents the top-left corner, index 1 represents the top-right corner,
+     *         index 2 represents the bottom-right corner, and index 3 represents the bottom-left corner.
+     */
+    public Symbol[] getBackCorners() {
+        return backCorners;
+    }
+
+
+    /**
+     * Retrieves the symbols in the center of the back of the card.
+     * @return An array containing the symbols in the center of the card.
+     */
     public Symbol[] getCenter() {
         return center.clone();
     }
 
+    /**
+     * Retrieves the points associated with the card.
+     * @return The points associated with the card.
+     */
     public int getCardPoints() {
         return cardPoints;
     }
 
+    /**
+     * Retrieves the symbols representing requirements (if there's any) for the card.
+     * @return An array containing the symbols representing requirements for the card.
+     */
     public Symbol[] getRequirements() {
         return requirements.clone();
     }
 
+    /**
+     * Retrieves the symbol modifier for the gold cards (if there's any)
+     * @return the symbol modifier
+     */
     public Symbol getGoldSymbol() {
         return goldSymbol;
     }
 
-    private CardData(DataType type, Symbol[] frontCorners, Symbol[] center, int cardPoints) {
+    /**
+     * Constructs a CardData instance.
+     * @param type the type of the card
+     * @param frontCorners the symbols on the front corners of the card
+     * @param center the symbols in the center of the back of the card
+     * @param cardPoints the points associated with the card
+     */
+    CardData(DataType type, Symbol[] frontCorners, Symbol[] center, int cardPoints) {
         this.type = type;
         this.frontCorners = frontCorners;
         this.center = center;
         this.cardPoints = cardPoints;
     }
 
-    private CardData(DataType type, Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, int cardPoints) {
+    /**
+     * Constructs a CardData instance with requirements (GoldCard).
+     * @param type the type of the card
+     * @param frontCorners the symbols on the front corners of the card
+     * @param center the symbols in the center of the back of the card
+     * @param requirements the symbols representing requirements for the card
+     * @param cardPoints the points associated with the card
+     */
+    CardData(DataType type, Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, int cardPoints) {
         this(type, frontCorners, center, cardPoints);
         this.requirements = requirements;
     }
 
-    private CardData(DataType type, Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, Symbol goldSymbol, int cardPoints) {
+    /**
+     * Constructs a CardData instance with requirements and a symbol.
+     * @param type the type of the card
+     * @param frontCorners the symbols on the front corners of the card
+     * @param center the symbols in the center of the back of the card
+     * @param requirements the symbols representing requirements for the card
+     * @param goldSymbol the symbol modifier for the gold cards
+     * @param cardPoints the points associated with the card
+     */
+    CardData(DataType type, Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, Symbol goldSymbol, int cardPoints) {
         this(type, frontCorners, center, requirements, cardPoints);
         this.goldSymbol = goldSymbol;
+    }
+
+    /**
+     * Constructs a CardData instance for start cards.
+     * @param frontCorners the symbols on the front corners of the card
+     * @param backCorners the symbols on the back corners of the card
+     * @param center the symbols in the center of the card
+     */
+    CardData(Symbol[] frontCorners,Symbol[] backCorners, Symbol[] center) {
+        this.type = DataType.START;
+        this.frontCorners = frontCorners;
+        this.backCorners = backCorners;
+        this.center = center;
+        cardPoints = 0;
     }
 }
