@@ -1,4 +1,4 @@
-package it.polimi.ingsw.card;
+package it.polimi.ingsw;
 
 /**
  * Class representing resource cards in the game.

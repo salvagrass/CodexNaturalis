@@ -1,7 +1,5 @@
-package it.polimi.ingsw.card;
-import it.polimi.ingsw.Symbol;
+package it.polimi.ingsw;
 
-import java.util.HashMap;
 import java.util.Map.Entry;
 
 /**
@@ -9,7 +7,7 @@ import java.util.Map.Entry;
  * This class is intended to be extended by specific gold card types.
  */
 public class GoldCard extends DrawableCard {
-    final HashMap<Symbol, Integer> requirements;
+    final Map<Symbol, Integer> requirements;
 
     /**
      * Constructs a card using information provided by the specified enum.
@@ -34,7 +32,7 @@ public class GoldCard extends DrawableCard {
      * @return true if the requirements are satisfied, false otherwise.
      */
     public boolean checkRequirements(GameBoard board) {
-        HashMap<Symbol, Integer> map = board.getCountResources();
+        Map<Symbol, Integer> map = board.getCountResources();
         for (Entry<Symbol, Integer> set : requirements.entrySet()) {
             if (map.get(set.getKey()) < set.getValue()) {
                 return false;

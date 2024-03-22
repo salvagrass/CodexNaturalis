@@ -1,5 +1,4 @@
-package it.polimi.ingsw.card;
-import it.polimi.ingsw.Symbol;
+package it.polimi.ingsw;
 
 /**
  * Class representing starting cards in the game.

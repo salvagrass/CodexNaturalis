@@ -1,4 +1,4 @@
-package it.polimi.ingsw.card;
+package it.polimi.ingsw;
 
 /**
  * Abstract class representing drawable cards in the game.
