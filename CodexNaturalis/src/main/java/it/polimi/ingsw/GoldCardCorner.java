@@ -35,7 +35,7 @@ public class GoldCardCorner extends GoldCard {
         int points = 0;
         int i, j;
         int l1, l2;
-        DrawableCard[][] board = g.getBoard();
+        Card[][] board = g.getBoard();
         if (!getShowingFace()) {
             return 0;
         }

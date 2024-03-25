@@ -51,5 +51,13 @@ public class Deck {
     public DrawableCard draw() throws NoSuchElementException {
         return deck.removeLast();
     }
+
+    /**
+     * Retrieves the size of the deck
+     * @return the deck size as an int
+     */
+    public int getSize(){
+        return deck.size();
+    }
 }
 
