@@ -92,21 +92,22 @@ public enum CardData {
     CG40(CardType.GOLD, new Symbol[] {Symbol.EMPTY, Symbol.EMPTY, Symbol.NOTAVAILABLE ,Symbol.NOTAVAILABLE}, new Symbol[] {Symbol.BUTTERFLY}, new Symbol[] {Symbol.BUTTERFLY, Symbol.BUTTERFLY, Symbol.BUTTERFLY, Symbol.BUTTERFLY, Symbol.BUTTERFLY},5),
 
     //FOR STARTING CARDS (FRONT CORNERS,BACK CORNERS,CENTER)
-    //Segna errore, non capisco che costruttore stia usando ma evidentemente uno sbagliato (vuole un parametro int per i punti come terzo parametro)
-    //CS1(CardType.START, new Symbol[] {Symbol.EMPTY, Symbol.GRASS, Symbol.EMPTY, Symbol.BUTTERFLY}, new Symbol[] {Symbol.FUNGUS, Symbol.GRASS, Symbol.WOLF, Symbol.BUTTERFLY}, new Symbol[] {Symbol.BUTTERFLY}),
+    CS1(new Symbol[]{Symbol.FUNGUS, Symbol.GRASS,Symbol.WOLF,Symbol.BUTTERFLY}, new Symbol[]{Symbol.EMPTY,Symbol.GRASS,Symbol.EMPTY,Symbol.BUTTERFLY}, new Symbol[]{Symbol.BUTTERFLY}),
+    CS2(new Symbol[]{Symbol.GRASS, Symbol.WOLF,Symbol.BUTTERFLY,Symbol.FUNGUS}, new Symbol[]{Symbol.WOLF,Symbol.EMPTY,Symbol.FUNGUS,Symbol.EMPTY}, new Symbol[]{Symbol.FUNGUS}),
+    CS3(new Symbol[]{Symbol.BUTTERFLY, Symbol.WOLF,Symbol.GRASS,Symbol.FUNGUS}, new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY}, new Symbol[]{Symbol.GRASS,Symbol.FUNGUS}),
+    CS4(new Symbol[]{Symbol.GRASS, Symbol.BUTTERFLY,Symbol.FUNGUS,Symbol.WOLF}, new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY}, new Symbol[]{Symbol.WOLF,Symbol.BUTTERFLY}),
+    CS5(new Symbol[]{Symbol.BUTTERFLY, Symbol.FUNGUS,Symbol.WOLF,Symbol.GRASS}, new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE}, new Symbol[]{Symbol.WOLF,Symbol.BUTTERFLY,Symbol.GRASS}),
+    CS6(new Symbol[]{Symbol.FUNGUS, Symbol.WOLF,Symbol.BUTTERFLY,Symbol.GRASS}, new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE}, new Symbol[]{Symbol.GRASS,Symbol.WOLF,Symbol.FUNGUS});
 
-    private CardType type;
-    private Symbol[] frontCorners;
+    private final CardType type;
+    private final Symbol[] frontCorners;
     private Symbol[] backCorners;
-    private Symbol[] center;
-    private int cardPoints;
+    private final Symbol[] center;
+    private final int cardPoints;
     private Symbol[] requirements;
     private Symbol goldSymbol;
 
-    /**
-     * Retrieves the type of the card
-     * @return the type of the card
-     */
+
     /**
      * Constructs a CardData instance.
      * @param type the type of the card

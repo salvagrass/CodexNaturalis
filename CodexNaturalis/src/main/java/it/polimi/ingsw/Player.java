@@ -14,13 +14,11 @@ public class Player {
 
     /**
      * Constructs a new Player.
-     *
-     * @param playingField
      * @param shared
      * @param nickname
      */
     public Player(CommonGround shared, String nickname) {
-        this.playingField= new Gameboard();
+        this.playingField= new GameBoard();
         this.shared=shared;
         this.nickname=nickname;
         this.points=0;
@@ -51,7 +49,7 @@ public class Player {
      * @param start the starting card to be placed
      */
     public void placeSTartingCard(StartingCard start) {
-        playingField.addStartCard();
+        playingField.addStartingCard(start);
     }
     /**
      * Allows the player to choose between two different objectives.
@@ -59,8 +57,8 @@ public class Player {
      * which is called twice.
      */
     public void chooseSecretObject() {
-        Object obj1 = getShared().getRandomObj();
-        Object obj2 = getShared().getRandomObj();
+        Object obj1 = getShared().getRandomObjective();
+        Object obj2 = getShared().getRandomObjective();
         //comunicazione col server
         //this...
     }
@@ -74,9 +72,9 @@ public class Player {
      */
     public DrawableCard[] drawFirstThree() {
         DrawableCard[] cards = new DrawableCard[3];
-        cards[0] = shared.draw();
-        cards[1] = shared.draw();
-        cards[2] = shared.draw();
+        cards[0] = shared.draw(0);
+        cards[1] = shared.draw(0);
+        cards[2] = shared.draw(3);
         return cards;
     }
 
@@ -113,8 +111,9 @@ public class Player {
      */
     public void addObjectivesScore() {
         updPoints(secretObjective.countObjectivePoints(this.playingField));
-        for(Objective o : shared.getObectives()) {
-            o.updPoints(shared.countObjectivePoints(this.playingField));
+        for(Objective o : shared.getCommonObjectives()) {
+            // FIXED THIS METHOD (?) AWAITING CONFIRMATION
+            updPoints(o.countObjectivePoints(this.playingField));
         }
     }
 
