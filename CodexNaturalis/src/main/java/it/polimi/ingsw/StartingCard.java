@@ -11,11 +11,9 @@ public class StartingCard extends Card {
      *
      * @param e An enum containing all the necessary information to create the card.
      */
-    public StartingCard(StartingEnum e) {
-        this.frontCorners = e.getFrontCorners();
+    public StartingCard(CardData e) {
+        super(e.getFrontCorners(), e.getCenter());
         this.backCorners = e.getBackCorners();
-        this.center = e.getCenter();
-        this.showingFace = e.getShowingFace();
     }
 
     /**
@@ -28,8 +26,17 @@ public class StartingCard extends Card {
      */
     public Symbol[] getShowingCorners() {
         if (getShowingFace()) {
-            return this.frontCorners.clone();
+            return super.getShowingCorners();
         }
         return this.backCorners.clone();
+    }
+
+    /**
+     * Retrieves the color of the card.
+     *
+     * @return Symbol.NOTAVAILABLE because startingCards don't have a color.
+     */
+    public Symbol getColor(){
+        return Symbol.NOTAVAILABLE;
     }
 }

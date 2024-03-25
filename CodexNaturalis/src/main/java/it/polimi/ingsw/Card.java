@@ -1,13 +1,25 @@
 package it.polimi.ingsw;
-import it.polimi.ingsw.Symbol;
 
 /**
  * Abstract class representing cards in the game. This class is intended to be extended by specific card types.
  */
 public abstract class Card {
-    Symbol[] frontCorners;
-    Symbol[] center;
-    boolean showingFace;
+    private final Symbol[] frontCorners;
+    private final Symbol[] center;
+    private boolean showingFace;
+
+
+    /**
+     * Creates a card with the specified corners and center.
+     *
+     * @param corners The symbols representing the front corners of the card.
+     * @param center The symbols representing the center of the card.
+     */
+    public Card(Symbol[] corners, Symbol[] center){
+        this.center = center;
+        this.frontCorners = corners;
+        this.showingFace = false;
+    }
 
     /**
      * Getter of the showingFace attrib
@@ -28,10 +40,10 @@ public abstract class Card {
     /**
      * Getter method for the showingCorners attribute.
      * Returns a copy of the frontCorners attribute if the showing face is the front one,
-     * or an array of it.polimi.ingsw.Symbol.EMPTY otherwise,
+     * or an array of Symbol.EMPTY otherwise,
      * because only the starting cards can have symbols on the back.
      * @return a copy of the attribute if the showing face is the front one,
-     *         or an array of it.polimi.ingsw.Symbol.EMPTY otherwise.
+     *         or an array of Symbol.EMPTY otherwise.
      */
     public Symbol[] getShowingCorners() {
         if (getShowingFace()) {
@@ -53,5 +65,14 @@ public abstract class Card {
             return new Symbol[] {};
         }
         return this.center.clone();
+    }
+
+    /**
+     * Retrieves the color of the card.
+     *
+     * @return The color of the card.
+     */
+    public Symbol getColor(){
+        return this.center[0];
     }
 }

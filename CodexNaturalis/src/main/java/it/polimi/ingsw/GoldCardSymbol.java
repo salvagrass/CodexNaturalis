@@ -4,24 +4,20 @@ package it.polimi.ingsw;
  * Class representing gold cards that give points based on the number of appearances of a specific symbol in the game.
  */
 public class GoldCardSymbol extends GoldCard {
-    final Symbol sym;
+    final private Symbol sym;
 
     /**
      * Constructs a card using information provided by the specified enum.
      *
      * @param e An enum containing all the necessary information to create the card.
      */
-    public GoldCardSymbol(GoldCardSymbolData e) {
-        this.frontCorners = e.getFrontCorners();
-        this.center = e.getCenter();
-        this.showingFace = e.getShowingFace();
-        this.cardPoints = e.getCardPoints();
-        this.requirements = e.getRequirements();
-        this.sym = e.getSymbol();
+    public GoldCardSymbol(CardData e) {
+        super(e.getFrontCorners(), e.getCenter(), e.getRequirements(), e.getCardPoints());
+        this.sym = e.getGoldSymbol();
     }
 
     public String getPoints() {
-        return this.cardPoints + " " + sym;
+        return getCardPoints() + " " + sym;
     }
 
     /**
@@ -38,6 +34,6 @@ public class GoldCardSymbol extends GoldCard {
         if (!getShowingFace()) {
             return 0;
         }
-        return g.getCountResources().get(sym) * this.cardPoints;
+        return g.getCountResources().get(sym) * getCardPoints();
     }
 }

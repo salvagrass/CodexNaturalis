@@ -10,16 +10,12 @@ public class GoldCardCorner extends GoldCard {
      *
      * @param e An enum containing all the necessary information to create the card.
      */
-    public GoldCardCorner(GoldCardCornerData e){
-        this.frontCorners = e.getFrontCorners();
-        this.center = e.getCenter();
-        this.showingFace = e.getShowingFace();
-        this.cardPoints = e.getCardPoints();
-        this.requirements = e.getRequirements();
+    public GoldCardCorner(CardData e){
+        super(e);
     }
 
     public String getPoints() {
-        return this.cardPoints + " EACH CORNER";
+        return getCardPoints() + " EACH CORNER";
     }
 
     /**
@@ -50,6 +46,6 @@ public class GoldCardCorner extends GoldCard {
                 points += board[i][j] != null ? 1 : 0;
             }
         }
-        return points * this.cardPoints;
+        return points * getCardPoints();
     }
 }

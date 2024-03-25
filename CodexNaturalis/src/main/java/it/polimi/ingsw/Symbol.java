@@ -6,5 +6,5 @@ package it.polimi.ingsw;
  * NOTAVAILABLE is a corner of a card on which you can't place another card
  */
 public enum Symbol {
-    WOLF, GRASS, BUTTERFLY, FUNGUS, POTION, SCROLL, FEATHER, EMPTY, NOTAVAILABLE;
+    WOLF, GRASS, BUTTERFLY, FUNGUS, POTION, SCROLL, FEATHER, EMPTY, NOTAVAILABLE
 }

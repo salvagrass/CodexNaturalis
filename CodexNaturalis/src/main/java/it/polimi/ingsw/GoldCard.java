@@ -1,25 +1,54 @@
 package it.polimi.ingsw;
 
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing gold cards with fixed points in the game.
  * This class is intended to be extended by specific gold card types.
  */
 public class GoldCard extends DrawableCard {
-    final Map<Symbol, Integer> requirements;
+    private Map<Symbol, Integer> requirements;
 
     /**
      * Constructs a card using information provided by the specified enum.
      *
      * @param e An enum containing all the necessary information to create the card.
      */
-    public GoldCard(GoldCardData e) {
-        this.frontCorners = e.getFrontCorners();
-        this.center = e.getCenter();
-        this.showingFace = e.getShowingFace();
-        this.cardPoints = e.getCardPoints();
-        this.requirements= e.getRequirements();
+    public GoldCard(CardData e) {
+        super(e.getFrontCorners(), e.getCenter(), e.getCardPoints());
+        this.requirements = new HashMap<>();
+        setRequirements(e.getRequirements());
+    }
+
+    /**
+     * Constructs a GoldCard with the specified front corners, center, requirements, and points.
+     *
+     * @param frontCorners The symbols representing the front corners of the card.
+     * @param center The symbols representing the center of the card.
+     * @param requirements The symbols representing the requirements of the card.
+     * @param points The number of points awarded by the card.
+     */
+    public GoldCard(Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, int points){
+        super(frontCorners, center, points);
+        this.requirements = new HashMap<>();
+        setRequirements(requirements);
+    }
+
+    /**
+     * Takes an array of symbols and creates a map associating each symbol with its number of appearances.
+     * The resulting map is stored in the class attribute.
+     *
+     * @param req The array of symbols.
+     */
+    private void setRequirements(Symbol[] req){
+        for(Symbol s: req){
+            if(this.requirements.containsKey(s)){
+                this.requirements.put(s, this.requirements.get(s)+1);
+            }else{
+                this.requirements.put(s, 1);
+            }
+        }
     }
 
     /**
@@ -33,7 +62,7 @@ public class GoldCard extends DrawableCard {
      */
     public boolean checkRequirements(GameBoard board) {
         Map<Symbol, Integer> map = board.getCountResources();
-        for (Entry<Symbol, Integer> set : requirements.entrySet()) {
+        for (Map.Entry<Symbol, Integer> set : requirements.entrySet()) {
             if (map.get(set.getKey()) < set.getValue()) {
                 return false;
             }

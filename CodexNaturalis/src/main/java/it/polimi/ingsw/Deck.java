@@ -16,7 +16,7 @@ public class Deck {
      * @param dim The dimension of the deck.
      */
     public Deck(int dim) {
-        deck = new ArrayList<DrawableCard>(dim);
+        deck = new ArrayList<>(dim);
     }
 
     /**

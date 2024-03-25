@@ -10,10 +10,7 @@ public class ResourceCard extends DrawableCard {
      *
      * @param e An enum containing all the necessary information to create the card.
      */
-    public ResourceCard(ResourceCardData e) {
-        this.frontCorners = e.getFrontCorners();
-        this.center = e.getCenter();
-        this.showingFace = e.getShowingFace();
-        this.cardPoints = e.getCardPoints();
+    public ResourceCard(CardData e) {
+        super(e.getFrontCorners(), e.getCenter(), e.getCardPoints());
     }
 }

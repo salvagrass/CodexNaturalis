@@ -4,8 +4,19 @@ package it.polimi.ingsw;
  * Abstract class representing drawable cards in the game.
  */
 public abstract class DrawableCard extends Card {
-    int cardPoints;
+    private final int cardPoints;
 
+    /**
+     * Creates a card with the specified corners, center and points.
+     *
+     * @param corners The symbols representing the front corners of the card.
+     * @param center The symbols representing the center of the card.
+     * @param p The number of points of the card
+     */
+    public DrawableCard(Symbol[] corners, Symbol[] center, int p){
+        super(corners, center);
+        this.cardPoints = p;
+    }
     /**
      * Getter method for the cardPoints attribute.
      * This method returns a string representation of the cardPoints attribute.
@@ -13,8 +24,17 @@ public abstract class DrawableCard extends Card {
      *
      * @return A string representation of the cardPoints attribute.
      */
-    public String getPoints() {
+    public String getPoints(){
         return this.cardPoints + "";
+    }
+
+    /**
+     * Retrieves the points assigned to the card.
+     *
+     * @return The number of points assigned to the card.
+     */
+    public int getCardPoints() {
+        return this.cardPoints;
     }
 
     /**
