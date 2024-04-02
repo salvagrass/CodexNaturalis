@@ -1,4 +1,7 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.item;
+
+import it.polimi.ingsw.Symbol;
+import java.util.Map;
 
 /**
  * Abstract class representing drawable cards in the game.
@@ -44,7 +47,7 @@ public abstract class DrawableCard extends Card {
      * @param board The state of the game board before placing the card.
      * @return true.
      */
-    public boolean checkRequirements(GameBoard board) {
+    public boolean checkRequirements(Map<Symbol, Integer> board) {
         return true;
     }
 
@@ -53,11 +56,12 @@ public abstract class DrawableCard extends Card {
      * returns 0 otherwise since cards do not have points on their back.
      *
      * @param board The state of the game board after placing the card.
+     * @param resources The resources of the board after placing the card.
      * @param x The x-coordinate of the card placement.
      * @param y The y-coordinate of the card placement.
      * @return The points obtained by placing the card.
      */
-    public int givePoints(GameBoard board, int x, int y) {
+    public int givePoints(Card[][] board, Map<Symbol, Integer> resources, int x, int y) {
         if (getShowingFace()) {
             return this.cardPoints;
         }

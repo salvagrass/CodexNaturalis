@@ -1,7 +1,8 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.gameplane;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.model.item.ResourceCard;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

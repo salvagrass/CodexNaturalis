@@ -1,4 +1,8 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.item;
+
+import it.polimi.ingsw.Symbol;
+
+import java.util.Map;
 
 /**
  * Class representing objectives in the game.
@@ -28,8 +32,9 @@ public abstract class Objective {
     /**
      * Returns the points obtained with the specified objective and board status.
      *
-     * @param g The board status.
+     * @param board The board status.
+     * @param resources The board's resources.
      * @return The points given by the objective.
      */
-    public abstract int countObjectivePoints(GameBoard g);
+    public abstract int countObjectivePoints(Card[][] board, Map<Symbol, Integer> resources);
 }

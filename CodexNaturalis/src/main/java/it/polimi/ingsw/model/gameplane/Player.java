@@ -1,4 +1,9 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.gameplane;
+
+import it.polimi.ingsw.PawnColor;
+import it.polimi.ingsw.model.item.DrawableCard;
+import it.polimi.ingsw.model.item.Objective;
+import it.polimi.ingsw.model.item.StartingCard;
 
 /**
  * This class represents a Player in the game.
@@ -48,7 +53,7 @@ public class Player {
      *
      * @param start the starting card to be placed
      */
-    public void placeSTartingCard(StartingCard start) {
+    public void placeStartingCard(StartingCard start) {
         playingField.addStartingCard(start);
     }
     /**

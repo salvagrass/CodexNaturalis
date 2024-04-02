@@ -1,4 +1,6 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.item;
+
+import it.polimi.ingsw.Symbol;
 
 /**
  * Class representing starting cards in the game.
@@ -7,13 +9,14 @@ public class StartingCard extends Card {
     private final Symbol[] backCorners;
 
     /**
-     * Constructs a card using information provided by the specified enum.
+     * Creates a card with the specified corners and center.
      *
-     * @param e An enum containing all the necessary information to create the card.
+     * @param corners The symbols representing the front corners of the card.
+     * @param center  The symbols representing the center of the card.
      */
-    public StartingCard(CardData e) {
-        super(e.getFrontCorners(), e.getCenter());
-        this.backCorners = e.getBackCorners();
+    public StartingCard(Symbol[] corners, Symbol[] center, Symbol[] back) {
+        super(corners, center);
+        this.backCorners = back;
     }
 
     /**

@@ -1,4 +1,9 @@
 package it.polimi.ingsw;
+
+import it.polimi.ingsw.model.item.DiagonalType;
+import it.polimi.ingsw.model.item.Disposition;
+import it.polimi.ingsw.model.item.LType;
+
 /**
  * Enumeration with all the data for the different objectives
  */

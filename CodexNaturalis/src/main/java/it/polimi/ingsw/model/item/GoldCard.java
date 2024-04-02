@@ -1,4 +1,7 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.item;
+
+import it.polimi.ingsw.model.gameplane.GameBoard;
+import it.polimi.ingsw.Symbol;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,18 +11,7 @@ import java.util.Map;
  * This class is intended to be extended by specific gold card types.
  */
 public class GoldCard extends DrawableCard {
-    private Map<Symbol, Integer> requirements;
-
-    /**
-     * Constructs a card using information provided by the specified enum.
-     *
-     * @param e An enum containing all the necessary information to create the card.
-     */
-    public GoldCard(CardData e) {
-        super(e.getFrontCorners(), e.getCenter(), e.getCardPoints());
-        this.requirements = new HashMap<>();
-        setRequirements(e.getRequirements());
-    }
+    final private Map<Symbol, Integer> requirements;
 
     /**
      * Constructs a GoldCard with the specified front corners, center, requirements, and points.

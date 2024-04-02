@@ -1,5 +1,9 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.gameplane;
 
+
+import it.polimi.ingsw.ObjectiveData;
+import it.polimi.ingsw.ObjectiveType;
+import it.polimi.ingsw.model.item.*;
 
 import java.io.IOException;
 import java.util.ArrayList;

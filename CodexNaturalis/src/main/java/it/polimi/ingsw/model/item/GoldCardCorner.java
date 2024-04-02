@@ -1,4 +1,8 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.item;
+
+import it.polimi.ingsw.Symbol;
+
+import java.util.Map;
 
 /**
  * Class representing gold cards that aim to cover corners during the game.
@@ -6,12 +10,15 @@ package it.polimi.ingsw;
 public class GoldCardCorner extends GoldCard {
 
     /**
-     * Constructs a card using information provided by the specified enum.
+     * Constructs a GoldCard with the specified front corners, center, requirements, and points.
      *
-     * @param e An enum containing all the necessary information to create the card.
+     * @param frontCorners The symbols representing the front corners of the card.
+     * @param center       The symbols representing the center of the card.
+     * @param requirements The symbols representing the requirements of the card.
+     * @param points       The number of points awarded by the card.
      */
-    public GoldCardCorner(CardData e){
-        super(e);
+    public GoldCardCorner(Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, int points) {
+        super(frontCorners, center, requirements, points);
     }
 
     public String getPoints() {
@@ -26,16 +33,16 @@ public class GoldCardCorner extends GoldCard {
      * and returns the product of this number multiplied by the points the card
      * gives for each corner.
      *
-     * @param g The state of the game board after placing the card.
+     * @param board The state of the game board after placing the card.
+     * @param resources The resources of the board after placing the card.
      * @param x The x-coordinate of the card placement.
      * @param y The y-coordinate of the card placement.
      * @return The points obtained by placing the card.
      */
-    public int givePoints(GameBoard g, int x, int y) {
+    public int givePoints(Card[][] board, Map<Symbol, Integer> resources, int x, int y) {
         int points = 0;
         int i, j;
         int l1, l2;
-        Card[][] board = g.getBoard();
         if (!getShowingFace()) {
             return 0;
         }

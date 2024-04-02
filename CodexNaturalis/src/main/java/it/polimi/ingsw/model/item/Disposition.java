@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.item;
 
 /**
  * Interface representing a disposition check for a game board.
@@ -8,8 +8,8 @@ public interface Disposition {
     /**
      * Checks the disposition of symbols on the provided game board.
      *
-     * @param g The game board to check.
+     * @param board The game board to check.
      * @return The number of occurrences of the specified disposition found on the board.
      */
-    int checkDisposition(GameBoard g);
+    int checkDisposition(Card[][] board);
 }

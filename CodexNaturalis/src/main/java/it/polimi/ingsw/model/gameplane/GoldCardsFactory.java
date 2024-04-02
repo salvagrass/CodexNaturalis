@@ -1,7 +1,10 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.gameplane;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.model.item.GoldCard;
+import it.polimi.ingsw.model.item.GoldCardCorner;
+import it.polimi.ingsw.model.item.GoldCardSymbol;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

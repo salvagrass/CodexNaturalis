@@ -1,4 +1,9 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.gameplane;
+
+import it.polimi.ingsw.Symbol;
+import it.polimi.ingsw.model.item.Card;
+import it.polimi.ingsw.model.item.DrawableCard;
+import it.polimi.ingsw.model.item.StartingCard;
 
 import java.util.EnumMap;
 import java.util.HashMap;

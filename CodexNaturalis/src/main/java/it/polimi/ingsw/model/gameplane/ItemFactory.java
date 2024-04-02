@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.gameplane;
 
 import java.io.IOException;
 import java.util.List;
