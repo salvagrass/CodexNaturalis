@@ -1,0 +1,206 @@
+[
+  {
+    "id": "CG4",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "requirements": {
+      "FUNGUS": 3,
+      "WOLF": 1
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG5",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "EMPTY"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "requirements": {
+      "FUNGUS": 3,
+      "GRASS": 1
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG6",
+    "frontCorners": [
+      "EMPTY",
+      "NOTAVAILABLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "requirements": {
+      "FUNGUS": 3,
+      "BUTTERFLY": 1
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG14",
+    "frontCorners": [
+      "NOTAVAILABLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "GRASS"
+    ],
+    "requirements": {
+      "GRASS": 3,
+      "BUTTERFLY": 1
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG15",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "EMPTY"
+    ],
+    "center": [
+      "GRASS"
+    ],
+    "requirements": {
+      "GRASS": 3,
+      "WOLF": 1
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG16",
+    "frontCorners": [
+      "EMPTY",
+      "NOTAVAILABLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "GRASS"
+    ],
+    "requirements": {
+      "GRASS": 3,
+      "FUNGUS": 1
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG24",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "WOLF"
+    ],
+    "requirements": {
+      "BUTTERFLY": 1,
+      "WOLF": 3
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG25",
+    "frontCorners": [
+      "EMPTY",
+      "NOTAVAILABLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "WOLF"
+    ],
+    "requirements": {
+      "FUNGUS": 1,
+      "WOLF": 3
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG26",
+    "frontCorners": [
+      "NOTAVAILABLE",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "WOLF"
+    ],
+    "requirements": {
+      "GRASS": 1,
+      "WOLF": 3
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG34",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "requirements": {
+      "BUTTERFLY": 3,
+      "WOLF": 1
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG35",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "EMPTY"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "requirements": {
+      "GRASS": 1,
+      "BUTTERFLY": 3
+    },
+    "cardPoints": 2
+  },
+  {
+    "id": "CG36",
+    "frontCorners": [
+      "EMPTY",
+      "NOTAVAILABLE",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "requirements": {
+      "FUNGUS": 1,
+      "BUTTERFLY": 3
+    },
+    "cardPoints": 2
+  }
+]

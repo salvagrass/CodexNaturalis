@@ -1,0 +1,122 @@
+[
+  {
+    "id": "CS1",
+    "frontCorners": [
+      "FUNGUS",
+      "GRASS",
+      "WOLF",
+      "BUTTERFLY"
+    ],
+    "backCorners": [
+      "EMPTY",
+      "GRASS",
+      "EMPTY",
+      "BUTTERFLY"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "cardPoints": 0
+  },
+  {
+    "id": "CS2",
+    "frontCorners": [
+      "GRASS",
+      "WOLF",
+      "BUTTERFLY",
+      "FUNGUS"
+    ],
+    "backCorners": [
+      "WOLF",
+      "EMPTY",
+      "FUNGUS",
+      "EMPTY"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "cardPoints": 0
+  },
+  {
+    "id": "CS3",
+    "frontCorners": [
+      "BUTTERFLY",
+      "WOLF",
+      "GRASS",
+      "FUNGUS"
+    ],
+    "backCorners": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "GRASS",
+      "FUNGUS"
+    ],
+    "cardPoints": 0
+  },
+  {
+    "id": "CS4",
+    "frontCorners": [
+      "GRASS",
+      "BUTTERFLY",
+      "FUNGUS",
+      "WOLF"
+    ],
+    "backCorners": [
+      "EMPTY",
+      "EMPTY",
+      "EMPTY",
+      "EMPTY"
+    ],
+    "center": [
+      "WOLF",
+      "BUTTERFLY"
+    ],
+    "cardPoints": 0
+  },
+  {
+    "id": "CS5",
+    "frontCorners": [
+      "BUTTERFLY",
+      "FUNGUS",
+      "WOLF",
+      "GRASS"
+    ],
+    "backCorners": [
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "WOLF",
+      "BUTTERFLY",
+      "GRASS"
+    ],
+    "cardPoints": 0
+  },
+  {
+    "id": "CS6",
+    "frontCorners": [
+      "FUNGUS",
+      "WOLF",
+      "BUTTERFLY",
+      "GRASS"
+    ],
+    "backCorners": [
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "GRASS",
+      "WOLF",
+      "FUNGUS"
+    ],
+    "cardPoints": 0
+  }
+]

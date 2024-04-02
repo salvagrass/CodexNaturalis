@@ -1,0 +1,258 @@
+[
+  {
+    "id": "CG7",
+    "frontCorners": [
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE",
+      "POTION"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "requirements": {
+      "FUNGUS": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG8",
+    "frontCorners": [
+      "FEATHER",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "requirements": {
+      "FUNGUS": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG9",
+    "frontCorners": [
+      "NOTAVAILABLE",
+      "EMPTY",
+      "SCROLL",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "requirements": {
+      "FUNGUS": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG10",
+    "frontCorners": [
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE",
+      "EMPTY"
+    ],
+    "center": [
+      "FUNGUS"
+    ],
+    "requirements": {
+      "FUNGUS": 5
+    },
+    "cardPoints": 5
+  },
+  {
+  "id": "CG17",
+  "frontCorners": [
+    "EMPTY",
+    "NOTAVAILABLE",
+    "NOTAVAILABLE",
+    "FEATHER"
+  ],
+  "center": [
+    "GRASS"
+  ],
+  "requirements": {
+    "GRASS": 3
+  },
+  "cardPoints": 3
+},
+  {
+    "id": "CG18",
+    "frontCorners": [
+      "SCROLL",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "GRASS"
+    ],
+    "requirements": {
+      "GRASS": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG19",
+    "frontCorners": [
+      "NOTAVAILABLE",
+      "POTION",
+      "EMPTY",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "GRASS"
+    ],
+    "requirements": {
+      "GRASS": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG20",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "GRASS"
+    ],
+    "requirements": {
+      "GRASS": 5
+    },
+    "cardPoints": 5
+  },
+  {
+    "id": "CG27",
+    "frontCorners": [
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE",
+      "SCROLL"
+    ],
+    "center": [
+      "WOLF"
+    ],
+    "requirements": {
+      "WOLF": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG28",
+    "frontCorners": [
+      "EMPTY",
+      "POTION",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "WOLF"
+    ],
+    "requirements": {
+      "WOLF": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG29",
+    "frontCorners": [
+      "NOTAVAILABLE",
+      "EMPTY",
+      "FEATHER",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "WOLF"
+    ],
+    "requirements": {
+      "WOLF": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG30",
+    "frontCorners": [
+      "NOTAVAILABLE",
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "WOLF"
+    ],
+    "requirements": {
+      "WOLF": 5
+    },
+    "cardPoints": 5
+  },
+  {
+    "id": "CG37",
+    "frontCorners": [
+      "POTION",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE",
+      "EMPTY"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "requirements": {
+      "BUTTERFLY": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG38",
+    "frontCorners": [
+      "EMPTY",
+      "SCROLL",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "requirements": {
+      "BUTTERFLY": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG39",
+    "frontCorners": [
+      "NOTAVAILABLE",
+      "NOTAVAILABLE",
+      "EMPTY",
+      "FEATHER"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "requirements": {
+      "BUTTERFLY": 3
+    },
+    "cardPoints": 3
+  },
+  {
+    "id": "CG40",
+    "frontCorners": [
+      "EMPTY",
+      "EMPTY",
+      "NOTAVAILABLE",
+      "NOTAVAILABLE"
+    ],
+    "center": [
+      "BUTTERFLY"
+    ],
+    "requirements": {
+      "BUTTERFLY": 5
+    },
+    "cardPoints": 5
+  }
+]
