@@ -44,10 +44,10 @@ public abstract class DrawableCard extends Card {
      * Returns true because not every card has requirements.
      * This method is intended to be overridden when necessary.
      *
-     * @param board The state of the game board before placing the card.
+     * @param inventory a map containing how many of each symbol are visible on the game board.
      * @return true.
      */
-    public boolean checkRequirements(Map<Symbol, Integer> board) {
+    public boolean checkRequirements(Map<Symbol, Integer> inventory) {
         return true;
     }
 

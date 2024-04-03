@@ -14,10 +14,10 @@ public class GoldCardCorner extends GoldCard {
      *
      * @param frontCorners The symbols representing the front corners of the card.
      * @param center       The symbols representing the center of the card.
-     * @param requirements The symbols representing the requirements of the card.
+     * @param requirements A map containing how many of each symbol are required from the card.
      * @param points       The number of points awarded by the card.
      */
-    public GoldCardCorner(Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, int points) {
+    public GoldCardCorner(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points) {
         super(frontCorners, center, requirements, points);
     }
 

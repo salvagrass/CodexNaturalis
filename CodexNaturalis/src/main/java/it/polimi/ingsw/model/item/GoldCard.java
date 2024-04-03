@@ -1,9 +1,7 @@
 package it.polimi.ingsw.model.item;
 
-import it.polimi.ingsw.model.gameplane.GameBoard;
 import it.polimi.ingsw.Symbol;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,29 +16,12 @@ public class GoldCard extends DrawableCard {
      *
      * @param frontCorners The symbols representing the front corners of the card.
      * @param center The symbols representing the center of the card.
-     * @param requirements The symbols representing the requirements of the card.
+     * @param requirements A map containing how many of each symbol are required from the card.
      * @param points The number of points awarded by the card.
      */
-    public GoldCard(Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, int points){
+    public GoldCard(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points){
         super(frontCorners, center, points);
-        this.requirements = new HashMap<>();
-        setRequirements(requirements);
-    }
-
-    /**
-     * Takes an array of symbols and creates a map associating each symbol with its number of appearances.
-     * The resulting map is stored in the class attribute.
-     *
-     * @param req The array of symbols.
-     */
-    private void setRequirements(Symbol[] req){
-        for(Symbol s: req){
-            if(this.requirements.containsKey(s)){
-                this.requirements.put(s, this.requirements.get(s)+1);
-            }else{
-                this.requirements.put(s, 1);
-            }
-        }
+        this.requirements = requirements;
     }
 
     /**
@@ -49,13 +30,12 @@ public class GoldCard extends DrawableCard {
      * For each necessary symbol, check that the number of appearances on the board
      * is greater than or equal to the required quantity.
      *
-     * @param board The state of the game board before placing the card.
+     * @param inventory a map containing how many of each symbol are visible on the game board.
      * @return true if the requirements are satisfied, false otherwise.
      */
-    public boolean checkRequirements(GameBoard board) {
-        Map<Symbol, Integer> map = board.getCountResources();
+    public boolean checkRequirements(Map<Symbol, Integer> inventory) {
         for (Map.Entry<Symbol, Integer> set : requirements.entrySet()) {
-            if (map.get(set.getKey()) < set.getValue()) {
+            if (inventory.get(set.getKey()) < set.getValue()) {
                 return false;
             }
         }

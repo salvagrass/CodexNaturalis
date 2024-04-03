@@ -15,11 +15,11 @@ public class GoldCardSymbol extends GoldCard {
      *
      * @param frontCorners The symbols representing the front corners of the card.
      * @param center       The symbols representing the center of the card.
-     * @param requirements The symbols representing the requirements of the card.
+     * @param requirements A map containing how many of each symbol are required from the card.
      * @param points       The number of points awarded by the card.
      * @param sym          The symbol for which the card gives points.
      */
-    public GoldCardSymbol(Symbol[] frontCorners, Symbol[] center, Symbol[] requirements, int points, Symbol sym) {
+    public GoldCardSymbol(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points, Symbol sym) {
         super(frontCorners, center, requirements, points);
         this.sym = sym;
     }
