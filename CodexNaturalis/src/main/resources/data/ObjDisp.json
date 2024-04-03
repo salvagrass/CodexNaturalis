@@ -1,0 +1,82 @@
+[
+  {
+    "id": "ObjDisp01",
+    "points": 2,
+    "disposition": {
+      "dispType": "DiagonalType",
+      "color": "FUNGUS",
+      "direction": -1,
+      "len": 3
+    }
+  },
+  {
+    "id": "ObjDisp02",
+    "points": 2,
+    "disposition": {
+      "dispType": "DiagonalType",
+      "color": "GRASS",
+      "direction": 1,
+      "len": 3
+    }
+  },
+  {
+    "id": "ObjDisp03",
+    "points": 2,
+    "disposition": {
+      "dispType": "DiagonalType",
+      "color": "WOLF",
+      "direction": -1,
+      "len": 3
+    }
+  },
+  {
+    "id": "ObjDisp04",
+    "points": 2,
+    "disposition": {
+      "dispType": "DiagonalType",
+      "color": "BUTTERFLY",
+      "direction": -1,
+      "len": 3
+    }
+  },
+  {
+    "id": "ObjDisp05",
+    "points": 3,
+    "disposition": {
+      "dispType": "LType",
+      "mainColor": "FUNGUS",
+      "secondaryColor": "GRASS",
+      "firstCardPos": 2
+    }
+  },
+  {
+    "id": "ObjDisp06",
+    "points": 3,
+    "disposition": {
+      "dispType": "LType",
+      "mainColor": "GRASS",
+      "secondaryColor": "BUTTERFLY",
+      "firstCardPos": 3
+    }
+  },
+  {
+    "id": "ObjDisp07",
+    "points": 3,
+    "disposition": {
+      "dispType": "LType",
+      "mainColor": "WOLF",
+      "secondaryColor": "FUNGUS",
+      "firstCardPos": 1
+    }
+  },
+  {
+    "id": "ObjDisp08",
+    "points": 3,
+    "disposition": {
+      "dispType": "LType",
+      "mainColor": "BUTTERFLY",
+      "secondaryColor": "WOLF",
+      "firstCardPos": 0
+    }
+  }
+]

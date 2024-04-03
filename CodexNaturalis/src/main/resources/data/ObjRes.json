@@ -1,0 +1,60 @@
+[
+  {
+    "id": "ObjRes01",
+    "points": 2,
+    "resources": {
+      "FUNGUS": 3
+    }
+  },
+  {
+    "id": "ObjRes02",
+    "points": 2,
+    "resources": {
+      "GRASS": 3
+    }
+  },
+  {
+    "id": "ObjRes03",
+    "points": 2,
+    "resources": {
+      "WOLF": 3
+    }
+  },
+  {
+    "id": "ObjRes04",
+    "points": 2,
+    "resources": {
+      "BUTTERFLY": 3
+    }
+  },
+  {
+    "id": "ObjRes05",
+    "points": 3,
+    "resources": {
+      "FEATHER": 1,
+      "SCROLL": 1,
+      "POTION": 1
+    }
+  },
+  {
+    "id": "ObjRes06",
+    "points": 2,
+    "resources": {
+      "SCROLL": 3
+    }
+  },
+  {
+    "id": "ObjRes07",
+    "points": 2,
+    "resources": {
+      "POTION": 3
+    }
+  },
+  {
+    "id": "ObjRes08",
+    "points": 2,
+    "resources": {
+      "FEATHER": 3
+    }
+  }
+]

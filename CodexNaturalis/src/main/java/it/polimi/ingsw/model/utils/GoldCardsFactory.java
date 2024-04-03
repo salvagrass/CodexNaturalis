@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.gameplane;
+package it.polimi.ingsw.model.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +24,7 @@ public class GoldCardsFactory extends ItemFactory<GoldCard> {
      * @throws NullPointerException if any of the JSON files are not found or the data is invalid.
      */
     @Override
-    public List<GoldCard> createDeck() throws IOException,NullPointerException {
+    public List<GoldCard> createItemsList() throws IOException,NullPointerException {
         Gson gson = new Gson();
         InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(GoldCardsFactory.class.getResourceAsStream("/data/GoldCard.json")));
         List<GoldCard> goldCardList = gson.fromJson(reader,new TypeToken<List<GoldCard>>(){}.getType());

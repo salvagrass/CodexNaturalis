@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.item;
 
-import it.polimi.ingsw.Symbol;
+import it.polimi.ingsw.model.utils.Symbol;
 
 /**
  * Abstract class representing cards in the game. This class is intended to be extended by specific card types.

@@ -1,8 +1,9 @@
 package it.polimi.ingsw.model.gameplane;
 
-import it.polimi.ingsw.Symbol;
+import it.polimi.ingsw.model.utils.Symbol;
 import it.polimi.ingsw.model.item.Card;
 import it.polimi.ingsw.model.item.DrawableCard;
+import it.polimi.ingsw.model.item.Objective;
 import it.polimi.ingsw.model.item.StartingCard;
 
 import java.util.EnumMap;
@@ -49,15 +50,6 @@ public class GameBoard {
         return new HashMap<>(countResources);
     }
 
-    //TODO: CHANGE THE GETTER FOR THE BOARD
-
-    /**
-     * Getter for the gameboard attribute
-     * @return a shallow copy of the gameboard attribute
-     */
-    public Card[][] getBoard() {
-        return board.clone();
-    }
 
     //TODO: TEST THE NEW METHOD
 
@@ -99,7 +91,7 @@ public class GameBoard {
      * @return True if the requirements for the card are met, false otherwise
      */
     public boolean checkRequirements(DrawableCard card){
-        return card.checkRequirements(this);
+        return card.checkRequirements(this.countResources);
     }
 
 
@@ -146,8 +138,17 @@ public class GameBoard {
        updResources(card,x,y);
        if(x==board.length-2&&y==board[0].length-2)
             expandBoard();
-       return card.givePoints(this,x,y);
+       return card.givePoints(this.board,this.countResources,x,y);
 
+    }
+
+    /**
+     * Calculates the point scored for the given objective
+     * @param obj the objective to calculate the points for
+     * @return the number of points scored
+     */
+    public int countObjPoints(Objective obj){
+        return obj.countObjectivePoints(this.board,this.countResources);
     }
 
     /**

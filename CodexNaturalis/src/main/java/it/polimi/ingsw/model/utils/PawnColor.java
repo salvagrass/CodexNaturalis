@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.utils;
 
 /**
  * Enumeration of every color available for a player's pawn.

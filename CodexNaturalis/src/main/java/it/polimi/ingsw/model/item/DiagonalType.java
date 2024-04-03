@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.item;
 
-import it.polimi.ingsw.Symbol;
+import it.polimi.ingsw.model.utils.Symbol;
 
 /**
  * Implementation of the Disposition interface for checking diagonal disposition on a game board.

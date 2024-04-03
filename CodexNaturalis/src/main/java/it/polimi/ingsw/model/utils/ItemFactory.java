@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.gameplane;
+package it.polimi.ingsw.model.utils;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,5 +17,5 @@ public abstract class ItemFactory<T> {
      * @throws IOException if an I/O error occurs while reading the item data.
      * @throws NullPointerException if the item data is null or invalid.
      */
-    public abstract List<T> createDeck() throws IOException, NullPointerException;
+    public abstract List<T> createItemsList() throws IOException, NullPointerException;
 }

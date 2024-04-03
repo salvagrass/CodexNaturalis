@@ -1,12 +1,12 @@
 package it.polimi.ingsw.model.gameplane;
 
 
-import it.polimi.ingsw.ObjectiveData;
-import it.polimi.ingsw.ObjectiveType;
 import it.polimi.ingsw.model.item.*;
+import it.polimi.ingsw.model.utils.GoldCardsFactory;
+import it.polimi.ingsw.model.utils.ObjFactory;
+import it.polimi.ingsw.model.utils.ResCardFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,12 +14,12 @@ import java.util.List;
  */
 
 public class CommonGround {
-    Deck<GoldCard> goldDeck;
-    Deck<ResourceCard> resDeck;
-    ResourceCard[] groundResCards;
-    GoldCard[] groundGoldCards;
-    Objective[] commonObjectives;
-    List<Objective> objectives;
+    private Deck<GoldCard> goldDeck;
+    private Deck<ResourceCard> resDeck;
+    private ResourceCard[] groundResCards;
+    private GoldCard[] groundGoldCards;
+    private Objective[] commonObjectives;
+    private List<Objective> objectives;
 
     /**
      * Retrieves the common objectives
@@ -72,8 +72,10 @@ public class CommonGround {
     }
 
     private void deckGenerator() throws IOException,NullPointerException {
-        resDeck = new Deck<>(new ResCardFactory().createDeck());
-        goldDeck = new Deck<>(new GoldCardsFactory().createDeck());
+        resDeck = new Deck<>(new ResCardFactory().createItemsList());
+        goldDeck = new Deck<>(new GoldCardsFactory().createItemsList());
+        resDeck.shuffle();
+        goldDeck.shuffle();
     }
 
 
@@ -107,19 +109,12 @@ public class CommonGround {
     /**
      * Construct the list of objectives and sets the common one on the ground
      */
-    public void setObjectives(){
+    public void setObjectives() throws IOException,NullPointerException {
         constructObjective();
         commonObjectives = new Objective[]{getRandomObjective(),getRandomObjective()};
     }
 
-    private void constructObjective(){
-        objectives = new ArrayList<>(ObjectiveData.values().length);
-
-        for(ObjectiveData data: ObjectiveData.values()){
-            switch(data.getType()){
-                case ObjectiveType.RESOURCE -> objectives.add(new ResourceObjective(data));
-                case ObjectiveType.DISPOSITION -> objectives.add(new DispObjective(data));
-            }
-        }
+    private void constructObjective() throws IOException,NullPointerException {
+        this.objectives = new ObjFactory().createItemsList();
     }
 }

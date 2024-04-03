@@ -1,5 +1,5 @@
 package it.polimi.ingsw.model.item;
-import it.polimi.ingsw.Symbol;
+import it.polimi.ingsw.model.utils.Symbol;
 
 import java.util.Map;
 

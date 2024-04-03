@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model.utils;
 
 /**
  * Enumeration of every possible symbol present on a card.

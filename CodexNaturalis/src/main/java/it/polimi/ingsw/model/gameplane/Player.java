@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.gameplane;
 
-import it.polimi.ingsw.PawnColor;
+import it.polimi.ingsw.model.utils.PawnColor;
 import it.polimi.ingsw.model.item.DrawableCard;
 import it.polimi.ingsw.model.item.Objective;
 import it.polimi.ingsw.model.item.StartingCard;
@@ -115,11 +115,9 @@ public class Player {
      * First, it updates the score of the secret objective, then it updates the score of each shared objective.
      */
     public void addObjectivesScore() {
-        updPoints(secretObjective.countObjectivePoints(this.playingField));
-        for(Objective o : shared.getCommonObjectives()) {
-            // FIXED THIS METHOD (?) AWAITING CONFIRMATION
-            updPoints(o.countObjectivePoints(this.playingField));
-        }
+        updPoints(this.playingField.countObjPoints(secretObjective));
+        for(Objective obj: this.shared.getCommonObjectives())
+            updPoints(this.playingField.countObjPoints(obj));
     }
 
     /**
