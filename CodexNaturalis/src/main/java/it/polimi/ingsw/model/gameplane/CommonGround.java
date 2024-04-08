@@ -2,9 +2,10 @@ package it.polimi.ingsw.model.gameplane;
 
 
 import it.polimi.ingsw.model.item.*;
-import it.polimi.ingsw.model.utils.GoldCardsFactory;
-import it.polimi.ingsw.model.utils.ObjFactory;
-import it.polimi.ingsw.model.utils.ResCardFactory;
+import it.polimi.ingsw.model.util.GoldCardsFactory;
+import it.polimi.ingsw.model.util.ObjFactory;
+import it.polimi.ingsw.model.util.ResCardFactory;
+import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,10 +35,14 @@ public class CommonGround {
      * @param sel the index for choosing a collection
      * @return the drawn card
      */
-    public DrawableCard draw(int sel){
+    public DrawableCard draw(int sel) throws InvalidDrawException {
         DrawableCard tmp;
-        switch(sel){
-            case 0 -> {return resDeck.draw();}
+        switch (sel) {
+            case 0 -> {
+                tmp = resDeck.draw();
+                if (tmp == null)
+                    throw new InvalidDrawException("Deck Vuoto");
+            }
             case 1 -> {
                 tmp = groundResCards[0];
                 groundResCards[0] = resDeck.draw();
@@ -48,7 +53,11 @@ public class CommonGround {
                 groundResCards[1] = resDeck.draw();
                 return tmp;
             }
-            case 3 -> { return goldDeck.draw();}
+            case 3 -> {
+                tmp = goldDeck.draw();
+                if (tmp == null)
+                    throw new InvalidDrawException("Deck Vuoto");
+            }
             case 4 -> {
                 tmp = groundGoldCards[0];
                 groundGoldCards[0] = goldDeck.draw();
@@ -59,8 +68,10 @@ public class CommonGround {
                 groundGoldCards[1] = goldDeck.draw();
                 return tmp;
             }
-            default -> {return null;}
+
+            default -> throw new InvalidDrawException("Invalid Selection");
         }
+        return null;
     }
 
     /**

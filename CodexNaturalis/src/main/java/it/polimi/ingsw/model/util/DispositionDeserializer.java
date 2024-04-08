@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.utils;
+package it.polimi.ingsw.model.util;
 
 import com.google.gson.*;
 import it.polimi.ingsw.model.item.LType;

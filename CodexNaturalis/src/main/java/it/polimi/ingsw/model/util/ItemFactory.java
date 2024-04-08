@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.utils;
+package it.polimi.ingsw.model.util;
 
 import java.io.IOException;
 import java.util.List;

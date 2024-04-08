@@ -1,10 +1,11 @@
 package it.polimi.ingsw.model.gameplane;
 
-import it.polimi.ingsw.model.utils.Symbol;
+import it.polimi.ingsw.model.util.Symbol;
 import it.polimi.ingsw.model.item.Card;
 import it.polimi.ingsw.model.item.DrawableCard;
 import it.polimi.ingsw.model.item.Objective;
 import it.polimi.ingsw.model.item.StartingCard;
+import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class GameBoard {
      * Constructor for GameBoard.
      * Initializes the board and its resource count.
      */
-    GameBoard(){
+    public GameBoard(){
         board = new Card[startSize][startSize];
         countResources = new EnumMap<>(Symbol.class);
         for(Symbol s : Symbol.values())
@@ -59,24 +60,26 @@ public class GameBoard {
      * @param y the y-coordinate of the position
      * @return True if the position is valid, false otherwise
      */
-    public boolean checkPosition(int x, int y) {
+    public boolean checkPosition(int x, int y){
         int i, j,counter;
         boolean flag = false;
         Card tmp;
 
-        if(x+y%2!=0||board[x][y]!=null)
+        if((x<0||y<0)||(x+y)%2!=0||board[x][y]!=null)
             return false;
 
         j = 1;
         counter = 0;
         for(i=1;i>=-1;i-=2){
             for(;(i>0 && j>=-i)||(i<0 && j<=-i);j-=2*i){
-                tmp = board[x+i][y+j];
-                if(tmp!=null){
-                    if(tmp.getShowingCorners()[counter]==Symbol.NOTAVAILABLE)
-                        return false;
-                    else
-                        flag = true;
+                if((x+i>=0&&x+i<board.length)&&(y+j>=0&&y+j<board[0].length)) {
+                    tmp = board[x + i][y + j];
+                    if (tmp != null) {
+                        if (tmp.getShowingCorners()[counter] == Symbol.NOTAVAILABLE)
+                            return false;
+                        else
+                            flag = true;
+                    }
                 }
                 counter++;
             }
@@ -133,7 +136,9 @@ public class GameBoard {
      * @param y the y-coordinate of the position
      * @return the points given by the placement of that card
      */
-    public int addCard(DrawableCard card,int x, int y){
+    public int addCard(DrawableCard card,int x, int y) throws InvalidDrawException {
+       if(!checkPosition(x,y)||!checkRequirements(card))
+           throw new InvalidDrawException("Invalid Card Placament");
        board[x][y] = card;
        updResources(card,x,y);
        if(x==board.length-2&&y==board[0].length-2)
@@ -162,5 +167,15 @@ public class GameBoard {
             for(int j=i%2==0?0:1;j<board[0].length;j+=2)
                 newBoard[i+5][j+5] = board[i][j];
         board = newBoard;
+    }
+
+    /**
+     * method intended for testing purposes
+     * @param x the x coordinate of the card
+     * @param y the y coordinate of the card
+     * @return the card
+     */
+    public Card getCard(int x,int y){
+        return board[x][y];
     }
 }

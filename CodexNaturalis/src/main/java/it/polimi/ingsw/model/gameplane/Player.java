@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model.gameplane;
 
-import it.polimi.ingsw.model.utils.PawnColor;
+import it.polimi.ingsw.model.util.PawnColor;
 import it.polimi.ingsw.model.item.DrawableCard;
 import it.polimi.ingsw.model.item.Objective;
 import it.polimi.ingsw.model.item.StartingCard;
+import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 
 /**
  * This class represents a Player in the game.
@@ -22,12 +23,11 @@ public class Player {
      * @param shared
      * @param nickname
      */
-    public Player(CommonGround shared, String nickname) {
+    public Player(CommonGround shared, String nickname){
         this.playingField= new GameBoard();
         this.shared=shared;
         this.nickname=nickname;
         this.points=0;
-        this.hand=drawFirstThree();
     }
 
     /**
@@ -75,7 +75,7 @@ public class Player {
      *
      * @return an array of the first three cards drawn by the player
      */
-    public DrawableCard[] drawFirstThree() {
+    public DrawableCard[] drawFirstThree() throws InvalidDrawException {
         DrawableCard[] cards = new DrawableCard[3];
         cards[0] = shared.draw(0);
         cards[1] = shared.draw(0);
@@ -93,12 +93,8 @@ public class Player {
      * @param y the y-coordinate of the position on the game board
      * @return true if the card was successfully placed, false otherwise
      */
-    public boolean placeCard(int idx, int x, int y) {
-        if(playingField.checkPosition(x,y)){
-            updPoints(playingField.addCard(hand[idx],x,y));
-            return true;
-        }
-        return false;
+    public void placeCard(int idx, int x, int y) throws InvalidDrawException {
+        updPoints(playingField.addCard(hand[idx],x,y));
     }
     /**
      * Allows the player to draw a card from a specific deck in the common ground.
@@ -106,7 +102,7 @@ public class Player {
      *
      * @param sel the index of the deck from which to draw a card
      */
-    public void drawCard(int sel) {
+    public void drawCard(int sel) throws InvalidDrawException {
             shared.draw(sel);
     }
     /**

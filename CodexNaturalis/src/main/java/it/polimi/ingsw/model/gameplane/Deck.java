@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.gameplane;
 
 import it.polimi.ingsw.model.item.DrawableCard;
+import it.polimi.ingsw.model.util.exception.InvalidDrawException;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -39,7 +41,9 @@ public class Deck <T extends DrawableCard>{
      *
      * @return The last card of the deck.
      */
-    public T draw() throws NoSuchElementException {
+    public T draw(){
+        if(deck.isEmpty())
+            return null;
         return deck.removeLast();
     }
 
