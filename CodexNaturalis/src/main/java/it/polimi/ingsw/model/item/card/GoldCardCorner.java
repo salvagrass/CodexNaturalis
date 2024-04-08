@@ -1,38 +1,37 @@
-package it.polimi.ingsw.model.item;
+package it.polimi.ingsw.model.item.card;
 
 import it.polimi.ingsw.model.util.Symbol;
 
 import java.util.Map;
 
 /**
- * Class representing gold cards that give points based on the number of appearances of a specific symbol in the game.
+ * Class representing gold cards that aim to cover corners during the game.
  */
-public class GoldCardSymbol extends GoldCard {
-    final private Symbol sym;
+public class GoldCardCorner extends GoldCard {
 
     /**
-     * Constructs a GoldCard with the specified front corners, center, requirements, points, and symbol.
+     * Constructs a GoldCard with the specified front corners, center, requirements, and points.
      *
      * @param frontCorners The symbols representing the front corners of the card.
      * @param center       The symbols representing the center of the card.
      * @param requirements A map containing how many of each symbol are required from the card.
      * @param points       The number of points awarded by the card.
-     * @param sym          The symbol for which the card gives points.
      */
-    public GoldCardSymbol(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points, Symbol sym) {
+    public GoldCardCorner(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points) {
         super(frontCorners, center, requirements, points);
-        this.sym = sym;
     }
 
-
     public String getPoints() {
-        return getCardPoints() + " " + sym;
+        return getCardPoints() + " EACH CORNER";
     }
 
     /**
      * Returns the points awarded when placing the card face-up;
      * returns 0 otherwise since cards do not have points on their back.
-     * Returns the number of points given for a symbol multiplied by the number of appearances of that symbol.
+     * Counts the number of adjacent positions occupied by a card,
+     * which represents the number of corners covered by the last card placed,
+     * and returns the product of this number multiplied by the points the card
+     * gives for each corner.
      *
      * @param board The state of the game board after placing the card.
      * @param resources The resources of the board after placing the card.
@@ -41,9 +40,19 @@ public class GoldCardSymbol extends GoldCard {
      * @return The points obtained by placing the card.
      */
     public int givePoints(Card[][] board, Map<Symbol, Integer> resources, int x, int y) {
+        int points = 0;
+        int i, j;
+        int l1, l2;
         if (!getShowingFace()) {
             return 0;
         }
-        return resources.get(sym) * getCardPoints();
+        l1 = board.length;
+        l2 = board[0].length;
+        for (i = x - 1 >= 0 ? x - 1 : x + 1; i <= x + 1 && i < l1; i += 2) {
+            for (j = y - 1 >= 0 ? y - 1 : y + 1; j <= y + 1 && j < l2; j += 2) {
+                points += board[i][j] != null ? 1 : 0;
+            }
+        }
+        return points * getCardPoints();
     }
 }

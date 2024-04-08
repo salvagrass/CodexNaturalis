@@ -1,7 +1,10 @@
 package it.polimi.ingsw.model.gameplane;
 
 
-import it.polimi.ingsw.model.item.*;
+import it.polimi.ingsw.model.item.card.DrawableCard;
+import it.polimi.ingsw.model.item.card.GoldCard;
+import it.polimi.ingsw.model.item.card.ResourceCard;
+import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.util.GoldCardsFactory;
 import it.polimi.ingsw.model.util.ObjFactory;
 import it.polimi.ingsw.model.util.ResCardFactory;

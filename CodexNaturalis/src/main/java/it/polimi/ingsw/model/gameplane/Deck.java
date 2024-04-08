@@ -1,10 +1,8 @@
 package it.polimi.ingsw.model.gameplane;
 
-import it.polimi.ingsw.model.item.DrawableCard;
-import it.polimi.ingsw.model.util.exception.InvalidDrawException;
+import it.polimi.ingsw.model.item.card.DrawableCard;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Class representing ground decks in the game.

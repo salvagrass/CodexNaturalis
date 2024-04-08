@@ -1,4 +1,6 @@
-package it.polimi.ingsw.model.item;
+package it.polimi.ingsw.model.item.objective;
+
+import it.polimi.ingsw.model.item.card.Card;
 
 /**
  * Interface representing a disposition check for a game board.

@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model.gameplane;
 
 import it.polimi.ingsw.model.util.Symbol;
-import it.polimi.ingsw.model.item.Card;
-import it.polimi.ingsw.model.item.DrawableCard;
-import it.polimi.ingsw.model.item.Objective;
-import it.polimi.ingsw.model.item.StartingCard;
+import it.polimi.ingsw.model.item.card.Card;
+import it.polimi.ingsw.model.item.card.DrawableCard;
+import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 
 import java.util.EnumMap;

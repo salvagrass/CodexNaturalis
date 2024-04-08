@@ -1,9 +1,9 @@
 package it.polimi.ingsw.model.gameplane;
 
 import it.polimi.ingsw.model.util.PawnColor;
-import it.polimi.ingsw.model.item.DrawableCard;
-import it.polimi.ingsw.model.item.Objective;
-import it.polimi.ingsw.model.item.StartingCard;
+import it.polimi.ingsw.model.item.card.DrawableCard;
+import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 
 /**

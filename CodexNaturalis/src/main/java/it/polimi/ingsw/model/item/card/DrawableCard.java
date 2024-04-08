@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.item;
+package it.polimi.ingsw.model.item.card;
 
 import it.polimi.ingsw.model.util.Symbol;
 import java.util.Map;

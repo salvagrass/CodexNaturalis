@@ -1,9 +1,9 @@
 package it.polimi.ingsw.model.util;
 
 import com.google.gson.*;
-import it.polimi.ingsw.model.item.LType;
-import it.polimi.ingsw.model.item.DiagonalType;
-import it.polimi.ingsw.model.item.Disposition;
+import it.polimi.ingsw.model.item.objective.LType;
+import it.polimi.ingsw.model.item.objective.DiagonalType;
+import it.polimi.ingsw.model.item.objective.Disposition;
 
 import java.lang.reflect.Type;
 

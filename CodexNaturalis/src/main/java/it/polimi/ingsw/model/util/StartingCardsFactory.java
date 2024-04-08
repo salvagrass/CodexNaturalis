@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.model.item.StartingCard;
+import it.polimi.ingsw.model.item.card.StartingCard;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

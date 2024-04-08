@@ -3,9 +3,9 @@ package it.polimi.ingsw.model.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.model.item.DispObjective;
-import it.polimi.ingsw.model.item.Objective;
-import it.polimi.ingsw.model.item.ResourceObjective;
+import it.polimi.ingsw.model.item.objective.DispObjective;
+import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.model.item.objective.ResourceObjective;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
