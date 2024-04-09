@@ -9,12 +9,13 @@ import it.polimi.ingsw.model.util.GoldCardsFactory;
 import it.polimi.ingsw.model.util.ObjFactory;
 import it.polimi.ingsw.model.util.ResCardFactory;
 import it.polimi.ingsw.model.util.exception.InvalidDrawException;
+import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- * class that represents the common area where the decks and the ground cards are
+ * Represents the common area for the game.
  */
 
 public class CommonGround {
@@ -26,61 +27,67 @@ public class CommonGround {
     private List<Objective> objectives;
 
     /**
-     * Retrieves the common objectives
-     * @return the common objectives
+     * Construct a new instance of CommonGround initializing decks and objectives.
+     * @throws IOException if an input error occurs in the reading of the JSON files.
      */
-    public Objective[] getCommonObjectives() {
-        return commonObjectives;
+    public CommonGround() throws IOException {
+        this.setDecks();
+        this.setObjectives();
     }
 
     /**
-     * Draws a card from the specified collection, if the card was drawn from the ground, replaces it
-     * @param sel the index for choosing a collection
-     * @return the drawn card
+     * Retrieves the common objectives.
+     * @return the common objectives.
      */
-    public DrawableCard draw(int sel) throws InvalidDrawException {
+    public Objective[] getCommonObjectives() {
+        return commonObjectives.clone();
+    }
+
+    /**
+     *  Draws a card from the specified collection and replaces it if drawn from the ground.
+     * @param sel the index for choosing the collection.
+     * @return the drawn card.
+     * @throws InvalidDrawException if the selected deck is empty.
+     * @throws InvalidSelectionException if the sel parameter isn't from the ones expected.
+     */
+    public DrawableCard draw(int sel) throws InvalidDrawException,InvalidSelectionException{
         DrawableCard tmp;
         switch (sel) {
             case 0 -> {
                 tmp = resDeck.draw();
-                if (tmp == null)
-                    throw new InvalidDrawException("Deck Vuoto");
             }
             case 1 -> {
                 tmp = groundResCards[0];
                 groundResCards[0] = resDeck.draw();
-                return tmp;
             }
             case 2 -> {
                 tmp = groundResCards[1];
                 groundResCards[1] = resDeck.draw();
-                return tmp;
             }
             case 3 -> {
                 tmp = goldDeck.draw();
-                if (tmp == null)
-                    throw new InvalidDrawException("Deck Vuoto");
             }
             case 4 -> {
                 tmp = groundGoldCards[0];
                 groundGoldCards[0] = goldDeck.draw();
-                return tmp;
             }
             case 5 -> {
                 tmp = groundGoldCards[1];
                 groundGoldCards[1] = goldDeck.draw();
-                return tmp;
             }
 
-            default -> throw new InvalidDrawException("Invalid Selection");
+            default -> throw new InvalidSelectionException("Invalid Selection");
         }
-        return null;
+        if(tmp==null)
+            throw new InvalidDrawException("Deck Empty");
+        return tmp;
     }
 
     /**
-     * Sets up the decks and the initial cards on the ground
+     * Sets up the deck and initial cards on the ground.
+     * @throws IOException if there's a problem while reading the JSON files
      */
-    public void setDecks() throws IOException,NullPointerException{
+    private void setDecks() throws IOException,NullPointerException{
         deckGenerator();
         setGroundCards();
     }
@@ -103,11 +110,17 @@ public class CommonGround {
     }
 
     /**
-     * checks if both decks are empty
-     * @return true if both decks are empty, false otherwise
+     * Checks if the correspondent deck is empty.
+     * @param sel the integer used for selecting a deck.
+     * @return true if the deck is empty, false otherwise.
+     * @throws InvalidSelectionException if sel doesn't correspond to any deck.
      */
-    public boolean areEmpty(){
-        return (resDeck.getSize()==0 && goldDeck.getSize()==0);
+    public boolean isEmpty(int sel) throws InvalidSelectionException{
+        switch (sel){
+            case 0 -> {return resDeck.getSize()==0;}
+            case 1 -> {return goldDeck.getSize()==0;}
+            default -> throw new InvalidSelectionException("Invalid Selection");
+        }
     }
 
     /**
@@ -121,9 +134,9 @@ public class CommonGround {
 
 
     /**
-     * Construct the list of objectives and sets the common one on the ground
+     * Construct the list of objectives and sets the common ones on the ground.
      */
-    public void setObjectives() throws IOException,NullPointerException {
+    private void setObjectives() throws IOException,NullPointerException {
         constructObjective();
         commonObjectives = new Objective[]{getRandomObjective(),getRandomObjective()};
     }

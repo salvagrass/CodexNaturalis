@@ -1,0 +1,68 @@
+package it.polimi.ingsw;
+
+import it.polimi.ingsw.model.item.card.GoldCard;
+import it.polimi.ingsw.model.item.card.GoldCardCorner;
+import it.polimi.ingsw.model.item.card.GoldCardSymbol;
+import it.polimi.ingsw.model.util.GoldCardsFactory;
+import it.polimi.ingsw.model.util.Symbol;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.EnumMap;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+public class GoldCardFactoryTest {
+    List<GoldCard> goldCards;
+    @Before
+    public void setUp(){
+        try {
+            goldCards = new GoldCardsFactory().createItemsList();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    @Test
+    public void createItemList_noInput_GoldCard(){
+        GoldCard card = goldCards.getFirst();
+        assertArrayEquals(card.getShowingCorners(), new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY});
+        assertArrayEquals(card.getCenter(),new Symbol[]{Symbol.FUNGUS});
+        card.setShowingFace(true);
+        assertArrayEquals(card.getShowingCorners(),new Symbol[]{Symbol.EMPTY,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.POTION});
+        assertEquals(card.getCardPoints(),3);
+        EnumMap<Symbol,Integer> req = new EnumMap<>(Symbol.class);
+        req.put(Symbol.FUNGUS,3);
+        assertEquals(card.getRequirements(),req);
+    }
+
+    @Test
+    public void createItemList_noInput_GoldCardCorner(){
+        GoldCard card = goldCards.get(16);
+        assertArrayEquals(card.getShowingCorners(), new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY});
+        assertArrayEquals(card.getCenter(),new Symbol[]{Symbol.FUNGUS});
+        card.setShowingFace(true);
+        assertArrayEquals(card.getShowingCorners(),new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.NOTAVAILABLE});
+        assertEquals(card.getCardPoints(),2);
+        EnumMap<Symbol,Integer> req = new EnumMap<>(Symbol.class);
+        req.put(Symbol.FUNGUS,3);
+        req.put(Symbol.WOLF,1);
+        assertEquals(card.getRequirements(),req);
+        assertTrue(card instanceof GoldCardCorner);
+    }
+
+    @Test
+    public void createItemList_noInput_GoldCardSymbol(){
+        GoldCard card = goldCards.get(28);
+        assertArrayEquals(card.getShowingCorners(), new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY});
+        assertArrayEquals(card.getCenter(),new Symbol[]{Symbol.FUNGUS});
+        card.setShowingFace(true);
+        assertArrayEquals(card.getShowingCorners(),new Symbol[]{Symbol.NOTAVAILABLE,Symbol.FEATHER,Symbol.NOTAVAILABLE,Symbol.EMPTY});
+        assertEquals(card.getCardPoints(),1);
+        EnumMap<Symbol,Integer> req = new EnumMap<>(Symbol.class);
+        req.put(Symbol.FUNGUS,2);
+        req.put(Symbol.WOLF,1);
+        assertEquals(card.getRequirements(),req);
+        assertTrue(card instanceof GoldCardSymbol);
+    }
+}

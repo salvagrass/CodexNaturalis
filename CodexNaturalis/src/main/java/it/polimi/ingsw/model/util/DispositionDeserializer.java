@@ -11,7 +11,7 @@ public class DispositionDeserializer implements JsonDeserializer<Disposition> {
     @Override
     public Disposition deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String dispType = jsonObject.get("DispType").getAsString();
+        String dispType = jsonObject.get("dispType").getAsString();
         Type rtr = switch (dispType) {
             case "DiagonalType" -> DiagonalType.class;
             case "LType" -> LType.class;

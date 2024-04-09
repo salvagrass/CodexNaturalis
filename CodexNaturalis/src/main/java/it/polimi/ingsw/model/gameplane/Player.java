@@ -5,6 +5,8 @@ import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.util.exception.InvalidDrawException;
+import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
+import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
 
 /**
  * This class represents a Player in the game.
@@ -75,7 +77,7 @@ public class Player {
      *
      * @return an array of the first three cards drawn by the player
      */
-    public DrawableCard[] drawFirstThree() throws InvalidDrawException {
+    public DrawableCard[] drawFirstThree() throws InvalidDrawException, InvalidSelectionException {
         DrawableCard[] cards = new DrawableCard[3];
         cards[0] = shared.draw(0);
         cards[1] = shared.draw(0);
@@ -93,7 +95,7 @@ public class Player {
      * @param y the y-coordinate of the position on the game board
      * @return true if the card was successfully placed, false otherwise
      */
-    public void placeCard(int idx, int x, int y) throws InvalidDrawException {
+    public void placeCard(int idx, int x, int y) throws InvalidPlacementException {
         updPoints(playingField.addCard(hand[idx],x,y));
     }
     /**
@@ -102,7 +104,7 @@ public class Player {
      *
      * @param sel the index of the deck from which to draw a card
      */
-    public void drawCard(int sel) throws InvalidDrawException {
+    public void drawCard(int sel) throws InvalidDrawException, InvalidSelectionException {
             shared.draw(sel);
     }
     /**

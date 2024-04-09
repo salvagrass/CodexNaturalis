@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.card.StartingCard;
-import it.polimi.ingsw.model.util.exception.InvalidDrawException;
+import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ public class GameBoard {
         boolean flag = false;
         Card tmp;
 
-    if((x<0||y<0)||(x>=board.length||y>=board[0].length)||(x+y)%2!=0||board[x][y]!=null)
+        if((x>=board.length||y>=board[0].length)||(x<0||y<0)||(x+y)%2!=0||board[x][y]!=null)
             return false;
 
         j = 1;
@@ -136,9 +136,9 @@ public class GameBoard {
      * @param y the y-coordinate of the position
      * @return the points given by the placement of that card
      */
-    public int addCard(DrawableCard card,int x, int y) throws InvalidDrawException {
+    public int addCard(DrawableCard card,int x, int y) throws InvalidPlacementException {
        if(!checkPosition(x,y)||!checkRequirements(card))
-           throw new InvalidDrawException("Invalid Card Placament");
+           throw new InvalidPlacementException("Invalid Card Placament");
        board[x][y] = card;
        updResources(card,x,y);
        if(x==board.length-2&&y==board[0].length-2)
@@ -167,15 +167,5 @@ public class GameBoard {
             for(int j=i%2==0?0:1;j<board[0].length;j+=2)
                 newBoard[i+5][j+5] = board[i][j];
         board = newBoard;
-    }
-
-    /**
-     * method intended for testing purposes
-     * @param x the x coordinate of the card
-     * @param y the y coordinate of the card
-     * @return the card
-     */
-    public Card getCard(int x,int y){
-        return board[x][y];
     }
 }

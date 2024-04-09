@@ -15,8 +15,7 @@
     ],
     "center": [
       "BUTTERFLY"
-    ],
-    "cardPoints": 0
+    ]
   },
   {
     "id": "CS2",
@@ -34,8 +33,7 @@
     ],
     "center": [
       "FUNGUS"
-    ],
-    "cardPoints": 0
+    ]
   },
   {
     "id": "CS3",
@@ -54,8 +52,7 @@
     "center": [
       "GRASS",
       "FUNGUS"
-    ],
-    "cardPoints": 0
+    ]
   },
   {
     "id": "CS4",
@@ -74,8 +71,7 @@
     "center": [
       "WOLF",
       "BUTTERFLY"
-    ],
-    "cardPoints": 0
+    ]
   },
   {
     "id": "CS5",
@@ -95,8 +91,7 @@
       "WOLF",
       "BUTTERFLY",
       "GRASS"
-    ],
-    "cardPoints": 0
+    ]
   },
   {
     "id": "CS6",
@@ -116,7 +111,6 @@
       "GRASS",
       "WOLF",
       "FUNGUS"
-    ],
-    "cardPoints": 0
+    ]
   }
 ]
