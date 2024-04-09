@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.item.card;
 
 import it.polimi.ingsw.model.util.Symbol;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,6 +23,15 @@ public class GoldCard extends DrawableCard {
     public GoldCard(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points){
         super(frontCorners, center, points);
         this.requirements = requirements;
+    }
+
+    /**
+     * Returns a copy of the requirements attribute.
+     *
+     * @return A copy of the requirements attribute.
+     */
+    public Map<Symbol,Integer> getRequirements(){
+        return new HashMap<>(this.requirements);
     }
 
     /**

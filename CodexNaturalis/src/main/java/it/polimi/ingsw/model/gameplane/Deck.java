@@ -37,7 +37,7 @@ public class Deck <T extends DrawableCard>{
     /**
      * Retrieves and removes the last card from the deck.
      *
-     * @return The last card of the deck.
+     * @return The last card of the deck, or null if the deck is empty.
      */
     public T draw(){
         if(deck.isEmpty())

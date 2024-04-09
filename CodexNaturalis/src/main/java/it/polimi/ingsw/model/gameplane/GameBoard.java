@@ -65,7 +65,7 @@ public class GameBoard {
         boolean flag = false;
         Card tmp;
 
-        if((x<0||y<0)||(x+y)%2!=0||board[x][y]!=null)
+    if((x<0||y<0)||(x>=board.length||y>=board[0].length)||(x+y)%2!=0||board[x][y]!=null)
             return false;
 
         j = 1;

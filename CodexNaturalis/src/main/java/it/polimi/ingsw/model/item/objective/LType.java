@@ -71,8 +71,8 @@ public class LType implements Disposition {
                 break;
         }
 
-        for (j = xStart, countDisp = 0; j < xLim; j++) {
-            for (i = (yStart + j) % 2 == 0 ? yStart : yStart + 1; i < yLim; i+=2) {
+        for (j = xStart, countDisp = 0; j <= xLim; j++) {
+            for (i = (yStart + j) % 2 == 0 ? yStart : yStart + 1; i <= yLim; i+=2) {
                 if (board[i][j] != null &&  board[i][j].getColor() == secondaryColor) {
                     if (board[i + dirY][j + dirX] != null && board[i + dirY][j + dirX].getColor() == mainColor &&
                             board[i + (yDim - 1) * dirY][j + dirX] != null && board[i + (yDim - 1) * dirY][j + dirX].getColor() == mainColor) {
