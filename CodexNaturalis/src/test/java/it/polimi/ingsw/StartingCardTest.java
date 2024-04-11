@@ -14,7 +14,8 @@ public class StartingCardTest {
     public void setUp(){
         c = new StartingCard(new Symbol[] {Symbol.FUNGUS, Symbol.GRASS, Symbol.WOLF, Symbol.BUTTERFLY},
                 new Symbol[] {Symbol.BUTTERFLY},
-                new Symbol[] {Symbol.EMPTY, Symbol.GRASS, Symbol.EMPTY, Symbol.BUTTERFLY});
+                new Symbol[] {Symbol.EMPTY, Symbol.GRASS, Symbol.EMPTY, Symbol.BUTTERFLY},
+                null);
     }
 
     @Test

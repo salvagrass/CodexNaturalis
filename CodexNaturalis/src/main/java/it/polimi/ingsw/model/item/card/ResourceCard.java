@@ -13,8 +13,9 @@ public class ResourceCard extends DrawableCard {
      * @param corners The symbols representing the front corners of the card.
      * @param center  The symbols representing the center of the card.
      * @param p       The number of points of the card
+     * @param id      A unique identifier for a card.
      */
-    public ResourceCard(Symbol[] corners, Symbol[] center, int p) {
-        super(corners, center, p);
+    public ResourceCard(Symbol[] corners, Symbol[] center, int p, String id) {
+        super(corners, center, p, id);
     }
 }

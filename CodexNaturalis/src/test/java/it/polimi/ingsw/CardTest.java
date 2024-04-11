@@ -15,7 +15,7 @@ public class CardTest {
     public void setUp(){
         c = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.BUTTERFLY},
-                0);
+                0, null);
     }
 
     @Test

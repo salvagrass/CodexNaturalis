@@ -15,9 +15,10 @@ public class ResourceObjective extends Objective {
      *
      * @param p   The number of points of the objective.
      * @param sym The map associating each symbol with its required quantity.
+     * @param id  A unique identifier for a objective.
      */
-    public ResourceObjective(int p, Map<Symbol, Integer> sym) {
-        super(p);
+    public ResourceObjective(int p, String id, Map<Symbol, Integer> sym) {
+        super(p, id);
         this.resources = sym;
     }
 
@@ -39,5 +40,10 @@ public class ResourceObjective extends Objective {
             }
         }
         return min * getPoints();
+    }
+
+    @Override
+    public String getInfo() {
+        return "Resources: " + this.resources.toString();
     }
 }

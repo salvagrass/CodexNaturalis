@@ -23,7 +23,7 @@ public class GoldCardSymbolTest {
                 new Symbol[] {Symbol.BUTTERFLY},
                 req,
                 1,
-                Symbol.POTION);
+                Symbol.POTION, null);
     }
 
     @Test

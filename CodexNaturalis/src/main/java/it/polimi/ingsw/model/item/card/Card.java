@@ -9,6 +9,7 @@ public abstract class Card {
     private final Symbol[] frontCorners;
     private final Symbol[] center;
     private boolean showingFace;
+    private final String id;
 
 
     /**
@@ -16,11 +17,13 @@ public abstract class Card {
      *
      * @param corners The symbols representing the front corners of the card.
      * @param center The symbols representing the center of the card.
+     * @param id A unique identifier for a card.
      */
-    public Card(Symbol[] corners, Symbol[] center){
+    public Card(Symbol[] corners, Symbol[] center, String id){
         this.center = center;
         this.frontCorners = corners;
         this.showingFace = false;
+        this.id = id;
     }
 
     /**
@@ -76,5 +79,14 @@ public abstract class Card {
      */
     public Symbol getColor(){
         return this.center[0];
+    }
+
+    /**
+     * Retrieves the id of the card.
+     *
+     * @return The id of the card.
+     */
+    public String getId(){
+        return this.id;
     }
 }

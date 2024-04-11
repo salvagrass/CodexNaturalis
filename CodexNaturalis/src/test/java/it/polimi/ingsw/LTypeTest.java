@@ -21,10 +21,10 @@ public class LTypeTest {
         l4 = new LType(Symbol.GRASS, Symbol.BUTTERFLY, 3);
         c = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.GRASS},
-                1);
+                1, null);
         d = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.BUTTERFLY},
-                1);
+                1, null);
     }
 
     @Test

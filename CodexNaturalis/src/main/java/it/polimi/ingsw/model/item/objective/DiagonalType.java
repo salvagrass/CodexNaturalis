@@ -58,5 +58,10 @@ public class DiagonalType implements Disposition {
         }
         return dispositionCount;
     }
+
+    @Override
+    public String toString(){
+        return "DiagonalType:\n"+this.color.toString()+"\n"+this.direction+"\n"+this.len;
+    }
 }
 

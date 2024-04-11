@@ -15,9 +15,10 @@ public abstract class DrawableCard extends Card {
      * @param corners The symbols representing the front corners of the card.
      * @param center The symbols representing the center of the card.
      * @param p The number of points of the card
+     * @param id A unique identifier for a card.
      */
-    public DrawableCard(Symbol[] corners, Symbol[] center, int p){
-        super(corners, center);
+    public DrawableCard(Symbol[] corners, Symbol[] center, int p, String id){
+        super(corners, center, id);
         this.cardPoints = p;
     }
     /**

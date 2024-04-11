@@ -21,16 +21,16 @@ public class DeckTest {
         ls1 = new ArrayList<>(4);
         ls1.add(new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.BUTTERFLY},
-                0));
+                0, null));
         ls1.add(new ResourceCard(new Symbol[] {Symbol.NOTAVAILABLE, Symbol.FUNGUS, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.FUNGUS},
-                1));
+                1, null));
         ls1.add(new ResourceCard(new Symbol[] {Symbol.EMPTY, Symbol.EMPTY, Symbol.NOTAVAILABLE, Symbol.GRASS},
                 new Symbol[] {Symbol.GRASS},
-                2));
+                2, null));
         ls1.add(new ResourceCard(new Symbol[] {Symbol.POTION, Symbol.EMPTY, Symbol.WOLF, Symbol.EMPTY},
                 new Symbol[] {Symbol.WOLF},
-                3));
+                3, null));
         deck1 = new Deck<>(ls1);
     }
 
@@ -69,7 +69,7 @@ public class DeckTest {
         List<ResourceCard> ls = new ArrayList<>(1), ls2;
         ls.add(new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.BUTTERFLY},
-                0));
+                0, null));
         ls2 = new ArrayList<>(ls);
         Deck<ResourceCard> d = new Deck<>(ls), d2 = new Deck<>(ls2);
         d.shuffle();

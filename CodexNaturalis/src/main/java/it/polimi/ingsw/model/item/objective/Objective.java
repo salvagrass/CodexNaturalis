@@ -11,14 +11,17 @@ import java.util.Map;
  */
 public abstract class Objective {
     final private int points;
+    final private String id;
 
     /**
      * Creates an objective with the specified points.
      *
      * @param p The number of points of the objective.
+     * @param id A unique identifier for a objective.
      */
-    public Objective(int p) {
+    public Objective(int p, String id) {
         this.points = p;
+        this.id = id;
     }
 
     /**
@@ -38,4 +41,20 @@ public abstract class Objective {
      * @return The points given by the objective.
      */
     public abstract int countObjectivePoints(Card[][] board, Map<Symbol, Integer> resources);
+
+    /**
+     * Retrieves the color of the objective.
+     *
+     * @return The color of the objective.
+     */
+    public String getId(){
+        return this.id;
+    }
+
+    /**
+     * Retrieves a string that contains information for the objective.
+     *
+     * @return The string that contains information for the objective.
+     */
+    public abstract String getInfo();
 }

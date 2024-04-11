@@ -16,9 +16,10 @@ public class GoldCardCorner extends GoldCard {
      * @param center       The symbols representing the center of the card.
      * @param requirements A map containing how many of each symbol are required from the card.
      * @param points       The number of points awarded by the card.
+     * @param id           A unique identifier for a card.
      */
-    public GoldCardCorner(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points) {
-        super(frontCorners, center, requirements, points);
+    public GoldCardCorner(Symbol[] frontCorners, Symbol[] center, Map<Symbol, Integer> requirements, int points, String id) {
+        super(frontCorners, center, requirements, points, id);
     }
 
     public String getPoints() {

@@ -13,9 +13,10 @@ public class StartingCard extends Card {
      *
      * @param corners The symbols representing the front corners of the card.
      * @param center  The symbols representing the center of the card.
+     * @param id      A unique identifier for a card.
      */
-    public StartingCard(Symbol[] corners, Symbol[] center, Symbol[] back) {
-        super(corners, center);
+    public StartingCard(Symbol[] corners, Symbol[] center, Symbol[] back, String id) {
+        super(corners, center, id);
         this.backCorners = back;
     }
 

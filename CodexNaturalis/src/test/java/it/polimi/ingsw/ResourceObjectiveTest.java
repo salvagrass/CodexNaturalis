@@ -18,7 +18,7 @@ public class ResourceObjectiveTest {
     public void setUp(){
         Map<Symbol, Integer> res = new HashMap<>();
         res.put(Symbol.FUNGUS, 3);
-        r = new ResourceObjective(2, res);
+        r = new ResourceObjective(2, null, res);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ResourceObjectiveTest {
         res.put(Symbol.FUNGUS, 3);
         res.put(Symbol.SCROLL, 2);
 
-        r = new ResourceObjective(2, res);
+        r = new ResourceObjective(2, null, res);
 
         assertEquals(r.countObjectivePoints(new Card[][]{{null, null},{null, null}}, mapRes), 0);
 

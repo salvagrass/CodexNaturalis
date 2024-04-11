@@ -15,7 +15,7 @@ public class LType implements Disposition {
      *
      * @param c1 The main color of the LType.
      * @param c2 The secondary color of the LType.
-     * @param firstCardPos The position of the first card (0 = NW, 1 = NE, 2 = SE, 3 = SW).
+     * @param firstCardPos The position of the first card (0 = UR, 1 = UL, 2 = DL, 3 = DR).
      */
     public LType(Symbol c1, Symbol c2, int firstCardPos) {
         this.mainColor = c1;
@@ -83,6 +83,21 @@ public class LType implements Disposition {
             }
         }
         return countDisp;
+    }
+
+    @Override
+    public String toString(){
+        String s = "LType:";
+        s += mainColor.toString() + "\n";
+        s += secondaryColor.toString() + "\n";
+        switch(firstCardPos){
+            case 0 -> s += "UR\n";
+            case 1 -> s += "UL\n";
+            case 2 -> s += "DL\n";
+            case 3 -> s += "DR\n";
+            default -> s += "ERROR";
+        }
+        return s;
     }
 }
 

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 public class GoldCardCornerTest {
     GoldCardCorner c;
+    ResourceCard r;
 
     @Before
     public void setUp(){
@@ -23,7 +24,10 @@ public class GoldCardCornerTest {
         c = new GoldCardCorner(new Symbol[] {Symbol.EMPTY, Symbol.EMPTY, Symbol.EMPTY, Symbol.NOTAVAILABLE},
                 new Symbol[] {Symbol.BUTTERFLY},
                 req,
-                2);
+                2, null);
+        r = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
+                new Symbol[] {Symbol.BUTTERFLY},
+                1, null);
     }
 
     @Test
@@ -60,9 +64,6 @@ public class GoldCardCornerTest {
 
     @Test
     public void givePoints_oneCornerCovered_two(){
-        ResourceCard r = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
-                new Symbol[] {Symbol.BUTTERFLY},
-                1);
         c.setShowingFace(true);
         assertEquals(c.givePoints(new Card[][] {{r, null, null}, {null, null, null}, {null, null, null}},
                         new HashMap<>(), 1, 1),
@@ -80,9 +81,6 @@ public class GoldCardCornerTest {
 
     @Test
     public void givePoints_twoCornersCovered_four(){
-        ResourceCard r = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
-                new Symbol[] {Symbol.BUTTERFLY},
-                1);
         c.setShowingFace(true);
         assertEquals(c.givePoints(new Card[][] {{r, null, r}, {null, null, null}, {null, null, null}},
                         new HashMap<>(), 1, 1),
@@ -106,9 +104,6 @@ public class GoldCardCornerTest {
 
     @Test
     public void givePoints_threeCornersCovered_six(){
-        ResourceCard r = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
-                new Symbol[] {Symbol.BUTTERFLY},
-                1);
         c.setShowingFace(true);
         assertEquals(c.givePoints(new Card[][] {{r, null, r}, {null, null, null}, {null, null, r}},
                         new HashMap<>(), 1, 1),
@@ -126,9 +121,6 @@ public class GoldCardCornerTest {
 
     @Test
     public void givePoints_fourCornersCovered_eight(){
-        ResourceCard r = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
-                new Symbol[] {Symbol.BUTTERFLY},
-                1);
         c.setShowingFace(true);
         assertEquals(c.givePoints(new Card[][] {{r, null, r}, {null, null, null}, {r, null, r}},
                         new HashMap<>(), 1, 1),

@@ -14,4 +14,6 @@ public interface Disposition {
      * @return The number of occurrences of the specified disposition found on the board.
      */
     int checkDisposition(Card[][] board);
+
+    String toString();
 }

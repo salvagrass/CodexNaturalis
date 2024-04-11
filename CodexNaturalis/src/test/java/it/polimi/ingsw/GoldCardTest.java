@@ -22,7 +22,7 @@ public class GoldCardTest {
         c = new GoldCard(new Symbol[] {Symbol.POTION, Symbol.NOTAVAILABLE, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.BUTTERFLY},
                 req,
-                3);
+                3, null);
     }
 
     @Test

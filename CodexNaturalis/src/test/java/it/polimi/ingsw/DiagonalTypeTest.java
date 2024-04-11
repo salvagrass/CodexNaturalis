@@ -19,14 +19,14 @@ public class DiagonalTypeTest {
         d2 = new DiagonalType(Symbol.GRASS, -1, 3);
         c = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.GRASS},
-                1);
+                1, null);
     }
 
     @Test
     public void checkDisposition_noOverlappedDispositions_correctOutput(){
         ResourceCard c2 = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.BUTTERFLY},
-                1);
+                1, null);
         assertEquals(d1.checkDisposition(new Card[][]
                 {
                         {null, null, null, null, null},

@@ -17,7 +17,7 @@ public class DrawableCardTest {
     public void setUp(){
         c = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
                 new Symbol[] {Symbol.BUTTERFLY},
-                1);
+                1, null);
     }
 
     @Test
