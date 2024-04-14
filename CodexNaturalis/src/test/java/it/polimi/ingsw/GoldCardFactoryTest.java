@@ -19,6 +19,7 @@ public class GoldCardFactoryTest {
     public void setUp(){
         try {
             goldCards = new GoldCardsFactory().createItemsList();
+            assertEquals(goldCards.size(),40);
         } catch (Exception e) {
             fail();
         }
@@ -64,5 +65,6 @@ public class GoldCardFactoryTest {
         req.put(Symbol.WOLF,1);
         assertEquals(card.getRequirements(),req);
         assertTrue(card instanceof GoldCardSymbol);
+        assertEquals(card.getPoints(),"1 FEATHER");
     }
 }

@@ -13,7 +13,6 @@ import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -26,37 +25,81 @@ public class GameBoardTest {
     List<GoldCard> goldCards;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp(){
         board = new GameBoard();
-        resourceCards = new ResCardFactory().createItemsList();
-        goldCards = new GoldCardsFactory().createItemsList();
-        startingCards = new StartingCardsFactory().createItemsList();
+        try {
+            resourceCards = new ResCardFactory().createItemsList();
+            goldCards = new GoldCardsFactory().createItemsList();
+            startingCards = new StartingCardsFactory().createItemsList();
+            addStartingCard_startingCard_updatedBehaviour();
+        } catch (Exception e) {
+            fail();
+        }
     }
 
-    @Test
+
     public void addStartingCard_startingCard_updatedBehaviour(){
         Map <Symbol,Integer> before = board.getCountResources();
         board.addStartingCard(startingCards.getLast());
 
         assertNotEquals(board.getCountResources(), before);
 
-        assertTrue(board.checkPosition(14, 14));
-        assertTrue(board.checkPosition(14, 16));
-        assertFalse(board.checkPosition(16, 14));
-        assertFalse(board.checkPosition(16, 16));
+        assertTrue(board.checkPosition(-1, -1));
+        assertTrue(board.checkPosition(-1, 1));
+        assertFalse(board.checkPosition(1, -1));
+        assertFalse(board.checkPosition(1, 1));
     }
 
     @Test
     public void checkPosition_outOfRangeIndexes_correctOutput(){
-        assertFalse(board.checkPosition(40, 40));
-        assertFalse(board.checkPosition(40, -1));
-        assertFalse(board.checkPosition(-1, 40));
-        assertFalse(board.checkPosition(-1, -1));
+        assertFalse(board.checkPosition(25, 25));   //Down-Right
+        assertFalse(board.checkPosition(25, -16));  //Down-Left
+        assertFalse(board.checkPosition(-16, 25));  //Upper-Right
+        assertFalse(board.checkPosition(-16, -16)); // Upper-Left
+    }
+
+    @Test (expected = InvalidPlacementException.class)
+    public void addCard_invalidPosition_exceptionThrown() throws InvalidPlacementException{
+        DrawableCard card = resourceCards.getFirst();
+        board.addCard(card,1,-1);
+    }
+
+
+    @Test
+    public void addCard_surroundedCard_correctOutput(){
+        DrawableCard card = new ResourceCard(new Symbol[]{Symbol.FUNGUS,Symbol.WOLF,Symbol.GRASS,Symbol.BUTTERFLY}, new Symbol[]{Symbol.FUNGUS},0,"Test");
+        card.setShowingFace(true);
+        try {
+
+            //getting the board ready
+            board.addCard(card,-1,1);
+
+            //creating the upper triangle
+            board.addCard(card,-2,2);
+            board.addCard(card,-3,3);
+            board.addCard(card,-2,4);
+
+            //creating the lower triangle
+            board.addCard(card,0,2);
+            board.addCard(card,1,3);
+            board.addCard(card,0,4);
+
+            //Card surrounded by other cards
+            /*
+                 0, 0, C, 0,
+                 0, C, 0, C,
+                 C, 0, X, 0,
+                 0, C, 0, C,
+                 0, 0, C, 0,
+             */
+            board.addCard(card,-1,3);
+        } catch (InvalidPlacementException e) {
+            fail();
+        }
     }
 
     @Test
     public void updResources_startingCard_correctOutput(){
-        addStartingCard_startingCard_updatedBehaviour();
         assertEquals((long)board.getCountResources().get(Symbol.BUTTERFLY), 0);
         assertEquals((long)board.getCountResources().get(Symbol.FEATHER), 0);
         assertEquals((long)board.getCountResources().get(Symbol.FUNGUS), 1);
@@ -67,12 +110,14 @@ public class GameBoardTest {
     }
 
     @Test
-    public void updResources_drawableCardFromStartingCard_correctOutput() throws InvalidPlacementException {
-        addStartingCard_startingCard_updatedBehaviour();
+    public void updResources_drawableCardFromStartingCard_correctOutput(){
         DrawableCard card = resourceCards.getFirst();
         card.setShowingFace(true);
-        board.addCard(card,14,14);
-        Map<Symbol,Integer> res = board.getCountResources();
+        try {
+            board.addCard(card,-1,-1);
+        } catch (InvalidPlacementException e) {
+            fail();
+        }
         assertEquals((long)board.getCountResources().get(Symbol.BUTTERFLY), 0);
         assertEquals((long)board.getCountResources().get(Symbol.FEATHER), 0);
         assertEquals((long)board.getCountResources().get(Symbol.FUNGUS), 3);
@@ -83,12 +128,15 @@ public class GameBoardTest {
     }
 
     @Test
-    public void updResources_DrawableCardFromDrawableCard_correctOutput() throws InvalidPlacementException {
-        updResources_drawableCardFromStartingCard_correctOutput();
-        DrawableCard card = resourceCards.get(1);
-        card.setShowingFace(true);
-        board.addCard(card,13,13);
-        Map<Symbol,Integer> res = board.getCountResources();
+    public void updResources_DrawableCardFromDrawableCard_correctOutput(){
+        try {
+            board.addCard(resourceCards.getFirst(),-1,-1);
+            DrawableCard card = resourceCards.get(1);
+            card.setShowingFace(true);
+            board.addCard(card,-2,-2);
+        } catch (InvalidPlacementException e) {
+            fail();
+        }
         assertEquals((long)board.getCountResources().get(Symbol.BUTTERFLY), 0);
         assertEquals((long)board.getCountResources().get(Symbol.FEATHER), 0);
         assertEquals((long)board.getCountResources().get(Symbol.FUNGUS), 4);
@@ -98,4 +146,32 @@ public class GameBoardTest {
         assertEquals((long)board.getCountResources().get(Symbol.WOLF), 1);
     }
 
+    @Test
+    public void updResource_surroundedCard_CorrectOutput(){
+        addCard_surroundedCard_correctOutput();
+        assertEquals((long)board.getCountResources().get(Symbol.BUTTERFLY), 7);
+        assertEquals((long)board.getCountResources().get(Symbol.FEATHER), 0);
+        assertEquals((long)board.getCountResources().get(Symbol.FUNGUS), 8);
+        assertEquals((long)board.getCountResources().get(Symbol.GRASS), 5);
+        assertEquals((long)board.getCountResources().get(Symbol.POTION), 0);
+        assertEquals((long)board.getCountResources().get(Symbol.SCROLL), 0);
+        assertEquals((long)board.getCountResources().get(Symbol.WOLF), 5);
+    }
+
+    @Test
+    public void expandBoard_edgeReached_boardExpanded(){
+        DrawableCard card = new ResourceCard(new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY}, new Symbol[]{Symbol.FUNGUS},0,"Test");
+        int i,j;
+        assertFalse(board.checkPosition(-16,16));
+        for(i=-1,j=1;i>=-15&&j<=15;i--,j++)
+            try {
+                board.addCard(card,i,j);
+            }
+            catch (InvalidPlacementException e) {
+                fail();
+            }
+        assertTrue(board.checkPosition(-16,16));
+        for(i=0,j=0;i>=-15 && j<=15;i--,j++)
+            assertFalse(board.checkPosition(i,j));
+    }
 }

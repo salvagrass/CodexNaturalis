@@ -36,6 +36,6 @@ public class DispObjective extends Objective {
 
     @Override
     public String getInfo() {
-        return "Disposition: " + this.disposition.toString();
+        return "Disposition: " + this.disposition.toString() + "\nPoints: " + this.getPoints();
     }
 }

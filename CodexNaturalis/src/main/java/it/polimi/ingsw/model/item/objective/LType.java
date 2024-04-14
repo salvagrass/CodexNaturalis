@@ -87,14 +87,15 @@ public class LType implements Disposition {
 
     @Override
     public String toString(){
-        String s = "LType:";
-        s += mainColor.toString() + "\n";
-        s += secondaryColor.toString() + "\n";
+        String s = "LType\n";
+        s += "Main Color: " + mainColor.toString() + "\n";
+        s += "Secondary Color: " + secondaryColor.toString() + "\n";
+        s += "First Card Position: ";
         switch(firstCardPos){
-            case 0 -> s += "UR\n";
-            case 1 -> s += "UL\n";
-            case 2 -> s += "DL\n";
-            case 3 -> s += "DR\n";
+            case 0 -> s += "UR";
+            case 1 -> s += "UL";
+            case 2 -> s += "DL";
+            case 3 -> s += "DR";
             default -> s += "ERROR";
         }
         return s;

@@ -10,8 +10,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class DeckTest {
     Deck<ResourceCard> deck1;
@@ -61,7 +60,7 @@ public class DeckTest {
     public void shuffle_emptyDeck_noExceptions(){
         Deck<ResourceCard> d = new Deck<>(new ArrayList<>(0));
         d.shuffle();
-        assert(true); //No exceptions threw
+        assertTrue(true); //No exceptions threw
     }
 
     @Test
@@ -87,7 +86,7 @@ public class DeckTest {
             c2 = deck2.draw();
             samePermutation = c1.equals(c2);
         }
-        assert(!samePermutation);
+        assertFalse(samePermutation);
     }
 
     @Test
