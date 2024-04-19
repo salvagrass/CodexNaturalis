@@ -115,6 +115,15 @@ public class Player {
     }
 
     /**
+     * Returns the nickname of the player.
+     *
+     * @return The player's nickname.
+     */
+    public String getNickname(){
+        return this.nickname;
+    }
+
+    /**
      * Updates the player's points.
      * This method adds a specified number of points to the player's current score.
      * The number of points added is determined by the card played by the player.
