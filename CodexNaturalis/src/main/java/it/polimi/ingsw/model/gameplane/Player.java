@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.util.PawnColor;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.card.StartingCard;
+import it.polimi.ingsw.model.gameplane.CommonGround;
 import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
 import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
@@ -13,7 +14,6 @@ import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
  */
 public class Player {
     private GameBoard playingField;
-    private CommonGround shared;
     private DrawableCard[] hand;
     private Objective secretObjective;
     private int points;
@@ -21,30 +21,24 @@ public class Player {
     private String nickname;
 
     /**
-     * Constructs a new Player.
-     * @param shared
-     * @param nickname
-     */
-    public Player(CommonGround shared, String nickname){
-        this.playingField= new GameBoard();
-        this.shared=shared;
-        this.nickname=nickname;
-        this.points=0;
-    }
-
-    /**
-     * Returns the shared common ground.
+     * Constructs a new Player object.
      *
-     * @return Returns the shared common ground
+     * @param nickname The player's nickname.
+     * @param secretObjective The player's secret objective.
+     * @param pawnColor The color of the player's pawn.
      */
-    public CommonGround getShared() {
-        return this.shared;
+    public Player(String nickname, Objective secretObjective, PawnColor pawnColor){
+        this.playingField = new GameBoard();
+        this.nickname = nickname;
+        this.secretObjective = secretObjective;
+        this.pawnColor = pawnColor;
+        this.points = 0;
     }
 
     /**
      * Returns the current points of the player.
      *
-     * @return the current points of the player
+     * @return the current points of the player.
      */
     public int getPoints() {
         return this.points;
@@ -58,74 +52,76 @@ public class Player {
     public void placeStartingCard(StartingCard start) {
         playingField.addStartingCard(start);
     }
-    /**
-     * Allows the player to choose between two different objectives.
-     * The objectives are provided by the getRandomObj method from the CommonGround class,
-     * which is called twice.
-     */
-    public void chooseSecretObject() {
-        Object obj1 = getShared().getRandomObjective();
-        Object obj2 = getShared().getRandomObjective();
-        //comunicazione col server
-        //this...
-    }
-    /**
-     * Allows the player to draw the first three cards.
-     * Two cards are drawn from the resource deck and one from the gold card deck.
-     * The draw method from the CommonGround class is called three times.
-     * Each returned value from the draw method is saved in an element of a three-element array.
-     *
-     * @return an array of the first three cards drawn by the player
-     */
-    public DrawableCard[] drawFirstThree() throws InvalidDrawException, InvalidSelectionException {
-        DrawableCard[] cards = new DrawableCard[3];
-        cards[0] = shared.draw(0);
-        cards[1] = shared.draw(0);
-        cards[2] = shared.draw(3);
-        return cards;
-    }
 
     /**
-     * Attempts to place a card from the player's hand onto the game board at the specified position.
-     * If the position is valid (as determined by the checkPosition method of the GameBoard class),
-     * the card is placed and the player's points are updated accordingly.
+     * Places a card on the game board at the specified position.
      *
-     * @param idx the index of the card in the player's hand
-     * @param x the x-coordinate of the position on the game board
-     * @param y the y-coordinate of the position on the game board
-     * @return true if the card was successfully placed, false otherwise
+     * @param idx The index of the card in the player's hand.
+     * @param x The x-coordinate of the position on the board.
+     * @param y The y-coordinate of the position on the board.
+     * @param face Whether the card should be placed face up or face down.
+     * @throws InvalidPlacementException If the card cannot be placed at the specified position.
      */
-    public void placeCard(int idx, int x, int y) throws InvalidPlacementException {
-        updPoints(playingField.addCard(hand[idx],x,y));
+    public void placeCard(int idx, int x, int y, boolean face) throws InvalidPlacementException {
+        boolean prevFace = hand[idx].getShowingFace();
+        hand[idx].setShowingFace(face);
+        try{
+            updPoints(playingField.addCard(hand[idx], x, y));
+        }catch(InvalidPlacementException e){
+            hand[idx].setShowingFace(prevFace);
+            throw new InvalidPlacementException();   
+        }
+        hand[idx] = null;
     }
-    /**
-     * Allows the player to draw a card from a specific deck in the common ground.
-     * The deck is selected based on the provided index.
-     *
-     * @param sel the index of the deck from which to draw a card
-     */
-    public void drawCard(int sel) throws InvalidDrawException, InvalidSelectionException {
-            shared.draw(sel);
-    }
+    
     /**
      * Updates the score of the objectives.
      * This method updates the score of the objectives using the updPoints method.
-     * First, it updates the score of the secret objective, then it updates the score of each shared objective.
+     * Firstly it updates the score of the secret objective, then it updates the score of each shared objective.
+     * 
+     * @param ground 
      */
-    public void addObjectivesScore() {
+    public void addObjectivesScore(CommonGround ground) {
         updPoints(this.playingField.countObjPoints(secretObjective));
-        for(Objective obj: this.shared.getCommonObjectives())
+        for(Objective obj : ground.getCommonObjectives()){
             updPoints(this.playingField.countObjPoints(obj));
+        }
+    }
+
+    /**
+     * Draws a card from the common ground and adds it to the player's hand.
+     *
+     * @param ground The common ground from which to draw the card.
+     * @param sel The index of the selected deck to draw from.
+     */
+    public void draw(CommonGround ground, int sel) throws InvalidSelectionException, InvalidDrawException {
+        int i;
+        for(i = 0; hand[i] != null && i < hand.length; i++);
+        if(i<hand.length)
+            hand[i] = ground.draw(sel);
+    }
+
+    /**
+     * Draws the first three cards from the common ground (2 resources and 1 gold) and adds them to the player's hand.
+     *
+     * @param ground The common ground from which to draw the cards.
+     */
+    public void drawFirstThree(CommonGround ground){
+        try{
+            hand[0] = ground.draw(0);
+            hand[1] = ground.draw(0);
+            hand[2] = ground.draw(3);
+        }catch(Exception e){}
     }
 
     /**
      * Updates the player's points.
      * This method adds a specified number of points to the player's current score.
      * The number of points added is determined by the card played by the player.
-     *
+     * 
      * @param p the number of points to be added to the player's score
      */
     private void updPoints(int p) {
-        this.points = this.points + p;
+        this.points += p;
     }
 }
