@@ -1,0 +1,64 @@
+package it.polimi.ingsw.controller.connection;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+/**
+ * Extends Comm to implement a socket connection.
+ */
+public class SocketComm extends Comm {
+
+  Socket socket;
+  Scanner in;
+  PrintWriter out;
+  /**
+   * Constructs a new SocketComm instance.
+   *
+   * @param socket the socket to use for communication.
+   * @throws IOException if an I/O-related exception occurs during initialization.
+   */
+  public SocketComm(Socket socket) throws IOException {
+    this.socket = socket;
+    this.in = new Scanner(socket.getInputStream());
+    this.out = new PrintWriter(socket.getOutputStream());
+  }
+
+  /**
+   * Sends a message over the socket.
+   *
+   * @param msg The message to send.
+   */
+  @Override
+  public void sendMsg(String msg){
+    out.println(msg);
+    out.flush();
+  }
+
+  /**
+   * Retrieves a message from the socket.
+   *
+   * @return The message read from the socket.
+   */
+  @Override
+  public String getMsg() {
+    return in.nextLine();
+  }
+
+  public String placeCard() {
+    //TODO implement
+    return null;
+  }
+
+  public String drawCard() {
+    //TODO implement
+    return null;
+  }
+
+  @Override
+  public void close(){
+    //TODO implement
+  }
+}
+
