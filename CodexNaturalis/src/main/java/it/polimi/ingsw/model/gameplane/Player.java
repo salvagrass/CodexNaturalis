@@ -4,9 +4,12 @@ import it.polimi.ingsw.model.util.PawnColor;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.card.StartingCard;
+import it.polimi.ingsw.model.util.Symbol;
 import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
 import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
+
+import java.util.Map;
 
 /**
  * This class represents a Player in the game.
@@ -42,6 +45,14 @@ public class Player {
      */
     public int getPoints() {
         return this.points;
+    }
+
+    /**
+     * Returns a map that associates a symbol to how many times is present on the board
+     * @return the map associating symbols and integer
+     */
+    public Map<Symbol,Integer> getInventory(){
+        return this.playingField.getCountResources();
     }
 
     public String getNickname(){

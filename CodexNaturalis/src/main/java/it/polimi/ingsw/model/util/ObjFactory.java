@@ -14,8 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Class that implements the factory method to create a list of objectives
+ */
+
 public class ObjFactory extends ItemFactory<Objective> {
 
+    /**
+     * Creates a list of objectives based on the ObjRes.json file
+     * @return a list of objectives
+     * @throws IOException if an IOException occurs reading the file
+     * @throws NullPointerException if any of the json files are not found or are invalid
+     */
     @Override
     public List<Objective> createItemsList() throws IOException, NullPointerException {
         InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(ObjFactory.class.getResourceAsStream("/data/ObjDisp.json")));

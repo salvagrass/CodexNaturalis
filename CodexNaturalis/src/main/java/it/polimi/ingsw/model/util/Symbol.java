@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.util;
 
 /**
  * Enumeration of every possible symbol present on a card.
- * EMPTY is an available corner without symbol.
+ * EMPTY is an available corner without a symbol.
  * NOTAVAILABLE is a corner of a card on which you can't place another card
  */
 public enum Symbol {

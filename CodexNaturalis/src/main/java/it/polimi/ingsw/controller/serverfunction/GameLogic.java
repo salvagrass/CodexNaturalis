@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
 import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;

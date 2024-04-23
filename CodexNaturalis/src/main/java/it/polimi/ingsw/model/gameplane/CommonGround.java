@@ -4,10 +4,12 @@ package it.polimi.ingsw.model.gameplane;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.card.GoldCard;
 import it.polimi.ingsw.model.item.card.ResourceCard;
+import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.util.GoldCardsFactory;
 import it.polimi.ingsw.model.util.ObjFactory;
 import it.polimi.ingsw.model.util.ResCardFactory;
+import it.polimi.ingsw.model.util.StartingCardsFactory;
 import it.polimi.ingsw.model.util.exception.InvalidDrawException;
 import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
 
@@ -21,10 +23,12 @@ import java.util.List;
 public class CommonGround {
     private Deck<GoldCard> goldDeck;
     private Deck<ResourceCard> resDeck;
+
     private ResourceCard[] groundResCards;
     private GoldCard[] groundGoldCards;
     private Objective[] commonObjectives;
     private List<Objective> objectives;
+    private List<StartingCard> startingCardList;
 
     /**
      * Construct a new instance of CommonGround initializing decks and objectives.
@@ -44,6 +48,30 @@ public class CommonGround {
     }
 
     /**
+     * Creates an array of strings with the information of the resource cards on the ground
+     * @return the array with the cards info
+     */
+    public String[] getGroundResourceCardsInfo(){
+        return getGroundCardInfo(groundResCards);
+    }
+
+    /**
+     * Creates an array of strings with the information of the gold cards on the ground
+     * @return the array with the cards info
+     */
+    public String[] getGroundGoldCardInfo(){
+        return getGroundCardInfo(groundGoldCards);
+    }
+
+    private String[] getGroundCardInfo(DrawableCard[] groundCards){
+        String[] info = new String[groundCards.length];
+        for(int i=0;i<groundCards.length;i++){
+            info[i] = groundCards[i].toString();
+        }
+        return info;
+    }
+
+    /**
      *  Draws a card from the specified collection and replaces it if drawn from the ground.
      * @param sel the index for choosing the collection.
      * @return the drawn card.
@@ -53,9 +81,7 @@ public class CommonGround {
     public DrawableCard draw(int sel) throws InvalidDrawException,InvalidSelectionException{
         DrawableCard tmp;
         switch (sel) {
-            case 0 -> {
-                tmp = resDeck.draw();
-            }
+            case 0 -> tmp = resDeck.draw();
             case 1 -> {
                 tmp = groundResCards[0];
                 groundResCards[0] = resDeck.draw();
@@ -64,9 +90,7 @@ public class CommonGround {
                 tmp = groundResCards[1];
                 groundResCards[1] = resDeck.draw();
             }
-            case 3 -> {
-                tmp = goldDeck.draw();
-            }
+            case 3 -> tmp = goldDeck.draw();
             case 4 -> {
                 tmp = groundGoldCards[0];
                 groundGoldCards[0] = goldDeck.draw();
@@ -95,6 +119,7 @@ public class CommonGround {
     private void deckGenerator() throws IOException,NullPointerException {
         resDeck = new Deck<>(new ResCardFactory().createItemsList());
         goldDeck = new Deck<>(new GoldCardsFactory().createItemsList());
+        startingCardList = new StartingCardsFactory().createItemsList();
         resDeck.shuffle();
         goldDeck.shuffle();
     }
@@ -124,12 +149,31 @@ public class CommonGround {
     }
 
     /**
-     * Gets a random objective from the objectives list and removes it from the list
+     * Gets a random objective from the objectives list and removes it from said list
      * @return the random objective
      */
     public Objective getRandomObjective(){
-        int idx = (int)Math.floor(Math.random()*(objectives.size()));
-        return objectives.remove(idx);
+        return this.getRandomItem(objectives);
+    }
+
+    /**
+     * Gets a random starting card from the starting cards list and removes it from said list
+     * @return the random starting card
+     */
+    public StartingCard getRandomStartingCard(){
+        return this.getRandomItem(startingCardList);
+    }
+
+
+    /**
+     * Gets a random object from the list given as a parameter and deletes it from said list
+     * @param list the list to retrieve the random object
+     * @param <T> the generic parameter
+     * @return the random item in the list
+     */
+    private <T> T getRandomItem(List<T> list){
+        int idx = (int)Math.floor(Math.random()*(list.size()));
+        return list.remove(idx);
     }
 
 
@@ -137,11 +181,7 @@ public class CommonGround {
      * Construct the list of objectives and sets the common ones on the ground.
      */
     private void setObjectives() throws IOException,NullPointerException {
-        constructObjective();
-        commonObjectives = new Objective[]{getRandomObjective(),getRandomObjective()};
-    }
-
-    private void constructObjective() throws IOException,NullPointerException {
         this.objectives = new ObjFactory().createItemsList();
+        commonObjectives = new Objective[]{getRandomObjective(),getRandomObjective()};
     }
 }
