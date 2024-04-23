@@ -52,4 +52,10 @@ public class GoldCard extends DrawableCard {
         }
         return true;
     }
+
+    public String toString(){
+        return super.toString() +
+                "\nRequirements: " + this.requirements.toString()+
+                "\nPoints: " + this.getPoints();
+    }
 }

@@ -89,4 +89,26 @@ public abstract class Card {
     public String getId(){
         return this.id;
     }
+
+    /**
+     * Returns a string representation of the object.
+     * Is intended to be overridden by specific card types.
+     *
+     * @return A string representation of the object.
+     */
+    public String toString(){
+        StringBuilder s = new StringBuilder("[" + this.center[0]);
+        for(int i = 1; i < this.center.length; i++){
+            s.append(",").append(this.center[i]);
+        }
+        s.append("]");
+        return "ID: " + this.getId() +
+                "\nShowing_Face: " + this.getShowingFace() +
+                "\nFront_Corners: [" +
+                this.frontCorners[0].toString() + "," +
+                this.frontCorners[1].toString() + "," +
+                this.frontCorners[2].toString() + "," +
+                this.frontCorners[3].toString() + "]" +
+                "\nCenter: " + s;
+    }
 }

@@ -50,11 +50,4 @@ public abstract class Objective {
     public String getId(){
         return this.id;
     }
-
-    /**
-     * Retrieves a string that contains information for the objective.
-     *
-     * @return The string that contains information for the objective.
-     */
-    public abstract String getInfo();
 }

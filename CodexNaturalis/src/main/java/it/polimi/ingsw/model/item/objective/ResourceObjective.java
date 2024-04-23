@@ -42,8 +42,15 @@ public class ResourceObjective extends Objective {
         return min * getPoints();
     }
 
+    /**
+     * Returns a string representation of the objective.
+     *
+     * @return A string representation of the objective.
+     */
     @Override
-    public String getInfo() {
-        return "Resources: " + this.resources.toString();
+    public String toString() {
+        return "Resources: " + this.resources.toString() +
+                "\nPoints: " + this.getPoints() +
+                "\nID: " + this.getId();
     }
 }

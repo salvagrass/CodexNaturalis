@@ -34,8 +34,15 @@ public class DispObjective extends Objective {
         return getPoints() * disposition.checkDisposition(board);
     }
 
+    /**
+     * Returns a string representation of the objective.
+     *
+     * @return A string representation of the objective.
+     */
     @Override
-    public String getInfo() {
-        return "Disposition: " + this.disposition.toString() + "\nPoints: " + this.getPoints();
+    public String toString() {
+        return "Disposition: " + this.disposition.toString() +
+                "\nPoints: " + this.getPoints() +
+                "\nID: " + this.getId();
     }
 }

@@ -85,12 +85,17 @@ public class LType implements Disposition {
         return countDisp;
     }
 
+    /**
+     * Returns a string representation of the disposition.
+     *
+     * @return A string representation of the disposition.
+     */
     @Override
     public String toString(){
-        String s = "LType\n";
-        s += "Main Color: " + mainColor.toString() + "\n";
-        s += "Secondary Color: " + secondaryColor.toString() + "\n";
-        s += "First Card Position: ";
+        String s = "LType\n" +
+                "Main Color: " + mainColor.toString() + "\n" +
+                "Secondary Color: " + secondaryColor.toString() + "\n" +
+                "First Card Position: ";
         switch(firstCardPos){
             case 0 -> s += "UR";
             case 1 -> s += "UL";

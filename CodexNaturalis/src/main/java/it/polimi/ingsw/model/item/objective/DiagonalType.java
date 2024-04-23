@@ -59,9 +59,16 @@ public class DiagonalType implements Disposition {
         return dispositionCount;
     }
 
+    /**
+     * Returns a string representation of the disposition.
+     *
+     * @return A string representation of the disposition.
+     */
     @Override
     public String toString(){
-        return "DiagonalType:\nColor: "+this.color.toString()+"\nDirection: "+this.direction+"\nLength: "+this.len;
+        return "DiagonalType\nColor: " + this.color.toString() +
+                "\nDirection: " + this.direction+
+                "\nLength: " + this.len;
     }
 }
 

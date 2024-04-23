@@ -47,4 +47,8 @@ public class GoldCardSymbol extends GoldCard {
         }
         return resources.get(sym) * getCardPoints();
     }
+
+    public String toString(){
+        return super.toString() + " " + this.sym;
+    }
 }

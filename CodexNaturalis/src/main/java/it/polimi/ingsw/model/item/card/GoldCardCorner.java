@@ -56,4 +56,8 @@ public class GoldCardCorner extends GoldCard {
         }
         return points * getCardPoints();
     }
+
+    public String toString(){
+        return super.toString() + " for each covered corner";
+    }
 }

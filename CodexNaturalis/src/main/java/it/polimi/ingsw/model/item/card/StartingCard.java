@@ -43,4 +43,13 @@ public class StartingCard extends Card {
     public Symbol getColor(){
         return Symbol.NOTAVAILABLE;
     }
+
+    public String toString(){
+        return super.toString() +
+                "\nBack_corners: " +
+                this.backCorners[0].toString() + "," +
+                this.backCorners[1].toString() + "," +
+                this.backCorners[2].toString() + "," +
+                this.backCorners[3].toString() + "]";
+    }
 }
