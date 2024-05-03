@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.gameplane.CommonGround;
 import it.polimi.ingsw.model.gameplane.Player;
 import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.model.util.PawnColor;
+import it.polimi.ingsw.util.PawnColor;
 
 import java.util.*;
 
@@ -51,8 +51,17 @@ class SetUpLogic {
         StartingCard card;
         String playerName = linkName(comm);
         record.put(comm, State.STARTING);
-        this.record.notifyAll();
-        waitStart(State.STARTING);
+        synchronized (this){
+            this.notifyAll();
+            //TODO stream inside synchronized not ideal
+            int numRemaining = (int) (numPlayers - record.values().stream().filter(x->x.equals(State.STARTING)).count());
+            if(numRemaining>0) {
+                String msg = MsgCreator.displayMessage("Waiting for players to finish\nRemaining: " + numRemaining + '\n');
+                List<Comm> stateStarting = record.keySet().stream().filter(x->record.get(x)==State.STARTING).toList();
+                Comm.sendBroadcast(msg,stateStarting);
+            }
+            this.waitStart(State.STARTING);
+        }
         synchronized (this.turnOrder){
             if(this.turnOrder.isEmpty()){
                 this.turnOrder.addAll(this.record.keySet());
@@ -69,7 +78,9 @@ class SetUpLogic {
         record.put(comm, State.READY);
         Player player = new Player(playerName, obj, color);
         player.placeStartingCard(card);
-        Comm.sendBroadcast("UPDBOARDVIEW;"+turnOrder.indexOf(comm)+"(0,0)"+card.toString(), this.turnOrder);
+        String msg = MsgCreator.updBoardMessage(turnOrder.indexOf(comm),0,0,card,
+                player.getInventory(),player.getPoints());
+        Comm.sendBroadcast(msg,this.turnOrder);
         return player;
     }
 
@@ -93,7 +104,7 @@ class SetUpLogic {
         boolean available = true;
 
         do{
-            game.sendMsg(comm, "DISPLAY;Insert_name:_|CHOOSE;^");
+            game.sendMsg(comm, MsgCreator.chooseMessage("Insert name: "));
             name = game.getMsg(comm);
             synchronized (nameToComm) {
                 if (nameToComm.get(name) == null) {
@@ -102,7 +113,7 @@ class SetUpLogic {
                 }
             }
         }while(available);
-        game.sendMsg(comm, "DISPLAY;valid name"); //TODO correct message
+        game.sendMsg(comm, MsgCreator.displayMessage("valid name\n"));
 
         return name;
     }
@@ -114,7 +125,7 @@ class SetUpLogic {
      * @param card The chosen orientation.
      */
     private void chooseStartingCard(Comm comm, StartingCard card){
-        game.sendMsg(comm, "DISPLAY;"+card.toString()+"CHOOSE;[0,1]");
+        game.sendMsg(comm, MsgCreator.chooseMessage(card.toString()+":\n",0, 1));
         card.setShowingFace(game.getMsg(comm).equals("1"));
     }
 
@@ -130,7 +141,8 @@ class SetUpLogic {
 
         chosen = true;
         while (chosen) {
-            game.sendMsg(comm, "DISPLAY;" + this.availableColors.toString() + "|CHOOSE;" + this.availableColors.toString().replace('[', '{').replace(']','}'));
+            game.sendMsg(comm, 
+                    MsgCreator.chooseMessage(this.availableColors.toString() + ": ", this.availableColors));
             color = PawnColor.valueOf(game.getMsg(comm));
             synchronized (this.availableColors) {
                 if (availableColors.contains(color)) {
@@ -138,20 +150,17 @@ class SetUpLogic {
                     chosen = false;
                 }
             }
-            if (chosen) {
-                game.sendMsg(comm, "DISPLAY;" + this.availableColors.toString() + "|CHOOSE;"
-                        + this.availableColors.toString());
-            }
         }
 
-        game.sendMsg(comm,"DISPLAY;Valid_color");
+        game.sendMsg(comm, MsgCreator.displayMessage("Valid color\n"));
         Map<Comm,State> copy = new HashMap<>(record);
 
-        for (Comm c : copy.keySet()) {
+        //TODO handle this case
+        /*for (Comm c : copy.keySet()) {
             if (c != comm && copy.get(c) == State.COLOR) {
-                game.sendMsg(comm, "DISPLAY;"+availableColors.toString()); //TODO handle this case
+                game.sendMsg(comm, "DISPLAY;"+availableColors.toString());
             }
-        }
+        }*/
         return color;
     }
 
@@ -168,10 +177,13 @@ class SetUpLogic {
                     ground.getRandomObjective() };
         }
 
-        String s = objs[0].toString() + "; " + objs[1].toString();
-        game.sendMsg(comm, "DISPLAY;" + s + "|CHOOSE;[0,1]");
+        String s = objs[0].toString()+'\n';
+        s += objs[1].toString();
+        game.sendMsg(comm, MsgCreator.chooseMessage(s+"\n", 0, 1));
         s = game.getMsg(comm);
-        return objs[Integer.parseInt(s)];
+        Objective obj = objs[Integer.parseInt(s)];
+        game.sendMsg(comm, MsgCreator.secretObjectiveMessage(obj));
+        return obj;
     }
 
     /**
@@ -180,14 +192,16 @@ class SetUpLogic {
      * @param s The required state.
      */
     private void waitStart(State s) {
-        synchronized (this.record) {
+        synchronized (this) {
             Set<State> set = new HashSet<>(this.record.values());
-            while (this.record.size() != this.numPlayers && set.contains(s) && set.size() == 1) {
+            while (this.record.size() != this.numPlayers || !(set.contains(s) && set.size() == 1)) {
                 try {
-                    this.record.wait();
+
+                    this.wait();
                 } catch (InterruptedException e) {
                     //TODO log fileSystem.out.println()
                 }
+                set = new HashSet<>(this.record.values());
             }
         }
     }

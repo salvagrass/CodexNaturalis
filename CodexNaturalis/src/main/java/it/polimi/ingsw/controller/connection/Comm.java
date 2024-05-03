@@ -18,10 +18,22 @@ public abstract class Comm extends UnicastRemoteObject {
      *
      * @throws RemoteException if a communication-related exception occurs.
      */
-    public Comm() throws RemoteException{
+    public Comm() throws RemoteException {
+
     }
+
+    /**
+     * Sends a message to the client.
+     *
+     * @param msg The message to be sent.
+     */
     public abstract void sendMsg(String msg);
 
+    /**
+     * Retrieves the answer previously obtained with the setMsg method.
+     *
+     * @return The answer obtained from the Client.
+     */
     public abstract String getMsg();
 
     public void setGame(GameLogic game){
@@ -43,6 +55,11 @@ public abstract class Comm extends UnicastRemoteObject {
             comm.sendMsg(msg);
         }
     }
+
+    /*
+     * Waits for a message.
+     */
+    public abstract void waitMsg();
 
     /**
      * Closes the connection.

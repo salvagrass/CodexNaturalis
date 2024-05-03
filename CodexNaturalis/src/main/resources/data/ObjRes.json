@@ -40,21 +40,21 @@
     "id": "ObjRes06",
     "points": 2,
     "resources": {
-      "SCROLL": 3
+      "SCROLL": 2
     }
   },
   {
     "id": "ObjRes07",
     "points": 2,
     "resources": {
-      "POTION": 3
+      "POTION": 2
     }
   },
   {
     "id": "ObjRes08",
     "points": 2,
     "resources": {
-      "FEATHER": 3
+      "FEATHER": 2
     }
   }
 ]

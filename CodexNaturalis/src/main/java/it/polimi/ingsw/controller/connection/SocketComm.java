@@ -13,6 +13,7 @@ public class SocketComm extends Comm {
   Socket socket;
   Scanner in;
   PrintWriter out;
+
   /**
    * Constructs a new SocketComm instance.
    *
@@ -46,14 +47,16 @@ public class SocketComm extends Comm {
     return in.nextLine();
   }
 
-  public String placeCard() {
-    //TODO implement
-    return null;
-  }
-
-  public String drawCard() {
-    //TODO implement
-    return null;
+  /**
+   * Waits for a Client's command and handles it.
+   */
+  @Override
+  public void waitMsg() {
+    String s = in.nextLine();
+    switch(s.split(";")[0]){
+      case "PLACECARD" -> this.getGame().placeCard(this, s);
+      case "DRAW" -> this.getGame().drawCard(this, s);
+    }
   }
 
   @Override

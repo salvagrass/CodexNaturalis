@@ -23,21 +23,26 @@ public class RMIComm extends Comm implements RemoteComm {
     }
 
     /**
-     * Sends a message to the client and saves the answer in an attribute.
+     * Sends a message to the client.
      *
      * @param msg The message to be sent.
      */
     @Override
     public void sendMsg(String msg){
         try{
-            this.chosen = this.client.handleMsg(msg);
+            this.client.handleMsg(msg);
         } catch (RemoteException e) {
             //TODO handle
         }
     }
 
+    @Override
+    public void setMsg(String msg) throws RemoteException{
+        this.chosen = msg;
+    }
+
     /**
-     * Retrieves the answer previously obtained with the sendMsg method.
+     * Retrieves the answer previously obtained with the setMsg method.
      *
      * @return The answer obtained from the last message sent.
      */
@@ -46,14 +51,34 @@ public class RMIComm extends Comm implements RemoteComm {
         return this.chosen;
     }
 
+    /**
+     * Empty method for RMIComm, intended to be used by other classes that inherit
+     * from Comm.
+     */
     @Override
-    public String placeCard(String msg) throws RemoteException {
-        return getGame().placeCard(this, msg) ? "true" : "false";
+    public void waitMsg() {
     }
 
+    /**
+     * Method called from the Client to place a card.
+     * 
+     * @param msg A string containing the placement information.
+     * @return True if the placement is successful, False otherwise.
+     */
     @Override
-    public String drawCard(String msg) throws RemoteException{
-        return getGame().drawCard(this, msg) ? "true" : "false";
+    public boolean placeCard(String msg) throws RemoteException {
+        return getGame().placeCard(this, msg);
+    }
+
+    /**
+     * Method called from the Client to draw a card.
+     * 
+     * @param msg A string containing the draw index.
+     * @return True if the draw succeeds, False otherwise.
+     */
+    @Override
+    public boolean drawCard(String msg) throws RemoteException{
+        return getGame().drawCard(this, msg);
     }
 
     @Override
