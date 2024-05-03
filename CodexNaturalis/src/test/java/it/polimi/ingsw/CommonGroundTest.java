@@ -3,8 +3,8 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.model.gameplane.CommonGround;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.model.util.exception.InvalidDrawException;
-import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
+import it.polimi.ingsw.util.exception.InvalidDrawException;
+import it.polimi.ingsw.util.exception.InvalidSelectionException;
 import org.junit.Before;
 import org.junit.Test;
 

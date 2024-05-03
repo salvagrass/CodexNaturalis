@@ -3,7 +3,7 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.model.gameplane.Deck;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.card.ResourceCard;
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 import org.junit.Before;
 import org.junit.Test;
 

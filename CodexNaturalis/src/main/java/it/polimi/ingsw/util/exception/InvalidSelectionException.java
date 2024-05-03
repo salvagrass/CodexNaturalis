@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.util.exception;
+package it.polimi.ingsw.util.exception;
 
 
 /**

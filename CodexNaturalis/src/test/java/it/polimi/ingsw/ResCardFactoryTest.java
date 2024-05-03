@@ -1,8 +1,8 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.model.item.card.ResourceCard;
-import it.polimi.ingsw.model.util.ResCardFactory;
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.ResCardFactory;
+import it.polimi.ingsw.util.Symbol;
 import org.junit.Test;
 import java.util.List;
 

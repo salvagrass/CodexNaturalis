@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.gameplane;
 
 import it.polimi.ingsw.model.item.card.DrawableCard;
+import it.polimi.ingsw.util.Symbol;
 
 import java.util.List;
 
@@ -39,10 +40,15 @@ public class Deck <T extends DrawableCard>{
      *
      * @return The last card of the deck, or null if the deck is empty.
      */
-    public T draw(){
-        if(deck.isEmpty())
+    public T draw() {
+        if (deck.isEmpty())
             return null;
         return deck.removeLast();
+    }
+
+    //TODO javadoc
+    public Symbol peek() {
+        return deck.getLast().getColor();
     }
 
     /**

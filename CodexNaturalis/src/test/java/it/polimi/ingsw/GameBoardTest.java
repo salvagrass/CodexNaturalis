@@ -5,11 +5,11 @@ import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.card.GoldCard;
 import it.polimi.ingsw.model.item.card.ResourceCard;
 import it.polimi.ingsw.model.item.card.StartingCard;
-import it.polimi.ingsw.model.util.GoldCardsFactory;
-import it.polimi.ingsw.model.util.ResCardFactory;
-import it.polimi.ingsw.model.util.StartingCardsFactory;
-import it.polimi.ingsw.model.util.Symbol;
-import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
+import it.polimi.ingsw.util.GoldCardsFactory;
+import it.polimi.ingsw.util.ResCardFactory;
+import it.polimi.ingsw.util.StartingCardsFactory;
+import it.polimi.ingsw.util.Symbol;
+import it.polimi.ingsw.util.exception.InvalidPlacementException;
 import org.junit.Before;
 import org.junit.Test;
 

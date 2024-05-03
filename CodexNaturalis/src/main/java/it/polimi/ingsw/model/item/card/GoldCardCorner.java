@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.item.card;
 
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 
 import java.util.Map;
 
@@ -58,6 +58,6 @@ public class GoldCardCorner extends GoldCard {
     }
 
     public String toString(){
-        return super.toString() + " for each covered corner";
+        return super.toString();
     }
 }

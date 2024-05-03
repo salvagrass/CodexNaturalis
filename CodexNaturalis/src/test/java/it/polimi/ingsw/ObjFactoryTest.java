@@ -1,8 +1,8 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.model.util.ObjFactory;
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.ObjFactory;
+import it.polimi.ingsw.util.Symbol;
 import org.junit.Before;
 import org.junit.Test;
 

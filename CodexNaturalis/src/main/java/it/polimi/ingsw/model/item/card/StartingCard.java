@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.item.card;
 
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 
 /**
  * Class representing starting cards in the game.
@@ -46,7 +46,7 @@ public class StartingCard extends Card {
 
     public String toString(){
         return super.toString() +
-                "\nBack_corners: " +
+                "\nBack_corners: [" +
                 this.backCorners[0].toString() + "," +
                 this.backCorners[1].toString() + "," +
                 this.backCorners[2].toString() + "," +

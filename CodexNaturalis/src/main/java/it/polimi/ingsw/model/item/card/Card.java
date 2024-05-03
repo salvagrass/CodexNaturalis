@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.item.card;
 
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 
 /**
  * Abstract class representing cards in the game. This class is intended to be extended by specific card types.
@@ -86,7 +86,7 @@ public abstract class Card {
      *
      * @return The id of the card.
      */
-    public String getId(){
+    public String getId() {
         return this.id;
     }
 
@@ -103,7 +103,7 @@ public abstract class Card {
         }
         s.append("]");
         return "ID: " + this.getId() +
-                "\nShowing_Face: " + this.getShowingFace() +
+                "\nShowing_Face: " + (this.getShowingFace() ? "Front" : "Back") +
                 "\nFront_Corners: [" +
                 this.frontCorners[0].toString() + "," +
                 this.frontCorners[1].toString() + "," +

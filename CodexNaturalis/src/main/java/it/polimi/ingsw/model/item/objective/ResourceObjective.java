@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.item.objective;
 import it.polimi.ingsw.model.item.card.Card;
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 
 import java.util.Map;
 
@@ -49,8 +49,8 @@ public class ResourceObjective extends Objective {
      */
     @Override
     public String toString() {
-        return "Resources: " + this.resources.toString() +
-                "\nPoints: " + this.getPoints() +
-                "\nID: " + this.getId();
+        return "ID: " + this.getId() +
+                "\nResources: " + this.resources.toString() +
+                "\nPoints: " + this.getPoints();
     }
 }

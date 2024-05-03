@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model.gameplane;
 
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.card.StartingCard;
-import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
+import it.polimi.ingsw.util.exception.InvalidPlacementException;
 
 import java.util.EnumMap;
 import java.util.HashMap;

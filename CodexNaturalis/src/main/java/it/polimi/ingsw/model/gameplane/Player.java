@@ -1,13 +1,13 @@
 package it.polimi.ingsw.model.gameplane;
 
-import it.polimi.ingsw.model.util.PawnColor;
+import it.polimi.ingsw.util.PawnColor;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.card.StartingCard;
-import it.polimi.ingsw.model.util.Symbol;
-import it.polimi.ingsw.model.util.exception.InvalidDrawException;
-import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
-import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
+import it.polimi.ingsw.util.Symbol;
+import it.polimi.ingsw.util.exception.InvalidDrawException;
+import it.polimi.ingsw.util.exception.InvalidPlacementException;
+import it.polimi.ingsw.util.exception.InvalidSelectionException;
 
 import java.util.Map;
 
@@ -21,6 +21,7 @@ public class Player {
     private final Objective secretObjective;
     private final PawnColor pawnColor;
     private final String nickname;
+    private int completedObjs;
 
     /**
      * Constructs a new Player object.
@@ -81,32 +82,31 @@ public class Player {
      * @param face Whether the card should be placed face up or face down.
      * @throws InvalidPlacementException If the card cannot be placed at the specified position.
      */
-    public String placeCard(int idx, int x, int y, boolean face) throws InvalidPlacementException {
+    public DrawableCard placeCard(int idx, int x, int y, boolean face) throws InvalidPlacementException {
         boolean prevFace = hand[idx].getShowingFace();
         hand[idx].setShowingFace(face);
         try{
             updPoints(playingField.addCard(hand[idx], x, y));
-            String s = hand[idx].toString();
+            DrawableCard c = hand[idx];
             hand[idx] = null;
-            return s;
+            return c;
         }catch(InvalidPlacementException e){
             hand[idx].setShowingFace(prevFace);
             throw new InvalidPlacementException();
         }
     }
 
-    /**
-     * Updates the score of the objectives.
-     * This method updates the score of the objectives using the updPoints method.
-     * Firstly it updates the score of the secret objective, then it updates the score of each shared objective.
-     *
-     * @param ground The common ground of the game.
-     */
+    //TODO javadoc
     public void addObjectivesScore(CommonGround ground) {
-        updPoints(this.playingField.countObjPoints(secretObjective));
+        int points;
+        int count = 0;
+        updPoints(points = this.playingField.countObjPoints(secretObjective));
+        count += points / this.secretObjective.getPoints();
         for(Objective obj : ground.getCommonObjectives()){
-            updPoints(this.playingField.countObjPoints(obj));
+            updPoints(points += this.playingField.countObjPoints(obj));
+            count += points / obj.getPoints();
         }
+        this.completedObjs = count;
     }
 
     /**
@@ -115,12 +115,12 @@ public class Player {
      * @param ground The common ground from which to draw the card.
      * @param sel The index of the selected deck to draw from.
      */
-    public String draw(CommonGround ground, int sel) throws InvalidSelectionException, InvalidDrawException {
+    public DrawableCard draw(CommonGround ground, int sel) throws InvalidSelectionException, InvalidDrawException {
         int i;
         for(i = 0; hand[i] != null && i < hand.length; i++);
         if (i < hand.length) {
             hand[i] = ground.draw(sel);
-            return hand[i].toString();
+            return hand[i];
         }
         return null;
     }
@@ -130,12 +130,12 @@ public class Player {
      *
      * @param ground The common ground from which to draw the cards.
      */
-    public String[] drawFirstThree(CommonGround ground){
+    public DrawableCard[] drawFirstThree(CommonGround ground){
         try{
             hand[0] = ground.draw(0);
             hand[1] = ground.draw(0);
-            hand[2] = ground.draw(3);
-            return new String[] {hand[0].toString(), hand[1].toString(), hand[2].toString()};
+            hand[2] = ground.draw(1);
+            return new DrawableCard[] {hand[0], hand[1], hand[2]};
         } catch (Exception e) {
             return null;
         }
@@ -150,5 +150,9 @@ public class Player {
      */
     private void updPoints(int p) {
         this.points += p;
+    }
+
+    public int getCompletedObjs(){
+        return this.completedObjs;
     }
 }

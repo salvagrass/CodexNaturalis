@@ -6,12 +6,13 @@ import it.polimi.ingsw.model.item.card.GoldCard;
 import it.polimi.ingsw.model.item.card.ResourceCard;
 import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.model.util.GoldCardsFactory;
-import it.polimi.ingsw.model.util.ObjFactory;
-import it.polimi.ingsw.model.util.ResCardFactory;
-import it.polimi.ingsw.model.util.StartingCardsFactory;
-import it.polimi.ingsw.model.util.exception.InvalidDrawException;
-import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
+import it.polimi.ingsw.util.GoldCardsFactory;
+import it.polimi.ingsw.util.ObjFactory;
+import it.polimi.ingsw.util.ResCardFactory;
+import it.polimi.ingsw.util.StartingCardsFactory;
+import it.polimi.ingsw.util.Symbol;
+import it.polimi.ingsw.util.exception.InvalidDrawException;
+import it.polimi.ingsw.util.exception.InvalidSelectionException;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,33 +45,37 @@ public class CommonGround {
      * @return the common objectives.
      */
     public Objective[] getCommonObjectives() {
-        return commonObjectives.clone();
+        return this.commonObjectives;
     }
 
     /**
      * Creates an array of strings with the information of the resource cards on the ground
      * @return the array with the cards info
      */
-    public String[] getGroundResourceCardsInfo(){
-        return getGroundCardInfo(groundResCards);
+    public DrawableCard[] getGroundResourceCards(){
+        return this.groundResCards;
     }
 
     /**
      * Creates an array of strings with the information of the gold cards on the ground
      * @return the array with the cards info
      */
-    public String[] getGroundGoldCardInfo(){
-        return getGroundCardInfo(groundGoldCards);
+    public DrawableCard[] getGroundGoldCard(){
+        return this.groundGoldCards;
     }
 
-    private String[] getGroundCardInfo(DrawableCard[] groundCards){
-        String[] info = new String[groundCards.length];
-        for(int i=0;i<groundCards.length;i++){
-            info[i] = groundCards[i].toString();
-        }
-        return info;
+    public Symbol peekResDeck(){
+        return peek(resDeck);
     }
 
+    public Symbol peekGoldDeck(){
+        return peek(goldDeck);
+    }
+
+    private <T extends DrawableCard> Symbol peek(Deck<T> deck){
+        return deck.peek();  
+    }
+    
     /**
      *  Draws a card from the specified collection and replaces it if drawn from the ground.
      * @param sel the index for choosing the collection.
@@ -82,15 +87,15 @@ public class CommonGround {
         DrawableCard tmp;
         switch (sel) {
             case 0 -> tmp = resDeck.draw();
-            case 1 -> {
+            case 2 -> {
                 tmp = groundResCards[0];
                 groundResCards[0] = resDeck.draw();
             }
-            case 2 -> {
+            case 3 -> {
                 tmp = groundResCards[1];
                 groundResCards[1] = resDeck.draw();
             }
-            case 3 -> tmp = goldDeck.draw();
+            case 1 -> tmp = goldDeck.draw();
             case 4 -> {
                 tmp = groundGoldCards[0];
                 groundGoldCards[0] = goldDeck.draw();

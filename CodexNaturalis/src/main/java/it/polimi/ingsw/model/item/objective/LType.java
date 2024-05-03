@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.item.objective;
 
 import it.polimi.ingsw.model.item.card.Card;
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 
 /**
  * Implementation of the Disposition interface for checking L type disposition on a game board.

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.util;
+package it.polimi.ingsw.util;
 
 import com.google.gson.*;
 import it.polimi.ingsw.model.item.objective.LType;
@@ -25,7 +25,7 @@ public class DispositionDeserializer implements JsonDeserializer<Disposition> {
     public Disposition deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         String dispType = jsonObject.get("dispType").getAsString();
-        // if the dispType attribute in the JSON is equal to "Diagonal Type treat it like
+        // if the dispType attribute in the JSON is equal to "DiagonalType" treat it like
         // a diagonal type disposition, if it is a LType treat it as a L disposition
         Type rtr = switch (dispType) {
             case "DiagonalType" -> DiagonalType.class;

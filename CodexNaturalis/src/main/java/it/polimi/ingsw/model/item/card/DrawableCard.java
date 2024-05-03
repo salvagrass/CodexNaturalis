@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.item.card;
 
-import it.polimi.ingsw.model.util.Symbol;
+import it.polimi.ingsw.util.Symbol;
 import java.util.Map;
 
 /**
