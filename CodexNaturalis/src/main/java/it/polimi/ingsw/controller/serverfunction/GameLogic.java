@@ -3,25 +3,25 @@ package it.polimi.ingsw.controller.serverfunction;
 import it.polimi.ingsw.controller.connection.Comm;
 import it.polimi.ingsw.model.gameplane.CommonGround;
 import it.polimi.ingsw.model.gameplane.Player;
-import it.polimi.ingsw.model.util.exception.InvalidDrawException;
-import it.polimi.ingsw.model.util.exception.InvalidPlacementException;
-import it.polimi.ingsw.model.util.exception.InvalidSelectionException;
+import it.polimi.ingsw.model.item.card.DrawableCard;
+import it.polimi.ingsw.util.exception.InvalidDrawException;
+import it.polimi.ingsw.util.exception.InvalidPlacementException;
+import it.polimi.ingsw.util.exception.InvalidSelectionException;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Class that manages the flow of the game.
  */
 public class GameLogic {
 
-    private boolean cardPlaced;
+    private boolean cardPlaced, cardDrawn;
     private CommonGround ground;
-    private Comm currPlayer,firstPlayer;
+    private Comm currPlayer;
     private SetUpLogic setUp;
+
     private final CentralServer server;
     private final List<Comm> turnOrder;
     private final Map<Comm, Player> players;
@@ -33,16 +33,16 @@ public class GameLogic {
      * @param size The number of players in the game.
      */
     public GameLogic(CentralServer server, int size) {
+        this.turnOrder = new ArrayList<>();
+        this.setUp = new SetUpLogic(this, size, this.turnOrder);
+        this.server = server;
+        players = new ConcurrentHashMap<>();
         try{
             ground = new CommonGround();
         } catch (IOException e) {
             //TODO log file
             System.out.println("file corrupted");
         }
-        this.turnOrder = new ArrayList<>();
-        this.setUp = new SetUpLogic(this, size, this.turnOrder);
-        this.server = server;
-        players = new ConcurrentHashMap<>();
     }
 
     /**
@@ -54,34 +54,75 @@ public class GameLogic {
     public void addPlayer(Comm comm){
         Player player = setUp.addPlayer(comm, ground);
         players.put(comm, player);
-        synchronized (this.setUp){
-            if(this.firstPlayer == null){
-                this.firstPlayer = comm;
+        synchronized (this.setUp) {
+            int numRemaining = this.turnOrder.size()-this.players.size();
+            if(numRemaining>0){
+                String msg = MsgCreator.displayMessage("Waiting for players\nRemaining: " + numRemaining + '\n');
+                Comm.sendBroadcast(msg, new ArrayList<>(players.keySet()));
+            }
+            if (this.currPlayer == null) {
+                this.currPlayer = comm;
                 setUp.waitReady();
-                gameStart();
-            }else{
+                gameFlow();
+            } else {
                 this.setUp.notifyAll();
             }
         }
-    }
+    }   
 
     /**
      * Handles the execution of the game until the end.
      */
-    private void gameStart() {
-        StringBuilder msg;
-
-        for (int i = 0; i < players.size(); i++) {
-            String[] s = players.get(this.turnOrder.get(i)).drawFirstThree(ground);
-            msg = new StringBuilder("UPDHANDVIEW;" + 0 + ";" + s[0]);
-            msg = new StringBuilder(msg + "|UPDHANDVIEW;" + 1 + ";" + s[1]);
-            msg = new StringBuilder(msg + "|UPDHANDVIEW;" + 2 + ";" + s[2]);
-            sendMsg(this.turnOrder.get(i), msg.toString());
+    private void gameFlow() {
+        List<String> names = new ArrayList<>(turnOrder.size());
+        for(Comm comm : turnOrder){
+            names.add(players.get(comm).getNickname());
         }
-        
+        Comm.sendBroadcast(MsgCreator.turnOrderMessage(names), turnOrder);
+
+        for (int i = 0; i < players.size(); i++){
+            DrawableCard[] hand = players.get(this.turnOrder.get(i)).drawFirstThree(ground);
+            sendMsg(this.turnOrder.get(i), MsgCreator.handView(hand));
+        }
+
+        this.setUpGameLogic();
         //keep playing turns until the end condition is reached - then play another turn
+        Comm.sendBroadcast(MsgCreator.gameStartMsg(), turnOrder);
         while(!fullTurn());
         fullTurn();
+
+        for(Comm comm: turnOrder){
+            players.get(comm).addObjectivesScore(this.ground);
+            Comm.sendBroadcast(MsgCreator.updPointsMsg(turnOrder.indexOf(comm), players.get(comm).getPoints()),this.turnOrder);
+        }
+        declareWinner();
+    }
+
+    /**
+    * Declares the winner of the game and broadcasts the leaderboard to all players.
+    * The leaderboard is determined based on player points and completed objectives.
+    * The players are sorted in ascending order of points, with tiebreakers based on the number of completed objectives.
+    * Each player's position in the leaderboard is determined by their relative ranking in the sorted list.
+    * The constructed leaderboard is then broadcasted to all players in the game.
+    * Example of leaderboard format in the broadcast message:
+    * LEADERBOARD;{"player1":1,"player2":2,"player3":2}
+    */                                                                             
+    private void declareWinner() {
+        Map<Player, Integer> leaderboard = new HashMap<>();
+        int pos = 1;
+        List<Player> ls = this.players.values().stream()
+                .sorted(Comparator.comparingInt(Player::getPoints)
+                        .thenComparingInt(Player::getCompletedObjs))
+                .toList();
+        for(int i = 0; i < ls.size() - 1; i++){
+            leaderboard.put(ls.get(i), pos);
+            if(!(ls.get(i).getPoints() == ls.get(i+1).getPoints() &&
+                 ls.get(i).getCompletedObjs() == ls.get(i+1).getCompletedObjs())){
+                pos++;
+            }
+        }
+        leaderboard.put(ls.getLast(), pos);
+        Comm.sendBroadcast(MsgCreator.leadeboarMessage(leaderboard), turnOrder);
     }
 
     /**
@@ -93,6 +134,8 @@ public class GameLogic {
         boolean endGame = false;
         for (int i = 0; i < players.size(); i++) {
             this.currPlayer = this.turnOrder.get(i);
+            this.cardPlaced = false;
+            this.cardDrawn = false;
             playTurn(this.turnOrder.get(i));
             try {
                 endGame = endGame || players.get(this.turnOrder.get(i)).getPoints() >= 20 ||
@@ -110,11 +153,29 @@ public class GameLogic {
      * @param comm The connection to the specific client.
      */
     private void playTurn(Comm comm) {
-        sendMsg(comm, "DISPLAY;Your_turn_to_place_a_card");
-        while(!this.cardPlaced);
+        sendMsg(comm,MsgCreator.tokenMsg("Your turn to place a card\n", 0));
+        comm.waitMsg();
+        synchronized(this) {
+            while (!this.cardPlaced){
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e); //TODO: HANDLE EXCEPTION
+                }
+            }
+        }
 
-        sendMsg(comm, "DISPLAY;Your_turn_to_draw_a_card");
-        while(this.cardPlaced);
+        sendMsg(comm, MsgCreator.tokenMsg("Your turn to draw a card\n", 1));
+        comm.waitMsg();
+        synchronized(this) {
+            while (!this.cardDrawn){
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e); //TODO: HANDLE EXCEPTION
+                }
+            }
+        }
     }
 
     /**
@@ -126,15 +187,26 @@ public class GameLogic {
      */
     public boolean placeCard(Comm comm, String msg) {
         String[] s = msg.split(";");
-        if(currPlayer != comm || cardPlaced)
+        //TODO REVISE THIS
+        int idx = Integer.parseInt(s[1]);
+        int x = Integer.parseInt(s[2].split(",")[0]);
+        int y = Integer.parseInt(s[2].split(",")[1]);
+        boolean face = s[3].equals("true");
+        if(currPlayer != comm || this.cardPlaced) {
+            comm.sendMsg(MsgCreator.confirmMsg(false));
             return false;
+        }
         try {
-            String card = this.players.get(comm).placeCard(Integer.parseInt(s[1]), Integer.parseInt(s[2]),
-                    Integer.parseInt(s[3]), s[4].equals("1"));
-            this.cardPlaced = true;
-            updBoardView(card, "(" + s[2] + "," + s[3] + ")", comm);
+            DrawableCard card = this.players.get(comm).placeCard(idx,x,y,face);
+            updBoardView(card, x, y, comm);
+            synchronized(this) {
+                this.cardPlaced = true;
+                comm.sendMsg(MsgCreator.confirmMsg(true));
+                this.notifyAll();
+            }
             return true;
         } catch (InvalidPlacementException e) {
+            comm.sendMsg(MsgCreator.confirmMsg(false));
             return false;
         }
     }
@@ -148,13 +220,41 @@ public class GameLogic {
      */
     public boolean drawCard(Comm comm, String msg) {
         String[] s = msg.split(";");
-        if(currPlayer != comm || !cardPlaced)
+        String cmd = "";
+        int idx;
+        if(currPlayer != comm || this.cardDrawn) {
+            comm.sendMsg(MsgCreator.confirmMsg(false));
             return false;
+        }
         try {
-            this.players.get(comm).draw(ground,Integer.parseInt(s[1]));
-            this.cardPlaced = false;
+            DrawableCard drawnCard  = this.players.get(comm).draw(ground, Integer.parseInt(s[1]));
+
+            comm.sendMsg(MsgCreator.updHandViewMsg(drawnCard));
+            
+            idx = Integer.parseInt(s[1]);
+            if(idx == 2 || idx == 3){
+                cmd = MsgCreator.updGroundViewMsg(idx, ground.getGroundResourceCards()[idx-2]);
+                idx = 0;
+            } else if (idx == 4 || idx == 5) {
+                cmd = MsgCreator.updGroundViewMsg(idx, this.ground.getGroundGoldCard()[idx-4]);
+                idx = 1;
+            }
+            String sym;
+            if (idx == 0) {
+                sym = this.ground.peekResDeck().toString();
+            } else {
+                sym = this.ground.peekGoldDeck().toString();
+            }
+            MsgCreator.updGroundViewMsg(idx, sym);
+            Comm.sendBroadcast(cmd, turnOrder);
+            synchronized(this){
+                this.cardDrawn = true;
+                comm.sendMsg(MsgCreator.confirmMsg(true));
+                this.notifyAll();
+            }
             return true;
         } catch (InvalidDrawException | InvalidSelectionException e) {
+            comm.sendMsg(MsgCreator.confirmMsg(false));
             return false;
         }
     }
@@ -181,14 +281,14 @@ public class GameLogic {
      * Sends an update on the state of a player's board to every other player.
      *
      * @param newCard The card that has been placed.
-     * @param positionOfCard The position where it has been placed.
+     * @param x the x-coordinate of the placed card
+     * @param y the y-coordinate of the place card
      * @param currPlayer The player who placed the card.
      */
-    private void updBoardView(String newCard, String positionOfCard, Comm currPlayer) {
-        Player player = players.get(currPlayer);
-        String msg = "UPDBOARDVIEW;" + turnOrder.indexOf(currPlayer) + ";" + positionOfCard + ";" + newCard + ";"
-                + player.getPoints();
-        Comm.sendBroadcast(msg, turnOrder.stream().filter(x -> x != currPlayer).collect(Collectors.toList()));
+    private void updBoardView(DrawableCard newCard, int x, int y, Comm currPlayer) {
+        Player player = players.get(currPlayer); 
+        String msg = MsgCreator.updBoardMessage(turnOrder.indexOf(currPlayer),x,y,newCard,player.getInventory(),player.getPoints());
+        Comm.sendBroadcast(msg, turnOrder);
     }
 
     /**
@@ -205,7 +305,29 @@ public class GameLogic {
             shutdown();
         }
     }
-    
+
+    /**
+     * Sets up the game logic by sending broadcast messages to update the ground view.
+     * This method sends multiple broadcast messages containing information about the game state,
+     * such as the resources and gold cards on the ground, as well as common objectives.
+     * Each broadcast message is formatted as follows:
+     * UPDGROUNDVIEW;<index>;<data>
+     * Where:
+     * - <index>: The index indicating the type of update.
+     * - <data>: The data associated with the update.
+     */
+    private void setUpGameLogic(){
+        String s = MsgCreator.updGroundViewMsg(0, this.ground.peekResDeck());
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(1, this.ground.peekGoldDeck()));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(2, this.ground.getGroundResourceCards()[0]));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(3, this.ground.getGroundResourceCards()[1]));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(4, this.ground.getGroundGoldCard()[0]));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(5, this.ground.getGroundGoldCard()[1]));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(6, this.ground.getCommonObjectives()[0].toString()));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(7, this.ground.getCommonObjectives()[1].toString()));
+        Comm.sendBroadcast(s, turnOrder);
+    }
+
     /**
      * Retrieves a message from the specified communication channel.
      *
@@ -234,16 +356,17 @@ public class GameLogic {
     }
     /**
      * Type of messages:
-     * sendMsg("choose;-what to choose-")
-     * sendMsg("setUpMsg;-FirstPlayerName-; -SecondPlayerName-;...")
-     * sendMsg("updBoardView;-PlayerTurnOrderNumber-;-board(xRel,yRel)-;-newCard.toString()-;-points-")
-     * sendMsg("updGroundView;-index-;card.toString()")
-     * sendMsg("placeCard;board(xRel,yRel);card.toString()")
-     * sendMsg("updHandView;cardPos,drawnCard.toString()")
-     * sendMsg("token;-TokenType-")
-     * sendMsg("display;String s")
+     * sendMsg("CHOOSE;-what to choose-")
+     * sendMsg("TURNORDER;[-FirstPlayerName-,-SecondPlayerName-,...]")
+     * sendMsg("UPDBOARDVIEW;-PlayerTurnOrderNumber-;-board(xRel,yRel)-;-newCard-;-inventory-;points")
+     * sendMsg("UPDGROUNDVIEW;-index-;-card-")
+     * sendMsg("SETUPGROUNDVIEW;GROUND.TOJSON")
+     * sendMsg("PLACECARD;board(xRel,yRel);-card-")
+     * sendMsg("UPDHANDVIEW;cardPos,-drawnCard-")
+     * sendMsg("TOKEN;-TokenType-")
+     * sendMsg("DRAWCARD;IDX")
+     * sendMsg("DISPLAY;String s")
      * sendMsg("GAMECLOSED;-ERROR OR GAME FINISHED-")
      */
     //TODO see if we manage to view players' names while the game is starting
-    //TODO check the numPlayer attribute in the client side
 }

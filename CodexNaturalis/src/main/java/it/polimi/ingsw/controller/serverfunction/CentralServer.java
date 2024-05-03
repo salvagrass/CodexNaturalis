@@ -62,6 +62,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
 
     public RemoteComm join(RemoteClient client) throws RemoteException {
         RMIComm comm = new RMIComm(client);
+        client.setComm(comm);
         handleClient(comm);
         return comm;
     }
@@ -89,9 +90,9 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
     private void handleClient(Comm comm){
         boolean isInvalid = false;
         do {
-            comm.sendMsg("DISPLAY;1)Create_Game&2)Join_game&3)Load_game&|CHOOSE;[1,3]");
+            comm.sendMsg(MsgCreator.chooseMessage("1)Create Game\n2)Join Game\n3)Load Game\n",1,3));
             String cmd = comm.getMsg();
-            comm.sendMsg("DISPLAY;Insert_room_ID:_|CHOOSE;^");
+            comm.sendMsg(MsgCreator.chooseMessage("Insert Room ID: "));
             String id = comm.getMsg();
             switch (cmd) {
                 case "1":
@@ -117,14 +118,14 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
      */
     private boolean createGame(String id, Comm comm){
         if(games.containsKey(id)) {
-            comm.sendMsg("DISPLAY;Id_already_exists");
+            comm.sendMsg(MsgCreator.displayMessage("ID already exists\n"));
             return true;
         }
-        comm.sendMsg("DISPLAY;Insert_lobby_capacity:_|CHOOSE;[2,4]");
+        comm.sendMsg(MsgCreator.chooseMessage("Insert lobby capacity: ",2,4));
         int numPlayers = Integer.parseInt(comm.getMsg());
         GameLogic game = new GameLogic(this,numPlayers);
         games.put(id, game);
-        comm.sendMsg("DISPLAY;Game_with_id_created");
+        comm.sendMsg(MsgCreator.displayMessage("Game with ID created\n"));
         return false;
     }
 
@@ -139,16 +140,16 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
         GameLogic game;
         synchronized(lock){
             if (!games.containsKey(id)) {
-                comm.sendMsg("DISPLAY;Id_does_not_exist");
+                comm.sendMsg(MsgCreator.displayMessage("Game with ID doesn't exist\n"));
                 return true;
             }
             game = games.get(id);
             synchronized(game){
                 if(game.isFull()){
-                    comm.sendMsg("DISPLAY;Full_Lobby");
+                    comm.sendMsg(MsgCreator.displayMessage("Full lobby\n"));
                     return true;
                 }
-                comm.sendMsg("DISPLAY;Joining_game");
+                comm.sendMsg(MsgCreator.displayMessage("Joining Game\n"));
                 comm.setGame(game);
                 game.addRecord(comm);
             }
@@ -168,40 +169,4 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
         //TODO IMPLEMENT THE METHOD
         return true;
     }
-
-
-    /*
-    private void handleClient(Socket socket) throws IOException {
-        Scanner in = getScanner(socket);
-        PrintWriter out = getPrintWriter(socket);
-        if (in == null || out == null)
-            return;
-        String id = null;
-        String name = null;
-        Comm comm = null;
-        boolean valid = true;
-        while(valid) {
-            id = in.nextLine();
-            name = in.nextLine();
-            if (!games.containsKey(id)) {
-                out.println("numero");
-                out.flush();
-                int size = Integer.parseInt(in.nextLine());
-                games.put(id,new GameLogic(size));
-            } else {
-                out.println("no numero");
-                out.flush();
-            }
-            GameLogic game = games.get(id);
-            synchronized(game){
-                if(!game.isFull()){
-                    valid = false;
-                    comm = new SocketComm(socket);
-                    game.addRecord(comm);
-                }
-            }
-        }
-        games.get(id).addPlayer(comm,name);
-    }
-     */
 }
