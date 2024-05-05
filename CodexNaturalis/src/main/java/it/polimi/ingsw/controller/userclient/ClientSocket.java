@@ -6,6 +6,7 @@ import it.polimi.ingsw.view.UserView;
 import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * The ClientSocket class represents a client using socket-based communication.
@@ -89,9 +90,44 @@ public class ClientSocket extends Client{
      * Allows the user to choose an action and sends the corresponding message to the server.
      */
     @Override
-    void choose() {
+    boolean choose() {
         String s = userView.getInput();
         socketComm.sendMsg(s);
+        return true;
+    }
+
+    @Override
+    boolean choose(double min, double max) {
+        try{
+            double choice = Double.parseDouble(userView.getInput());
+            if(choice >= min && choice <= max){
+                socketComm.sendMsg(choice + "");
+                return true;
+            }
+        }catch(NumberFormatException e){
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    boolean choose(List<String> choices) {
+        String s = userView.getInput();
+        if(choices.contains(s)){
+            socketComm.sendMsg(s);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    boolean choose(String pattern) {
+        String s = userView.getInput();
+        if(s.matches(pattern)){
+            socketComm.sendMsg(s);
+            return true;
+        }
+        return false;
     }
 
     /**

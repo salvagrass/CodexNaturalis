@@ -102,7 +102,10 @@ public abstract class Client extends UnicastRemoteObject {
         String[] s = command.split(";");
         switch (s[0]) {
             case "CHOOSE" -> {
-                choose();
+                if(!handleChoose(s[1])){
+                    this.userView.show(s[2]);
+                    this.handleMsg(command);
+                }
             }
             case "SECROBJ" -> this.model.setObj(s[1]);
             case "CREATEHANDVIEW" -> this.model.setHand(this.gson.fromJson(s[1],
@@ -146,7 +149,33 @@ public abstract class Client extends UnicastRemoteObject {
     }
 
 
-    abstract void choose(); //TODO ADD CONTROLS FOR THE CLIENT INTPUT
+    boolean handleChoose(String domain) {
+        if (domain.matches("\\[-?\\d+(\\.\\d+)?,-?\\d+(\\.\\d+)?]")) { //[min,max]
+            double min, max;
+            domain = domain.substring(1, domain.length() - 1);
+            min = Double.parseDouble(domain.split(",")[0]);
+            max = Double.parseDouble(domain.split(",")[1]);
+            return choose(min, max);
+        } else if (domain.matches("\\{([^,]+,)*[^,]+}")) { //{x,y,...,z}
+            List<String> choices = new LinkedList<>();
+            domain = domain.substring(1, domain.length() - 1);
+            String[] parts = domain.split(",");
+            for (String part : parts) {
+                choices.add(part.trim());
+            }
+            return choose(choices);
+        } else {
+            return choose(domain);
+        }
+    }
+
+    abstract boolean choose();
+
+    abstract boolean choose(double min, double max);
+
+    abstract boolean choose(List<String> choices);
+
+    abstract boolean choose(String pattern);
 
     /**
      * This method represents the action of placing a card.

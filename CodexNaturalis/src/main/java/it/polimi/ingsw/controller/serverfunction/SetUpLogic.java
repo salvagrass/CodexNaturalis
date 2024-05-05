@@ -104,7 +104,9 @@ class SetUpLogic {
         boolean available = true;
 
         do{
-            game.sendMsg(comm, MsgCreator.chooseMessage("Insert name: "));
+            game.sendMsg(comm, MsgCreator.chooseMessage("Insert name (1-8 length, starts with a letter, no special characters): ",
+                    "^[a-zA-Z][a-zA-Z0-9]{0,7}$",
+                    "Invalid name: 1-8 length, starts with a letter, no special characters"));
             name = game.getMsg(comm);
             synchronized (nameToComm) {
                 if (nameToComm.get(name) == null) {
@@ -125,7 +127,7 @@ class SetUpLogic {
      * @param card The chosen orientation.
      */
     private void chooseStartingCard(Comm comm, StartingCard card){
-        game.sendMsg(comm, MsgCreator.chooseMessage(card.toString()+":\n",0, 1));
+        game.sendMsg(comm, MsgCreator.chooseMessage(card.toString()+":\n", 0, 1,"Invalid orientation, try again!"));
         card.setShowingFace(game.getMsg(comm).equals("1"));
     }
 
@@ -142,7 +144,8 @@ class SetUpLogic {
         chosen = true;
         while (chosen) {
             game.sendMsg(comm, 
-                    MsgCreator.chooseMessage(this.availableColors.toString() + ": ", this.availableColors));
+                    MsgCreator.chooseMessage(this.availableColors.toString() +
+                            ": ", this.availableColors, "Color not available, try again!"));
             color = PawnColor.valueOf(game.getMsg(comm));
             synchronized (this.availableColors) {
                 if (availableColors.contains(color)) {
@@ -179,7 +182,7 @@ class SetUpLogic {
 
         String s = objs[0].toString()+'\n';
         s += objs[1].toString();
-        game.sendMsg(comm, MsgCreator.chooseMessage(s+"\n", 0, 1));
+        game.sendMsg(comm, MsgCreator.chooseMessage(s+"\n", 0, 1, "There's not an objective with that index, try again!"));
         s = game.getMsg(comm);
         Objective obj = objs[Integer.parseInt(s)];
         game.sendMsg(comm, MsgCreator.secretObjectiveMessage(obj));

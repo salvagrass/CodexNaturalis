@@ -90,9 +90,9 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
     private void handleClient(Comm comm){
         boolean isInvalid = false;
         do {
-            comm.sendMsg(MsgCreator.chooseMessage("1)Create Game\n2)Join Game\n3)Load Game\n",1,3));
+            comm.sendMsg(MsgCreator.chooseMessage("1)Create Game\n2)Join Game\n3)Load Game\n",1,3, "Invalid choice, try again!"));
             String cmd = comm.getMsg();
-            comm.sendMsg(MsgCreator.chooseMessage("Insert Room ID: "));
+            comm.sendMsg(MsgCreator.chooseMessage("Insert Room ID (6 alphanumeric characters): ", "^[a-zA-Z0-9]{6}$", "Invalid ID: 6 alphanumeric characters"));
             String id = comm.getMsg();
             switch (cmd) {
                 case "1":
@@ -121,7 +121,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
             comm.sendMsg(MsgCreator.displayMessage("ID already exists\n"));
             return true;
         }
-        comm.sendMsg(MsgCreator.chooseMessage("Insert lobby capacity: ",2,4));
+        comm.sendMsg(MsgCreator.chooseMessage("Insert lobby capacity: ", 2,4, "Invalid choice, try again!"));
         int numPlayers = Integer.parseInt(comm.getMsg());
         GameLogic game = new GameLogic(this,numPlayers);
         games.put(id, game);

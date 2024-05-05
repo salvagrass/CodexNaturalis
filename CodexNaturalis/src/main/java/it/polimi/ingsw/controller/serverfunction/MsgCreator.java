@@ -28,7 +28,7 @@ public class MsgCreator {
      * @param idx       The index of the player whose board is to be updated.
      * @param x         Relative x-position.
      * @param y         Relative y-position.
-     * @param card      The card that is been placed.
+     * @param card      The card that has been placed.
      * @param inventory The new inventory values.
      * @param points    The updated points.
      * @return          The message created.
@@ -49,15 +49,16 @@ public class MsgCreator {
     public static String displayMessage(String displayText) {
         return "DISPLAY;" + format(displayText);
     }
-    
+
     /**
      * Creates a message containing a string to be displayed and information about the choice to make.
-     * 
+     *
      * @param displayText The string to be displayed.
+     * @param pattern The regex pattern to be satisfied.
      * @return The message created.
      */
-    public static String chooseMessage(String displayText) {
-        return displayMessage(displayText) + "|CHOOSE;^";
+    public static String chooseMessage(String displayText, String pattern, String error) {
+        return displayMessage(displayText) + "|CHOOSE;" + pattern + ";" + MsgCreator.format(error);
     }
 
     /**
@@ -69,8 +70,8 @@ public class MsgCreator {
      * @param max         The upper bound value.
      * @return The message created.
      */
-    public static String chooseMessage(String displayText, int min, int max) {
-        return displayMessage(displayText) + "|CHOOSE;[" + min + "," + max + "]";
+    public static String chooseMessage(String displayText, int min, int max, String error) {
+        return displayMessage(displayText) + "|CHOOSE;[" + min + "," + max + "];" + MsgCreator.format(error);
     }
     
     /**
@@ -81,8 +82,8 @@ public class MsgCreator {
      * @param choose      A list of the possible choices.
      * @return The message created.
      */
-    public static <T> String chooseMessage(String displayText, List<T> choose) {
-        return displayMessage(displayText) + "|CHOOSE;" + choose.toString().replace('[', '{').replace(']', '}');
+    public static <T> String chooseMessage(String displayText, List<T> choose, String error) {
+        return displayMessage(displayText) + "|CHOOSE;" + choose.toString().replace('[', '{').replace(']', '}') + ";" + MsgCreator.format(error);
     }
 
     /**
@@ -118,7 +119,7 @@ public class MsgCreator {
     /**
      * Creates a message with the leaderboard.
      * 
-     * @param leaderboards The cards in the player's hand.
+     * @param leaderboard The cards in the player's hand.
      * @return The message created.
      */
     public static String leadeboarMessage(Map<Player, Integer> leaderboard) {
@@ -128,7 +129,7 @@ public class MsgCreator {
     /**
      * Creates a message to set the player's ability to place or draw cards.
      * 
-     * @param display Text to be displayed.
+     * @param displayText Text to be displayed.
      * @param idx     0 for the placeCard token, 1 for the drawCard token.
      * @return The message created.
      */
@@ -140,7 +141,7 @@ public class MsgCreator {
     /**
      * Creates a message to update the hand status.
      * 
-     * @param card The card that is been drawn.
+     * @param card The card that has been drawn.
      * @return The message created.
      */
     public static String updHandViewMsg(DrawableCard card) {

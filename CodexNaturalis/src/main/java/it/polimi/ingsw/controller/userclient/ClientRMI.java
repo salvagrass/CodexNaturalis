@@ -7,6 +7,7 @@ import it.polimi.ingsw.view.UserView;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
 
 
 /** 
@@ -52,6 +53,7 @@ public class ClientRMI extends Client implements RemoteClient {
             this.comm = comm;
         }
     }
+
     /**
      * It splits the input message using the pipe character ('|') as a delimiter
      * and then processes each command individually.
@@ -70,19 +72,63 @@ public class ClientRMI extends Client implements RemoteClient {
      * It sets the message received from the user view using the `comm.setMsg()` method.
      */
     @Override
-    void choose() {
+    boolean choose() {
         try{
             comm.setMsg(userView.getInput());
         }catch(RemoteException e){
             System.out.println("choose error"); //TODO handle
+            return false;
         }
+        return true;
+    }
+
+    @Override
+    boolean choose(double min, double max) {
+        try{
+            double choice = Double.parseDouble(userView.getInput());
+            if(choice >= min && choice <= max){
+                comm.setMsg(choice + "");
+                return true;
+            }
+        }catch(RemoteException e){
+            System.out.println("choose error"); //TODO handle
+        }catch(NumberFormatException e){
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    boolean choose(List<String> choices) {
+        try{
+            String s = userView.getInput();
+            if(choices.contains(s)){
+                comm.setMsg(s);
+                return true;
+            }
+        }catch(RemoteException e){
+            System.out.println("choose error"); //TODO handle
+        }
+        return false;
+    }
+
+    @Override
+    boolean choose(String pattern) {
+        try{
+            String s = userView.getInput();
+            if(s.matches(pattern)){
+                comm.setMsg(s);
+                return true;
+            }
+        }catch(RemoteException e){
+            System.out.println("choose error"); //TODO handle
+        }
+        return false;
     }
 
     /**
      * The `placeCard` method processes card placement based on the input message.
      * Otherwise, it displays an error message to the user view: "Invalid Placement!".
-     *
-     * @throws RemoteException If a remote communication error occurs.
      */
     public void placeCard() {
         String msg = super.placeCardSetUp();
@@ -103,8 +149,6 @@ public class ClientRMI extends Client implements RemoteClient {
     /**
      * The `drawCard` method processes card drawing based on the input message.
      * Otherwise, it displays an error message to the user view: "Invalid Draw!".
-     *
-     * @throws RemoteException If a remote communication error occurs.
      */
     public void drawCard() {
         String msg = super.drawCardSetUp();
