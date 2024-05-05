@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.item.card.ResourceCard;
 import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.util.GoldCardsFactory;
-import it.polimi.ingsw.util.ObjFactory;
+import it.polimi.ingsw.util.json.ObjFactory;
 import it.polimi.ingsw.util.ResCardFactory;
 import it.polimi.ingsw.util.StartingCardsFactory;
 import it.polimi.ingsw.util.Symbol;
@@ -109,6 +109,7 @@ public class CommonGround {
         }
         if(tmp==null)
             throw new InvalidDrawException("Deck Empty");
+        tmp.setShowingFace(true);
         return tmp;
     }
 

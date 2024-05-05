@@ -67,6 +67,13 @@ class SetUpLogic {
                 this.turnOrder.addAll(this.record.keySet());
             }
         }
+        List<String> names = new ArrayList<>(turnOrder.size());
+        //TODO REVISE
+        for(Comm iterComm:turnOrder){
+            String name = nameToComm.keySet().stream().filter(x-> nameToComm.get(x) == iterComm).findAny().get();
+            names.add(name);
+        }
+        Comm.sendBroadcast(MsgCreator.turnOrderMessage(names), turnOrder);
         synchronized (ground){
             card = ground.getRandomStartingCard();
         }
@@ -79,7 +86,7 @@ class SetUpLogic {
         Player player = new Player(playerName, obj, color);
         player.placeStartingCard(card);
         String msg = MsgCreator.updBoardMessage(turnOrder.indexOf(comm),0,0,card,
-                player.getInventory(),player.getPoints());
+                player.getInventory());
         Comm.sendBroadcast(msg,this.turnOrder);
         return player;
     }

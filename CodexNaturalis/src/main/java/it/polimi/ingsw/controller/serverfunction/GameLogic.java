@@ -55,11 +55,11 @@ public class GameLogic {
         Player player = setUp.addPlayer(comm, ground);
         players.put(comm, player);
         synchronized (this.setUp) {
-            int numRemaining = this.turnOrder.size()-this.players.size();
+            /* int numRemaining = this.turnOrder.size()-this.players.size();
             if(numRemaining>0){
                 String msg = MsgCreator.displayMessage("Waiting for players\nRemaining: " + numRemaining + '\n');
                 Comm.sendBroadcast(msg, new ArrayList<>(players.keySet()));
-            }
+            } */
             if (this.currPlayer == null) {
                 this.currPlayer = comm;
                 setUp.waitReady();
@@ -74,12 +74,6 @@ public class GameLogic {
      * Handles the execution of the game until the end.
      */
     private void gameFlow() {
-        List<String> names = new ArrayList<>(turnOrder.size());
-        for(Comm comm : turnOrder){
-            names.add(players.get(comm).getNickname());
-        }
-        Comm.sendBroadcast(MsgCreator.turnOrderMessage(names), turnOrder);
-
         for (int i = 0; i < players.size(); i++){
             DrawableCard[] hand = players.get(this.turnOrder.get(i)).drawFirstThree(ground);
             sendMsg(this.turnOrder.get(i), MsgCreator.handView(hand));
@@ -286,9 +280,10 @@ public class GameLogic {
      * @param currPlayer The player who placed the card.
      */
     private void updBoardView(DrawableCard newCard, int x, int y, Comm currPlayer) {
-        Player player = players.get(currPlayer); 
-        String msg = MsgCreator.updBoardMessage(turnOrder.indexOf(currPlayer),x,y,newCard,player.getInventory(),player.getPoints());
-        Comm.sendBroadcast(msg, turnOrder);
+        Player player = players.get(currPlayer);
+        String updBoardMsg = MsgCreator.updBoardMessage(turnOrder.indexOf(currPlayer),x,y,newCard,player.getInventory());
+        String updPointsMsg = MsgCreator.updPointsMsg(turnOrder.indexOf(currPlayer),player.getPoints());
+        Comm.sendBroadcast(MsgCreator.cat(updBoardMsg,updPointsMsg), turnOrder);
     }
 
     /**
@@ -317,14 +312,14 @@ public class GameLogic {
      * - <data>: The data associated with the update.
      */
     private void setUpGameLogic(){
-        String s = MsgCreator.updGroundViewMsg(0, this.ground.peekResDeck());
+        String s = MsgCreator.updGroundViewMsg(0,this.ground.peekResDeck());
         s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(1, this.ground.peekGoldDeck()));
         s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(2, this.ground.getGroundResourceCards()[0]));
         s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(3, this.ground.getGroundResourceCards()[1]));
         s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(4, this.ground.getGroundGoldCard()[0]));
         s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(5, this.ground.getGroundGoldCard()[1]));
-        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(6, this.ground.getCommonObjectives()[0].toString()));
-        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(7, this.ground.getCommonObjectives()[1].toString()));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(6, this.ground.getCommonObjectives()[0]));
+        s = MsgCreator.cat(s, MsgCreator.updGroundViewMsg(7, this.ground.getCommonObjectives()[1]));
         Comm.sendBroadcast(s, turnOrder);
     }
 
@@ -354,19 +349,19 @@ public class GameLogic {
             this.server.close(this);
         }
     }
-    /**
-     * Type of messages:
-     * sendMsg("CHOOSE;-what to choose-")
-     * sendMsg("TURNORDER;[-FirstPlayerName-,-SecondPlayerName-,...]")
-     * sendMsg("UPDBOARDVIEW;-PlayerTurnOrderNumber-;-board(xRel,yRel)-;-newCard-;-inventory-;points")
-     * sendMsg("UPDGROUNDVIEW;-index-;-card-")
-     * sendMsg("SETUPGROUNDVIEW;GROUND.TOJSON")
-     * sendMsg("PLACECARD;board(xRel,yRel);-card-")
-     * sendMsg("UPDHANDVIEW;cardPos,-drawnCard-")
-     * sendMsg("TOKEN;-TokenType-")
-     * sendMsg("DRAWCARD;IDX")
-     * sendMsg("DISPLAY;String s")
-     * sendMsg("GAMECLOSED;-ERROR OR GAME FINISHED-")
+    /*
+      Type of messages:
+      sendMsg("CHOOSE;-what to choose-")
+      sendMsg("TURNORDER;[-FirstPlayerName-,-SecondPlayerName-,...]")
+      sendMsg("UPDBOARDVIEW;-PlayerTurnOrderNumber-;-board(xRel,yRel)-;-newCard-;-inventory-;points")
+      sendMsg("UPDGROUNDVIEW;-index-;-card-")
+      sendMsg("SETUPGROUNDVIEW;GROUND.TOJSON")
+      sendMsg("PLACECARD;board(xRel,yRel);-card-")
+      sendMsg("UPDHANDVIEW;cardPos,-drawnCard-")
+      sendMsg("TOKEN;-TokenType-")
+      sendMsg("DRAWCARD;IDX")
+      sendMsg("DISPLAY;String s")
+      sendMsg("GAMECLOSED;-ERROR OR GAME FINISHED-")
      */
     //TODO see if we manage to view players' names while the game is starting
 }

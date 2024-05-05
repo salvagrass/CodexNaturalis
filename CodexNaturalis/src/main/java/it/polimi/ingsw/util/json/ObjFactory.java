@@ -1,4 +1,4 @@
-package it.polimi.ingsw.util;
+package it.polimi.ingsw.util.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.item.objective.DispObjective;
 import it.polimi.ingsw.model.item.objective.Disposition;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.objective.ResourceObjective;
+import it.polimi.ingsw.util.ItemFactory;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,7 +30,7 @@ public class ObjFactory extends ItemFactory<Objective> {
     @Override
     public List<Objective> createItemsList() throws IOException, NullPointerException {
         InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(ObjFactory.class.getResourceAsStream("/data/ObjDisp.json")));
-        Gson gson = new GsonBuilder().registerTypeAdapter(Disposition.class, new DispositionDeserializer()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Disposition.class, new DispositionSerializeLogic()).create();
         List<Objective> objectives = new ArrayList<>(gson.fromJson(reader,new TypeToken<List<DispObjective>>(){}.getType()));
         reader.close();
         reader = new InputStreamReader(Objects.requireNonNull(ObjFactory.class.getResourceAsStream("/data/ObjRes.json")));

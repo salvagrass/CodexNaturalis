@@ -52,10 +52,14 @@ public class SocketComm extends Comm {
    */
   @Override
   public void waitMsg() {
-    String s = in.nextLine();
-    switch(s.split(";")[0]){
-      case "PLACECARD" -> this.getGame().placeCard(this, s);
-      case "DRAW" -> this.getGame().drawCard(this, s);
+    boolean isValid = false;
+    while(!isValid){
+      String s = in.nextLine();
+      isValid = switch(s.split(";")[0]){
+        case "PLACECARD" -> this.getGame().placeCard(this, s);
+        case "DRAW" -> this.getGame().drawCard(this, s);
+        default -> false;
+      };
     }
   }
 

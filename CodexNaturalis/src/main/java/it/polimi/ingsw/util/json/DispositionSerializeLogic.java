@@ -1,4 +1,4 @@
-package it.polimi.ingsw.util;
+package it.polimi.ingsw.util.json;
 
 import com.google.gson.*;
 import it.polimi.ingsw.model.item.objective.LType;
@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
  * Class to adapt gson deserializer to work with the Disposition interface
  */
 
-public class DispositionDeserializer implements JsonDeserializer<Disposition> {
+public class DispositionSerializeLogic implements JsonDeserializer<Disposition>,JsonSerializer<Disposition> {
     /**
      * Deserializes a JSON element into a concrete implementation of the Disposition interface.
      *
@@ -32,6 +32,15 @@ public class DispositionDeserializer implements JsonDeserializer<Disposition> {
             case "LType" -> LType.class;
             default -> throw new JsonParseException("Type Not Defined");
         };
-        return jsonDeserializationContext.deserialize(jsonElement,rtr);
+        return (new Gson()).fromJson(jsonElement,rtr);
+    }
+
+    @Override
+    public JsonElement serialize(Disposition src, Type typeOfSrc, JsonSerializationContext context) {
+        Gson gson = new Gson();
+        JsonElement element = gson.toJsonTree(src);
+        JsonObject object = element.getAsJsonObject();
+        object.addProperty("dispType",src.getClass().getSimpleName());
+        return object;
     }
 }

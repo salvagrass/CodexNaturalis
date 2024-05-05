@@ -68,24 +68,10 @@ public class ClientRMI extends Client implements RemoteClient {
         }
     }
 
-    /**
-     * It sets the message received from the user view using the `comm.setMsg()` method.
-     */
     @Override
-    boolean choose() {
+    boolean choose(int min, int max) {
         try{
-            comm.setMsg(userView.getInput());
-        }catch(RemoteException e){
-            System.out.println("choose error"); //TODO handle
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    boolean choose(double min, double max) {
-        try{
-            double choice = Double.parseDouble(userView.getInput());
+            int choice = Integer.parseInt(userView.getInput());
             if(choice >= min && choice <= max){
                 comm.setMsg(choice + "");
                 return true;

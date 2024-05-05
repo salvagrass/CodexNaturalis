@@ -86,20 +86,10 @@ public class ClientSocket extends Client{
         listener();
     }
 
-    /**
-     * Allows the user to choose an action and sends the corresponding message to the server.
-     */
     @Override
-    boolean choose() {
-        String s = userView.getInput();
-        socketComm.sendMsg(s);
-        return true;
-    }
-
-    @Override
-    boolean choose(double min, double max) {
+    boolean choose(int min, int max) {
         try{
-            double choice = Double.parseDouble(userView.getInput());
+            int choice = Integer.parseInt(userView.getInput());
             if(choice >= min && choice <= max){
                 socketComm.sendMsg(choice + "");
                 return true;
@@ -143,7 +133,7 @@ public class ClientSocket extends Client{
         if(waitResponse()){
             super.acceptedPlacement();
         }else{
-            userView.show("Invalid Placement!");
+            userView.show("Invalid Placement!\n");
         }
     }
 
@@ -160,7 +150,7 @@ public class ClientSocket extends Client{
         if(waitResponse()){
             super.acceptedDraw();
         }else{
-            userView.show("Invalid Draw!");
+            userView.show("Invalid Draw!\n");
         }
     }
 

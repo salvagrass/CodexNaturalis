@@ -3,14 +3,25 @@ package it.polimi.ingsw.controller.userclient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.util.CardSerializeLogic;
+import it.polimi.ingsw.controller.serverfunction.MsgCreator;
+import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.card.DrawableCard;
+import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.util.json.CardSerializeLogic;
+import it.polimi.ingsw.util.ObjectiveSerializeLogic;
+import it.polimi.ingsw.util.Symbol;
 import it.polimi.ingsw.view.UserView;
+import it.polimi.ingsw.view.coreview.BoardView;
+import it.polimi.ingsw.view.coreview.CardView;
 import it.polimi.ingsw.view.coreview.ModelView;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
 
 /** 
  * Client class represents a client entity.
@@ -37,7 +48,8 @@ public abstract class Client extends UnicastRemoteObject {
         model = new ModelView();
         token = new boolean[2];
         gson = new GsonBuilder().
-                registerTypeAdapter(DrawableCard.class,new CardSerializeLogic()).
+                registerTypeHierarchyAdapter(Card.class,new CardSerializeLogic()).
+                registerTypeHierarchyAdapter(Objective.class,new ObjectiveSerializeLogic()).
                 create();
     }
 
@@ -57,32 +69,51 @@ public abstract class Client extends UnicastRemoteObject {
         String[] cmd;
         boolean stay = true;
         while (stay) {
+            //TODO SYNCHRONIZE THIS PART WITH THE CONFIRM
             String command = userView.getInput();
-            cmd = command.split(" ");
+            cmd = command.split("(\\s+(?=-?\\d))|(\\s+$)");
             switch (cmd[0]) { //TODO complete switch cases
-                case "show" -> {
-                    switch (cmd[1]) {
-                        case "hand" -> this.userView.show(this.model.getHand().toString()+'\n');
-                        case "objective" -> this.userView.show(this.model.getSecrObj()+'\n');
-                        case "ground" -> this.userView.show(this.model.getGround().toString()+'\n');
-                        case "board" -> {}
-                        case "leaderboard" -> {
-                            List<String> tmp = this.leaderboard.keySet().stream()
-                                                .sorted(Comparator.comparingInt(x -> leaderboard.get(x)))
-                                                .toList();
-
-                            for (String name : tmp) {
-                                this.userView.show(name + " (id: " + names.indexOf(name) + "): " + leaderboard.get(name)+'\n');
-                            }
-                        }
+                case "show hand" -> this.userView.showHand(this.model.getHand());
+                case "show objective" -> this.userView.show(this.model.getSecrObj()+'\n');
+                case "show ground" -> this.userView.show(this.model.getGround().toString()+'\n');
+                case "show card" -> {
+                    try {
+                        int userIdx = Integer.parseInt(cmd[1]);
+                        int x = Integer.parseInt(cmd[2]);
+                        int y = Integer.parseInt(cmd[3]);
+                        this.userView.show(this.model.getBoard(userIdx).showCard(x,y));
+                    }catch(Exception e){
+                        this.userView.show("Not an index\n");
                     }
                 }
-                case "placeCard" -> {
+                case "show board" -> {
+                    try {
+                        int idx = Integer.parseInt(cmd[1]);
+                        this.userView.show(this.model.getBoard(idx).asciiBoard());
+                    }catch(Exception e){
+                        this.userView.show("Not an index\n");
+                    }
+                }
+                case "show leaderboard" -> {
+                    List<String> tmp = this.leaderboard.keySet().stream()
+                                            .sorted(Comparator.comparingInt(x -> leaderboard.get(x)))
+                                            .toList();
+                    for (String name : tmp) {
+                        this.userView.show(name + " (id: " + names.indexOf(name) + "): " + leaderboard.get(name)+'\n');
+                    }
+                }
+                case "flip card" -> {
+                    //TODO ADD CONTROL
+                    int idx = Integer.parseInt(cmd[1]);
+                    CardView view = this.model.getHandCard(idx);
+                    view.setFace(!view.getFace());
+                }
+                case "place card" -> {
                     if(this.token[0]){
                         placeCard();
                     }
                 }
-                case "drawCard" -> {
+                case "draw card" -> {
                     if (this.token[1]) {
                         drawCard();
                     }
@@ -103,13 +134,15 @@ public abstract class Client extends UnicastRemoteObject {
         switch (s[0]) {
             case "CHOOSE" -> {
                 if(!handleChoose(s[1])){
-                    this.userView.show(s[2]);
+                    this.userView.show(MsgCreator.deformat(s[2])+'\n');
                     this.handleMsg(command);
                 }
             }
             case "SECROBJ" -> this.model.setObj(s[1]);
-            case "CREATEHANDVIEW" -> this.model.setHand(this.gson.fromJson(s[1],
-                                                        new TypeToken<List<DrawableCard>>(){}.getType()));
+            case "CREATEHANDVIEW" -> {
+                List<DrawableCard> cards = this.gson.fromJson(s[1],new TypeToken<List<DrawableCard>>(){}.getType());
+                this.model.setHand(cards);
+            }
             case "TURNORDER" -> {
                 this.names = this.gson.fromJson(s[1], new TypeToken<List<String>>() {
                 }.getType());
@@ -119,12 +152,27 @@ public abstract class Client extends UnicastRemoteObject {
                 }
             }
             case "UPDHANDVIEW" -> {
-                this.model.updHand(this.gson.fromJson(s[1], DrawableCard.class), idx);
+                this.model.updHand(this.gson.fromJson(s[1], Card.class), idx);
                 setToken(1, false);
             }
             case "UPDGROUNDVIEW" -> this.model.updGround(Integer.parseInt(s[1]), s[2]);
-            case "UPDBOARDVIEW" -> //TODO updBoardView
-                    setToken(0, false);
+            case "UPDBOARDVIEW" -> {
+                //TODO REVISE
+                int turnIdx = Integer.parseInt(s[1]);
+                BoardView board = this.model.getBoard(turnIdx);
+                String[] boardIdxs = s[2].split(",");
+                int x = Integer.parseInt(boardIdxs[0].substring(1));
+                int y = Integer.parseInt(boardIdxs[1].substring(0,boardIdxs[1].length()-1));
+                Card card = this.gson.fromJson(s[3],Card.class);
+                Map<Symbol,Integer> inventory = this.gson.fromJson(s[4],new TypeToken<Map<Symbol,Integer>>(){}.getType());
+                board.updBoardView(card,x,y,inventory);
+                setToken(0, false);
+            }
+            case "UPDPOINTS" -> {
+                int playerIdx = Integer.parseInt(s[1]);
+                int points = Integer.parseInt(s[2]);
+                leaderboard.put(names.get(idx),points);
+            }
             case "TOKEN" -> {
                 switch (s[1]) {
                     case "0" -> setToken(0, true);
@@ -151,10 +199,10 @@ public abstract class Client extends UnicastRemoteObject {
 
     boolean handleChoose(String domain) {
         if (domain.matches("\\[-?\\d+(\\.\\d+)?,-?\\d+(\\.\\d+)?]")) { //[min,max]
-            double min, max;
+            int min, max;
             domain = domain.substring(1, domain.length() - 1);
-            min = Double.parseDouble(domain.split(",")[0]);
-            max = Double.parseDouble(domain.split(",")[1]);
+            min = Integer.parseInt(domain.split(",")[0]);
+            max = Integer.parseInt(domain.split(",")[1]);
             return choose(min, max);
         } else if (domain.matches("\\{([^,]+,)*[^,]+}")) { //{x,y,...,z}
             List<String> choices = new LinkedList<>();
@@ -169,9 +217,7 @@ public abstract class Client extends UnicastRemoteObject {
         }
     }
 
-    abstract boolean choose();
-
-    abstract boolean choose(double min, double max);
+    abstract boolean choose(int min, int max);
 
     abstract boolean choose(List<String> choices);
 

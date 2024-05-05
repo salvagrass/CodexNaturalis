@@ -2,11 +2,13 @@ package it.polimi.ingsw.controller.serverfunction;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.util.CardSerializeLogic;
+import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.gameplane.Player;
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.util.json.CardSerializeLogic;
+import it.polimi.ingsw.util.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.Symbol;
 
 import java.util.List;
@@ -17,7 +19,9 @@ import java.util.Map;
  */
 public class MsgCreator {
 
-    private final static Gson gson = new GsonBuilder().registerTypeAdapter(DrawableCard.class, new CardSerializeLogic())
+    private final static Gson gson = new GsonBuilder().
+            registerTypeHierarchyAdapter(Card.class, new CardSerializeLogic()).
+            registerTypeHierarchyAdapter(Objective.class,new ObjectiveSerializeLogic())
             .create();
 
     /**
@@ -30,14 +34,11 @@ public class MsgCreator {
      * @param y         Relative y-position.
      * @param card      The card that has been placed.
      * @param inventory The new inventory values.
-     * @param points    The updated points.
      * @return          The message created.
      */
-    public static <T extends Card> String updBoardMessage(int idx, int x, int y, T card, Map<Symbol, Integer> inventory,
-            int points) {
+    public static <T extends Card> String updBoardMessage(int idx, int x, int y, T card, Map<Symbol, Integer> inventory) {
         return ("UPDBOARDVIEW;" + idx + ";" + "(" + x
-                + "," + y + ");" + gson.toJson(card) + ";" + gson.toJson(inventory) + ";" + points);
-                //TODO pipeline points
+                + "," + y + ");" + gson.toJson(card,Card.class) + ";" + gson.toJson(inventory));
     }
 
     /**
@@ -156,7 +157,7 @@ public class MsgCreator {
      * @return The message created.
      */
     public static String updPointsMsg(int idx, int points) {
-        return "UPDPOINTS;" + idx + points;
+        return "UPDPOINTS;" + idx + ";" + points;
     }
     
     /**
@@ -177,7 +178,7 @@ public class MsgCreator {
      * @return The message created.
      */
     public static <T> String updGroundViewMsg(int idx, T item) {
-        return "UPDGROUNDVIEW;" + idx + ";" + gson.toJson(item, item.getClass());
+        return "UPDGROUNDVIEW;" + idx + ";" + gson.toJson(item);
     }
 
     /**
@@ -210,4 +211,5 @@ public class MsgCreator {
     private static String format(String msg){
         return msg.replace(' ','_').replace('\n','&');
     }
+    public static String deformat(String msg){return msg.replace('_',' ').replace('&',' ');}
 }
