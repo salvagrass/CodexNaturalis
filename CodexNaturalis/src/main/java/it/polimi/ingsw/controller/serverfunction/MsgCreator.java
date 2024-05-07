@@ -2,10 +2,13 @@ package it.polimi.ingsw.controller.serverfunction;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonObject;
+
+import it.polimi.ingsw.model.gameplane.GameBoard;
 import it.polimi.ingsw.model.gameplane.Player;
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.card.DrawableCard;
+import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
 import it.polimi.ingsw.util.ObjectiveSerializeLogic;
@@ -94,7 +97,7 @@ public class MsgCreator {
      * @return The message created.
      */
     public static String secretObjectiveMessage(Objective obj) {
-        return "SECROBJ;" + obj.toString();
+        return "SECROBJ;" + gson.toJson(obj);
     }
 
     /**
@@ -113,8 +116,13 @@ public class MsgCreator {
      * @param hand The cards in the player's hand.
      * @return The message created.
      */
-    public static String handView(DrawableCard[] hand) {
+    public static String createHandViewMsg(DrawableCard[] hand) {
         return "CREATEHANDVIEW;" + gson.toJson(hand, DrawableCard[].class);
+    }
+
+
+    public static String sendStartingCardMsg(StartingCard card){
+        return "STARTINGCARD;" + gson.toJson(card);
     }
 
     /**
@@ -180,6 +188,13 @@ public class MsgCreator {
     public static <T> String updGroundViewMsg(int idx, T item) {
         return "UPDGROUNDVIEW;" + idx + ";" + gson.toJson(item);
     }
+    
+    /**
+     * Creates a message containing the common objectives for the game
+     */
+    public static String sendCommonObjectivesMsg(Objective[] objs) {
+        return "COMMONOBJECTIVES;" + gson.toJson(objs);
+    }
 
     /**
      * Creates a message instructing the client to start the game.
@@ -188,6 +203,20 @@ public class MsgCreator {
      */
     public static String gameStartMsg() {
         return displayMessage("Game started\n") + "|GAMESTART";
+    }
+
+
+    public static String createBoardViewMsg(Player player, int idx) {
+        JsonObject object = gson.toJsonTree(player).getAsJsonObject();
+        String msg = "CREATEBOARDVIEW;" + gson.toJson(object.get("playingField"), GameBoard.class);
+        return msg;
+    }
+
+    public static String createHandViewMsg(Player player) {
+        String msg = "CREATEHANDVIEW;";
+        JsonObject object = gson.toJsonTree(player).getAsJsonObject();
+        msg += gson.toJson(object.get("hand"),DrawableCard[].class);
+        return msg;
     }
     
     /**

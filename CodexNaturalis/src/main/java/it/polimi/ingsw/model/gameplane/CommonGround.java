@@ -87,15 +87,15 @@ public class CommonGround {
         DrawableCard tmp;
         switch (sel) {
             case 0 -> tmp = resDeck.draw();
-            case 2 -> {
+            case 1 -> {
                 tmp = groundResCards[0];
                 groundResCards[0] = resDeck.draw();
             }
-            case 3 -> {
+            case 2 -> {
                 tmp = groundResCards[1];
                 groundResCards[1] = resDeck.draw();
             }
-            case 1 -> tmp = goldDeck.draw();
+            case 3 -> tmp = goldDeck.draw();
             case 4 -> {
                 tmp = groundGoldCards[0];
                 groundGoldCards[0] = goldDeck.draw();
@@ -130,14 +130,15 @@ public class CommonGround {
         goldDeck.shuffle();
     }
 
-
     private void setGroundCards(){
         this.groundResCards = new ResourceCard[2];
         this.groundGoldCards = new GoldCard[2];
-        groundResCards[0] = resDeck.draw();
-        groundResCards[1] = resDeck.draw();
-        groundGoldCards[0] = goldDeck.draw();
-        groundGoldCards[1] = goldDeck.draw();
+        try {
+            groundResCards[0] = (ResourceCard) draw(0);
+            groundResCards[1] =  (ResourceCard) draw(0);
+            groundGoldCards[0] = (GoldCard) draw(3);
+            groundGoldCards[1] = (GoldCard) draw(3);
+        }catch(InvalidSelectionException | InvalidDrawException ignored){}
     }
 
     /**

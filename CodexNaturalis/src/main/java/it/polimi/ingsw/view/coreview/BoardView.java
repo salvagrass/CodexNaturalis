@@ -12,6 +12,10 @@ import java.util.Map;
  * A class representing a view of the game board
  */
 public class BoardView {
+
+    /**
+     * A record representing coordinates for board positions.
+     */
     private record Coord(int x, int y){
 
     }
@@ -20,6 +24,10 @@ public class BoardView {
     private int counter;
     private int yMax,yMin,xMax,xMin;
 
+    /**
+     * Constructor for the BoardView class.
+     * Initializes the board view and inventory.
+     */
     public BoardView(){
         this.placedCards = new HashMap<>();
         this.inventory = new HashMap<>();
@@ -30,6 +38,14 @@ public class BoardView {
         yMin = 0;
     }
 
+    /**
+     * Updates the board view with a placed card and updates inventory.
+     *
+     * @param card      The card to be placed on the board.
+     * @param x         The x-coordinate of the position on the board.
+     * @param y         The y-coordinate of the position on the board.
+     * @param inventory The inventory to be updated.
+     */
     public void updBoardView(Card card, int x, int y, Map<Symbol,Integer> inventory){
         CardView view = new CardView(card);
         counter++;
@@ -47,6 +63,11 @@ public class BoardView {
         placedCards.put(new Coord(x,y),view);
     }
 
+    /**
+     * Generates an ASCII representation of the game board.
+     *
+     * @return The ASCII representation of the game board.
+     */
     public String asciiBoard(){
         int i,j;
         StringBuilder board = new StringBuilder();
@@ -73,7 +94,13 @@ public class BoardView {
         return board.toString();
     }
 
-
+    /**
+     * Retrieves the ASCII art representation of a card at a specified position on the board.
+     *
+     * @param x The x-coordinate of the position on the board.
+     * @param y The y-coordinate of the position on the board.
+     * @return The ASCII art representation of the card at the specified position.
+     */
     public String showCard(int x,int y){
         CardView view = placedCards.get(new Coord(x,y));
         if(view!=null)

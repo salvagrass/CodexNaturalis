@@ -21,6 +21,9 @@ import java.util.Map;
  */
 public class CardView {
 
+    /**
+     * A record representing coordinates for ASCII art representation.
+     */
     private record Coord(int x, int y, boolean side) {
 
     }
@@ -44,15 +47,29 @@ public class CardView {
         this.constructHeader(card);
     }
 
+    /**
+     * Sets the showing face of the card.
+     *
+     * @param face The showing face of the card.
+     */
     public void setFace(boolean face) {
         this.face = face;
     }
-    
+
+    /**
+     * Retrieves the showing face of the card.
+     *
+     * @return The showing face of the card.
+     */
     public boolean getFace() {
         return this.face;
 
     }
 
+    /**
+     * Retrieves the color of the card
+     * @return the card color as a symbol
+     */
     public Symbol getColor(){
         return this.color;
     }
@@ -62,38 +79,48 @@ public class CardView {
         return cardID;
     }
 
+    /**
+     * Constructs the header of the card's ASCII art based on its type.
+     *
+     * @param card The card for which the header is constructed.
+     */
     private void constructHeader(Card card) {
         switch (card.getClass().getSimpleName()) {
-            case "StartingCard" -> this.push("START");
+            case "StartingCard" -> this.push("START",1,2);
             case "ResourceCard" -> {
-                this.push("RES");
+                this.push("RES",1,2);
                 ResourceCard resCard = (ResourceCard) card;
                 this.push("" + resCard.getCardPoints(), 1, (asciiArtYDim - 1) / 2, true);
             }
         case "GoldCard" -> {
-            this.push("GOLD");
+            this.push("GOLD",1,2);
             GoldCard goldCard = (GoldCard) card;
             this.push("" + goldCard.getCardPoints(), 1, (asciiArtYDim - 1) / 2, true);
             this.constructFooter(goldCard);
         }
         case "GoldCardCorner" -> {
-            this.push("GOLD");
+            this.push("GOLD",1,2);
             GoldCardCorner goldCard = (GoldCardCorner) card;
             this.push("" + goldCard.getCardPoints(), 1, (asciiArtYDim - 1) / 2, true);
-            this.push("■", 1, asciiArtYDim - 3, true);
+            this.asciiArt.put(new Coord(1,asciiArtYDim-3,true),'■');
             this.constructFooter(goldCard);
         }
         case "GoldCardSymbol" -> {
-            this.push("GOLD");
+            this.push("GOLD",1,2);
             GoldCardSymbol goldCard = (GoldCardSymbol) card;
             this.push("" + goldCard.getCardPoints(), 1, (asciiArtYDim - 1) / 2, true);
-            this.push(goldCard.getSym().name().substring(0,1), 1, asciiArtYDim - 3, true);
+            this.asciiArt.put(new Coord(1,asciiArtYDim-3,true),goldCard.getSym().INITIAL);
             this.constructFooter(goldCard);
         }
       }
       constructBody(card);
     }
 
+    /**
+     * Constructs the body of the card's ASCII art which include its corners and center symbols.
+     *
+     * @param card The card for which the body is constructed.
+     */
     private void constructBody(Card card){
         card.setShowingFace(true);
         this.setCorners(card.getShowingCorners(),true);
@@ -101,58 +128,81 @@ public class CardView {
         card.setShowingFace(false);
         this.setCorners(card.getShowingCorners(),false);
 
-        String[] center = this.nameInitial(card.getCenter());
-        for(int i=0;i<center.length;i++){
-            this.push(center[i], 4 - (center.length/2)+i, (asciiArtYDim - 1) / 2, false);
+        Symbol[] center = card.getCenter();
+        for(Symbol symbol : center) {
+            this.asciiArt.put(new Coord(4 - (center.length / 2), (asciiArtYDim - 1) / 2, false), symbol.INITIAL);
         }
     }
-    
+
+    /**
+     * Constructs the footer of a Gold Card's ASCII art, representing its requirements.
+     *
+     * @param card The Gold Card for which the footer is constructed.
+     */
     private void constructFooter(GoldCard card) {
       int i = 2; 
       for (Symbol sym : card.getRequirements().keySet()) {
-        int length = card.getRequirements().get(sym);
-        for(int k = 0; k < length; k++, i += 2){
-          this.push(sym.name().replace("FUNGUS","M").substring(0,1), asciiArtXDim - 2, i, true);
+          int length = card.getRequirements().get(sym);
+          for(int k = 0; k < length; k++, i += 2){
+            this.asciiArt.put(new Coord(asciiArtXDim-2,i,true),sym.INITIAL);
         }
       }
     }
-    
+
+
+    /**
+     * Pushes a string into the ascii representation
+     * @param s the string to be pushed
+     * @param row the row where the string should be pushed
+     * @param begin the column where the string should start
+     * @param side the side on which to push the string
+     */
     private void push(String s, int row, int begin, boolean side) {
-      int length = s.length();
-      for (int i = 0; i < length; i++) {
+        int length = s.length();
+        for (int i = 0; i < length; i++) {
         this.asciiArt.put(new Coord(row,begin + i,side), s.charAt(i));
       }
     }
 
-    private void push(String s) {
+
+    /**
+     * Pushes a string on both sides of the ascii representation
+     * @param s the string to be pushed
+     * @param row the row where the string should be pushed
+     * @param begin the column where the string should start
+     */
+    private void push(String s,int row,int begin) {
         int length = s.length();
         for (int i = 0; i < length; i++) {
-            this.asciiArt.put(new Coord(1, 2+i, true), s.charAt(i));
-            this.asciiArt.put(new Coord(1, 2+i, false), s.charAt(i));
+            this.asciiArt.put(new Coord(row, begin+i, true), s.charAt(i));
+            this.asciiArt.put(new Coord(row, begin+i, false), s.charAt(i));
         }
     }
 
-    private String[] nameInitial(Symbol[] symbols){
-        String[] strings = new String[symbols.length];
-        for(int i=0;i< symbols.length;i++){
-            strings[i] = symbols[i].name().replace("FUNGUS","M").substring(0,1);
-        }
-        return strings;
-    }
-
+    /**
+     * Pushes the corner of a card into its ascii representation
+     * @param symbols the corner of the card, indexed in a clockwise pattern
+     * @param side the side on which to push the corners
+     */
     private void setCorners(Symbol[] symbols,boolean side){
         int i,counter;
         int[] xPos = new int[]{3,5};
         int[] yPos = new int[]{2,asciiArtYDim-3};
         int[] values = new int[]{0,1,3,2};
-        String[] names = this.nameInitial(symbols);
         for(i=0,counter=0;i<2;i++){
             for(int j=0;j<2;j++,counter++){
-                this.push(names[values[counter]],xPos[i],yPos[j],side);
+                this.asciiArt.put(new Coord(xPos[i],yPos[j],side),symbols[values[counter]].INITIAL);
             }
         }
     }
 
+    /**
+     * Generates the ASCII art representation of one or more cards. The cards will be represented
+     * all on the same line
+     *
+     * @param cards The cards for which the ASCII art representation will be generated.
+     * @return The ASCII art representation of the cards.
+     */
     public static String showAsciiArt(CardView... cards) {
         int i,j,column,pos;
         CardView cardView;
@@ -187,7 +237,13 @@ public class CardView {
         return asciiArt.toString();
     }
 
-
+    /**
+     * Generates the ASCII art representation of a list of cards. The cards will be represented
+     * all on the same line
+     *
+     * @param cards The list of cards for which the ASCII art representation will be generated.
+     * @return The ASCII art representation of the list of cards.
+     */
     public static String showAsciiArt(List<CardView> cards){
         CardView[] temp = new CardView[cards.size()];
         for(int i=0;i<cards.size();i++)

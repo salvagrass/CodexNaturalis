@@ -11,6 +11,7 @@ public abstract class UserView {
   public abstract String getInput();
   public abstract void show(String s);
 
-  public void showHand(List<CardView> hand){}
+  public void showCards(CardView... cards){}
+  public void showCards(List<CardView> cards){}
 
 }

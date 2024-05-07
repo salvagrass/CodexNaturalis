@@ -65,16 +65,16 @@ class SetUpLogic {
         synchronized (this.turnOrder){
             if(this.turnOrder.isEmpty()){
                 this.turnOrder.addAll(this.record.keySet());
+                List<String> names = new ArrayList<>(turnOrder.size());
+                //TODO REVISE
+                for(Comm iterComm:turnOrder){
+                    String name = nameToComm.keySet().stream().filter(x-> nameToComm.get(x) == iterComm).findAny().get();
+                    names.add(name);
+                }
+                Comm.sendBroadcast(MsgCreator.turnOrderMessage(names), turnOrder);
             }
         }
-        List<String> names = new ArrayList<>(turnOrder.size());
-        //TODO REVISE
-        for(Comm iterComm:turnOrder){
-            String name = nameToComm.keySet().stream().filter(x-> nameToComm.get(x) == iterComm).findAny().get();
-            names.add(name);
-        }
-        Comm.sendBroadcast(MsgCreator.turnOrderMessage(names), turnOrder);
-        synchronized (ground){
+        synchronized(this.turnOrder){
             card = ground.getRandomStartingCard();
         }
         chooseStartingCard(comm, card);
@@ -82,12 +82,11 @@ class SetUpLogic {
         PawnColor color = chooseColor(comm);
         record.put(comm, State.OBJECTIVE);
         Objective obj = chooseObjective(comm,ground);
-        record.put(comm, State.READY);
         Player player = new Player(playerName, obj, color);
         player.placeStartingCard(card);
         String msg = MsgCreator.updBoardMessage(turnOrder.indexOf(comm),0,0,card,
                 player.getInventory());
-        Comm.sendBroadcast(msg,this.turnOrder);
+        Comm.sendBroadcast(msg, this.turnOrder);
         return player;
     }
 
@@ -134,7 +133,9 @@ class SetUpLogic {
      * @param card The chosen orientation.
      */
     private void chooseStartingCard(Comm comm, StartingCard card){
-        game.sendMsg(comm, MsgCreator.chooseMessage(card.toString()+":\n", 0, 1,"Invalid orientation, try again!"));
+        String cardToJson = MsgCreator.sendStartingCardMsg(card);
+        String chooseOrientation = MsgCreator.chooseMessage("Choose an orientation for the starting card (0 back, 1 front): ", 0, 1,"Invalid orientation, try again!");
+        game.sendMsg(comm,MsgCreator.cat(cardToJson,chooseOrientation));
         card.setShowingFace(game.getMsg(comm).equals("1"));
     }
 
@@ -182,14 +183,15 @@ class SetUpLogic {
      */
     private Objective chooseObjective(Comm comm, CommonGround ground) {
         Objective[] objs;
-        synchronized(ground) {
+        synchronized (ground) {
             objs = new Objective[] { ground.getRandomObjective(),
                     ground.getRandomObjective() };
         }
-
-        String s = objs[0].toString()+'\n';
-        s += objs[1].toString();
-        game.sendMsg(comm, MsgCreator.chooseMessage(s+"\n", 0, 1, "There's not an objective with that index, try again!"));
+        
+        String s = MsgCreator.sendCommonObjectivesMsg(objs);
+        s = MsgCreator.cat(s, MsgCreator.chooseMessage("Choose common objective (0 left, 1 right): ", 0, 1,
+                "There's not an objective with that index, try again!"));
+        game.sendMsg(comm, s);
         s = game.getMsg(comm);
         Objective obj = objs[Integer.parseInt(s)];
         game.sendMsg(comm, MsgCreator.secretObjectiveMessage(obj));
@@ -233,6 +235,12 @@ class SetUpLogic {
             comm.close();
         }
     }
+
+
+    void setReady(Comm comm){
+        record.put(comm,State.READY);
+    }
+
 
     /**
      * Intended to be called from GameLogic to wait for the "Ready" state.

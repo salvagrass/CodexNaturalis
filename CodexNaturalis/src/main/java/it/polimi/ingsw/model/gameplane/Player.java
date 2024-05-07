@@ -64,6 +64,10 @@ public class Player {
         return this.pawnColor;
     }
 
+    public Objective getSecretObjective(){
+        return getSecretObjective();
+    }
+
     /**
      * Places the given starting card on the player's game board.
      *
@@ -134,7 +138,7 @@ public class Player {
         try{
             hand[0] = ground.draw(0);
             hand[1] = ground.draw(0);
-            hand[2] = ground.draw(1);
+            hand[2] = ground.draw(3);
             return new DrawableCard[] {hand[0], hand[1], hand[2]};
         } catch (Exception e) {
             return null;
