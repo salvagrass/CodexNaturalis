@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.item.objective;
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.util.Symbol;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,15 +32,19 @@ public class ResourceObjective extends Objective {
      * @param boardRes The board's resources.
      * @return The points gained by the objective.
      */
-    public int countObjectivePoints(Card[][] board, Map<Symbol, Integer> boardRes) throws ArithmeticException{
+    public int countObjectivePoints(Card[][] board, Map<Symbol, Integer> boardRes) throws ArithmeticException {
         Symbol s = (Symbol) this.resources.keySet().toArray()[0];
-        int min = boardRes.get(s)/this.resources.get(s);
+        int min = boardRes.get(s) / this.resources.get(s);
         for (Map.Entry<Symbol, Integer> e : this.resources.entrySet()) {
             if (boardRes.get(e.getKey()) / this.resources.get(e.getKey()) < min) {
                 min = boardRes.get(e.getKey()) / this.resources.get(e.getKey());
             }
         }
         return min * getPoints();
+    }
+
+    public Map<Symbol, Integer> getResources() {
+        return new HashMap<>(this.resources);
     }
 
     /**

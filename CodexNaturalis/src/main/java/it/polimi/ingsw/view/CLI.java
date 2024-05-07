@@ -20,7 +20,8 @@ public class CLI extends UserView {
     System.out.print(s);
   }
 
-  public void showHand(List<CardView> hand){
-    this.show(CardView.showAsciiArt(hand));
+  public void showCards(List<CardView> cards){
+    this.show(CardView.showAsciiArt(cards));
   }
+  public void showCards(CardView... cards){this.show(CardView.showAsciiArt(cards));}
 }

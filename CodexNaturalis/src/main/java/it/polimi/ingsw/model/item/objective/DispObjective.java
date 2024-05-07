@@ -34,6 +34,10 @@ public class DispObjective extends Objective {
         return getPoints() * disposition.checkDisposition(board);
     }
 
+    public Disposition getDisposition(){
+        return this.disposition;
+    }
+
     /**
      * Returns a string representation of the objective.
      *

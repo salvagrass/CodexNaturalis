@@ -13,6 +13,29 @@ import java.util.Objects;
 
 /**
  * Concrete implementation of the factory design pattern for creating a list of GoldCards.
+ *
+ * <br><br>Gold Card: {<br>
+ *     "id": String,<br>
+ *     "frontCorners": [Symbol, Symbol, Symbol, Symbol],<br>
+ *     "center": [Symbol, ...],<br>
+ *     "requirements": {Symbol: int, ...},<br>
+ *     "cardPoints": int<br>
+ * }<br><br>
+ * Gold Card Symbol: {<br>
+ *     "id": String,<br>
+ *     "frontCorners": [Symbol, Symbol, Symbol, Symbol],<br>
+ *     "center": [Symbol, ...],<br>
+ *     "requirements": {Symbol: int, ...},<br>
+ *     "sym": Symbol,<br>
+ *     "cardPoints": int<br>
+ * }<br><br>
+ * Gold Card Corner: {<br>
+ *     "id": String,<br>
+ *     "frontCorners": [Symbol, Symbol, Symbol, Symbol],<br>
+ *     "center": [Symbol, ...],<br>
+ *     "requirements": {Symbol: int, ...},<br>
+ *     "cardPoints": int<br>
+ * }
  */
 public class GoldCardsFactory extends ItemFactory<GoldCard> {
 

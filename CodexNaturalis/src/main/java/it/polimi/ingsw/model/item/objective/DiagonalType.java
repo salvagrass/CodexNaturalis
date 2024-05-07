@@ -44,8 +44,8 @@ public class DiagonalType implements Disposition {
                                         board[i - 1][j - this.direction].getColor() != color))) {
                     //Check the entire diagonal starting at i,j and with {direction} direction
                     for (count = 1, k = 1; i + k < board.length &&
-                                           j + (k * this.direction) < board[0].length &&
-                                           j + (k * this.direction) >= 0; k++) {
+                            j + (k * this.direction) < board[0].length &&
+                            j + (k * this.direction) >= 0; k++) {
                         if (board[i + k][j + (k * this.direction)] != null &&
                                 board[i + k][j + (k * this.direction)].getColor() == color) {
                             count++;
@@ -57,6 +57,18 @@ public class DiagonalType implements Disposition {
             }
         }
         return dispositionCount;
+    }
+
+    public Symbol getColor() {
+        return this.color;
+    }
+
+    public int getDirection() {
+        return this.direction;
+    }
+
+    public int getLen() {
+        return this.len;
     }
 
     /**

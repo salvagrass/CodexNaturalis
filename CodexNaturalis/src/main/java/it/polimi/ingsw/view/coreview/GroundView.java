@@ -11,54 +11,65 @@ import it.polimi.ingsw.util.json.CardSerializeLogic;
 import it.polimi.ingsw.util.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.Symbol;
 
+import java.util.HashMap;
+
 /**
  * A class representing a view of the common ground.
  */
 public class GroundView {
   private final Gson gson;
-  private final Symbol[] decks; // 0 FOR RESOURCE DECK, 1 FOR GOLD DECK
-  private final ResourceCard[] groundResCards; // 2-3 RESOURCE CARDS
-  private final GoldCard[] groundGoldCards; // 4-5 GOLD CARDS
-  private final String[] commonObjectives;
+  private final CardView[] resGroundView; // 2-3 RESOURCE CARDS
+  private final CardView[] goldGroundView; // 4-5 GOLD CARDS
+  private final ObjectiveView[] objViews;
 
   /**
-   * COnstructor of the class.
+   * Constructor for the GroundView class.
+   * Initializes the Gson instance and arrays for resource cards, gold cards, and objectives.
    */
   public GroundView() {
     this.gson = new GsonBuilder().
             registerTypeHierarchyAdapter(Card.class, new CardSerializeLogic()).
             registerTypeHierarchyAdapter(Objective.class,new ObjectiveSerializeLogic()).
             create();
-    this.decks = new Symbol[2];
-    this.groundResCards = new ResourceCard[2];
-    this.groundGoldCards = new GoldCard[2];
-    this.commonObjectives = new String[2];
+    this.resGroundView = new CardView[3];
+    this.goldGroundView = new CardView[3];
+    this.objViews = new ObjectiveView[2];
   }
-  
+
   /**
-   * Update the object value.
-   * 
-   * @param idx The index of the element to be updated.
-   * @param updated The new object value.
+   * Updates the ground view with a new card or objective.
+   *
+   * @param idx     The index representing the type of item being updated.
+   * @param updated The JSON string representing the updated card or objective.
    */
   public void updGround(int idx, String updated) {
-    if (idx == 0 || idx == 1) {
-      this.decks[idx] = this.gson.fromJson(updated, Symbol.class);
-    } else if (idx == 2 || idx == 3) {
-      this.groundResCards[idx - 2] = this.gson.fromJson(updated, ResourceCard.class);
-    } else if (idx == 4 || idx == 5) {
-      this.groundGoldCards[idx - 4] = this.gson.fromJson(updated, GoldCard.class);
+    if (idx>=0 && idx<=2) {
+      if(idx==0){
+        Symbol center = this.gson.fromJson(updated,Symbol.class);
+        this.resGroundView[idx] = new CardView(new ResourceCard(new Symbol[]{Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE},new Symbol[]{center}, 0, "backView"));
+      }else{
+        this.resGroundView[idx] = new CardView(this.gson.fromJson(updated, ResourceCard.class));
+      }
+    } else if (idx>=3 && idx<=5) {
+      if(idx==3){
+        Symbol center = this.gson.fromJson(updated,Symbol.class);
+        this.goldGroundView[idx-3] = new CardView(new GoldCard(new Symbol[]{Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE},new Symbol[]{center},new HashMap<>() ,0, "backView"));
+      }else{
+        this.goldGroundView[idx-3] = new CardView(this.gson.fromJson(updated, GoldCard.class));
+      }
     } else {
-      this.commonObjectives[idx - 6] = this.gson.fromJson(updated,Objective.class).toString();
+      this.objViews[idx - 6] = new ObjectiveView(this.gson.fromJson(updated,Objective.class));
     }
   }
 
-  @Override
-  public String toString(){
-    String view = "Decks: [ResDeck(0): " + decks[0].name() + ", GoldDeck(1): " + decks[1].name()
-                                    + "]\n ResGroundCards:\n(2) " + groundResCards[0].toString() + "\n(3) " + groundResCards[1].toString()
-                                    + "\n GoldGroundCards:\n(4) " + groundGoldCards[0].toString() + "\n(5) " + groundGoldCards[1].toString()
-                                    + "\nObjectives:\n" + this.commonObjectives[0] + "\n" + this.commonObjectives[1];
-    return view;
+  /**
+   * Generates an ASCII representation of the common ground.
+   *
+   * @return The ASCII representation of the common ground.
+   */
+  public String asciiGround(){
+      return CardView.showAsciiArt(resGroundView) + '\n' +
+            CardView.showAsciiArt(goldGroundView) + '\n' +
+            ObjectiveView.showAsciiArt(objViews) + '\n';
   }
 }

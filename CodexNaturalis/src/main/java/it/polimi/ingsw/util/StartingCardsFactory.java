@@ -11,6 +11,14 @@ import java.util.Objects;
 
 /**
  * Concrete implementation of the factory design pattern for creating a list of starting cards.
+ *
+ * <br><br>Starting Card: {<br>
+ *     "id": String, <br>
+ *     "frontCorners": [Symbol, Symbol, Symbol, Symbol],<br>
+ *     "center": [Symbol...],<br>
+ *     "requirements": {Symbol: int, ...},<br>
+ *     "cardPoints": int <br>
+ * }
  */
 public class StartingCardsFactory extends ItemFactory<StartingCard> {
 

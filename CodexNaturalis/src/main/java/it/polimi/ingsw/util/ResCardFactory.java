@@ -10,7 +10,14 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Concrete implementation of the factory design pattern for creating the list of resource cards
+ * Concrete implementation of the factory design pattern for creating the list of resource cards.
+ *
+ * <br><br>Resource Card: {<br>
+ *     "id": String,<br>
+ *     "frontCorners": [Symbol, Symbol, Symbol, Symbol],<br>
+ *     "backCorners": [Symbol, Symbol, Symbol, Symbol],<br>
+ *     "center": [Symbol...]<br>
+ * }
  */
 public class ResCardFactory extends ItemFactory<ResourceCard> {
 

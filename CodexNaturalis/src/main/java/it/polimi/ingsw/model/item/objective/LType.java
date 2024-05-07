@@ -72,10 +72,11 @@ public class LType implements Disposition {
         }
 
         for (j = xStart, countDisp = 0; j <= xLim; j++) {
-            for (i = (yStart + j) % 2 == 0 ? yStart : yStart + 1; i <= yLim; i+=2) {
-                if (board[i][j] != null &&  board[i][j].getColor() == secondaryColor) {
+            for (i = (yStart + j) % 2 == 0 ? yStart : yStart + 1; i <= yLim; i += 2) {
+                if (board[i][j] != null && board[i][j].getColor() == secondaryColor) {
                     if (board[i + dirY][j + dirX] != null && board[i + dirY][j + dirX].getColor() == mainColor &&
-                            board[i + (yDim - 1) * dirY][j + dirX] != null && board[i + (yDim - 1) * dirY][j + dirX].getColor() == mainColor) {
+                            board[i + (yDim - 1) * dirY][j + dirX] != null
+                            && board[i + (yDim - 1) * dirY][j + dirX].getColor() == mainColor) {
                         countDisp++;
                         i += yDim - 2;
                     }
@@ -83,6 +84,18 @@ public class LType implements Disposition {
             }
         }
         return countDisp;
+    }
+
+    public Symbol getMainColor() {
+        return this.mainColor;
+    }
+
+    public Symbol getSecondaryColor() {
+        return this.secondaryColor;
+    }
+
+    public int getFirsCardPos() {
+        return this.firstCardPos;
     }
 
     /**
