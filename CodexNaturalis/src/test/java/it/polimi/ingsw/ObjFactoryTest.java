@@ -13,9 +13,15 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+/**
+ * Unit test for LTypeTest.
+ */
 public class ObjFactoryTest {
     List<Objective> objectiveList;
 
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         try {
@@ -25,13 +31,24 @@ public class ObjFactoryTest {
         }
     }
 
-
+    /**
+     * Test case for creating an item list with no input, using a DiagonalType object.
+     *
+     * @throws AssertionError if the test fails (e.g., if assertions are not met)
+     */
     @Test
     public void createItemList_noInput_DiagonalTypeObj(){
         Objective obj = objectiveList.getFirst();
         assertEquals(obj.getId(),"ObjDisp01");
         assertEquals(obj.toString(),"Disposition: DiagonalType:\nColor: FUNGUS\nDirection: -1\nLength: 3\nPoints: 2");
     }
+
+    /**
+     * Test case for creating an item list with no input, using an LType object.
+     *
+     * @throws AssertionError if the test fails (e.g., if assertions are not met)
+     */
+
     @Test
     public void createItemList_noInput_LTypeObj(){
         Objective obj = objectiveList.get(4);
@@ -39,6 +56,11 @@ public class ObjFactoryTest {
         assertEquals(obj.toString(),"Disposition: LType\nMain Color: FUNGUS\nSecondary Color: GRASS\nFirst Card Position: DL\nPoints: 3");
     }
 
+    /**
+     * Test case for creating an item list with no input, using a ResourceObjective.
+     *
+     * @throws AssertionError if the test fails (e.g., if assertions are not met)
+     */
     @Test
     public void createItemList_noInput_ResourceObjective(){
         Objective obj = objectiveList.get(8);

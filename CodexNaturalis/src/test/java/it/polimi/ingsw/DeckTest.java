@@ -11,10 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-
+/**
+ * Unit test for deck.
+ */
 public class DeckTest {
     Deck<ResourceCard> deck1;
     List<ResourceCard> ls1;
+
+    /**
+     * Sets up the initial state for testing.
+     * Creates a list of resource cards and a deck of cards.
+     */
     @Before
     public void setUp(){
         ls1 = new ArrayList<>(4);
@@ -33,6 +40,10 @@ public class DeckTest {
         deck1 = new Deck<>(ls1);
     }
 
+    /**
+     * Tests the behavior of the `draw` method in a normal deck.
+     * Verifies that the drawn cards match the expected output.
+     */
     @Test
     public void draw_normalDeck_correctOutput(){
         DrawableCard tmp;
@@ -56,6 +67,10 @@ public class DeckTest {
         assertNull(d.draw());
     }
 
+    /**
+     * Tests the `shuffle` method on an empty deck.
+     * Verifies that no exceptions are thrown during the shuffle operation.
+     */
     @Test
     public void shuffle_emptyDeck_noExceptions(){
         Deck<ResourceCard> d = new Deck<>(new ArrayList<>(0));
@@ -63,6 +78,10 @@ public class DeckTest {
         assertTrue(true); //No exceptions threw
     }
 
+    /**
+     * Tests the `shuffle` method on a one-card deck.
+     * Verifies that the deck remains unchanged after shuffling.
+     */
     @Test
     public void shuffle_oneCardDeck_noChanges(){
         List<ResourceCard> ls = new ArrayList<>(1), ls2;
@@ -75,6 +94,11 @@ public class DeckTest {
         assertEquals(d.draw(), d2.draw());
     }
 
+    /**
+     * Tests the `shuffle` method on a normal deck.
+     * Verifies that the shuffled deck produces a different permutation
+     * compared to the original deck.
+     */
     @Test
     public void shuffle_normalDeck_differentPermutation(){
         boolean samePermutation = true;
@@ -89,6 +113,10 @@ public class DeckTest {
         assertFalse(samePermutation);
     }
 
+    /**
+     * Tests the `getSize` method on a normal deck.
+     * Verifies that the deck size is correctly updated after drawing cards.
+     */
     @Test
     public void getSize_normalDeck_correctOutput(){
         assertEquals(deck1.getSize(), 4);

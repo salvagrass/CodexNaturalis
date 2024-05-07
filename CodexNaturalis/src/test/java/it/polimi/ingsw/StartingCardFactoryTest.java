@@ -11,8 +11,15 @@ import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
 
+/**
+ * Unit test for ResCardFactoryTest.
+ */
 public class StartingCardFactoryTest {
     List<StartingCard> startingCards;
+
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         try {
@@ -22,6 +29,9 @@ public class StartingCardFactoryTest {
         }
     }
 
+    /**
+     * Test case for the createItemList method with no input, focusing on the startingCardList.
+     */
     @Test
     public void createItemList_noInput_startingCardList(){
         StartingCard card = startingCards.get(4);

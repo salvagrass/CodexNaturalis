@@ -11,9 +11,15 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Unit test for GoldCardSymbolTest.
+ */
 public class GoldCardSymbolTest {
     GoldCardSymbol c;
 
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         Map<Symbol, Integer> req = new HashMap<>();
@@ -26,6 +32,9 @@ public class GoldCardSymbolTest {
                 Symbol.POTION, null);
     }
 
+    /**
+     * Test case for calculating points when the card is front face up.
+     */
     @Test
     public void givePoints_frontFaceUp_correctOutput(){
         Map<Symbol, Integer> res = new HashMap<>();
@@ -42,6 +51,9 @@ public class GoldCardSymbolTest {
         assertEquals(c.givePoints(new Card[][] {{null,null},{null,null}}, res, 0, 0), 5);
     }
 
+    /**
+     * Test case for calculating points when the card is back face up.
+     */
     @Test
     public void givePoints_backFaceUp_zero(){
         Map<Symbol, Integer> res = new HashMap<>();

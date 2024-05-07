@@ -11,9 +11,15 @@ import java.util.Map;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Unit test for GoldCardTest.
+ */
 public class GoldCardTest {
     GoldCard c;
 
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         Map<Symbol, Integer> req = new HashMap<>();
@@ -25,6 +31,9 @@ public class GoldCardTest {
                 3, null);
     }
 
+    /**
+     * Checks if the provided requirements are met.
+     */
     @Test
     public void checkRequirements_enoughItems_true(){
         Map<Symbol, Integer> req = new HashMap<>();
@@ -41,6 +50,9 @@ public class GoldCardTest {
         assertTrue(c.checkRequirements(req));
     }
 
+    /**
+     * Checks if the provided requirements are not met.
+     */
     @Test
     public void checkRequirements_notEnoughItems_false(){
         Map<Symbol, Integer> req = new HashMap<>();

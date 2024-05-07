@@ -13,8 +13,14 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * Unit test for GoldCardFactoryTest.
+ */
 public class GoldCardFactoryTest {
     List<GoldCard> goldCards;
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         try {
@@ -24,6 +30,10 @@ public class GoldCardFactoryTest {
             fail();
         }
     }
+
+    /**
+     * Test case for creating an item list with no input, specifically for a GoldCard.
+     */
     @Test
     public void createItemList_noInput_GoldCard(){
         GoldCard card = goldCards.getFirst();
@@ -37,6 +47,9 @@ public class GoldCardFactoryTest {
         assertEquals(card.getRequirements(),req);
     }
 
+    /**
+     * Test case for creating an item list with no input, specifically for a GoldCardCorner.
+     */
     @Test
     public void createItemList_noInput_GoldCardCorner(){
         GoldCard card = goldCards.get(16);
@@ -52,6 +65,9 @@ public class GoldCardFactoryTest {
         assertTrue(card instanceof GoldCardCorner);
     }
 
+    /**
+     * Test case for creating an item list with no input, specifically for a GoldCardSymbol.
+     */
     @Test
     public void createItemList_noInput_GoldCardSymbol(){
         GoldCard card = goldCards.get(28);

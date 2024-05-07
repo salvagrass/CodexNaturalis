@@ -9,10 +9,16 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Unit test for DiagonalTypeTest.
+ */
 public class DiagonalTypeTest {
     DiagonalType d1, d2;
     ResourceCard c;
 
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         d1 = new DiagonalType(Symbol.GRASS, 1, 3);
@@ -22,6 +28,9 @@ public class DiagonalTypeTest {
                 1, null);
     }
 
+    /**
+     * Tests the `checkDisposition` method with various input scenarios to ensure correct output.
+     */
     @Test
     public void checkDisposition_noOverlappedDispositions_correctOutput(){
         ResourceCard c2 = new ResourceCard(new Symbol[] {Symbol.FEATHER, Symbol.BUTTERFLY, Symbol.NOTAVAILABLE, Symbol.EMPTY},
@@ -167,6 +176,9 @@ public class DiagonalTypeTest {
                 }), 4);
     }
 
+    /**
+     * Tests the `checkDisposition` method with overlapped dispositions to ensure correct output.
+     */
     @Test
     public void checkDisposition_unvalidCells_correctOutput(){
         assertEquals(d1.checkDisposition(new Card[][]

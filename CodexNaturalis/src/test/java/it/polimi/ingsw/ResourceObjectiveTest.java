@@ -11,9 +11,15 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Unit test for ResCardFactoryTest.
+ */
 public class ResourceObjectiveTest {
     ResourceObjective r;
 
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         Map<Symbol, Integer> res = new HashMap<>();
@@ -21,6 +27,11 @@ public class ResourceObjectiveTest {
         r = new ResourceObjective(2, null, res);
     }
 
+    /**
+     * Test case for counting objective points when there are not enough symbols.
+     *
+     * @throws AssertionError if the test fails (e.g., if assertions are not met)
+     */
     @Test
     public void countObjectivePoints_notEnoughSymbol_zero(){
         Map<Symbol, Integer> res = new HashMap<>();
@@ -34,6 +45,10 @@ public class ResourceObjectiveTest {
         assertEquals(r.countObjectivePoints(new Card[][]{{null, null},{null, null}}, res), 0);
     }
 
+    /**
+     * Calculates the objective points based on the provided symbol counts.
+     * The method takes a map of symbol counts and returns the total objective points.
+     */
     @Test
     public void countObjectivePoints_enoughSymbol_correctOutput(){
         Map<Symbol, Integer> res = new HashMap<>();
@@ -55,6 +70,10 @@ public class ResourceObjectiveTest {
         assertEquals(r.countObjectivePoints(new Card[][]{{null, null},{null, null}}, res), 6);
     }
 
+    /**
+     * Calculates the objective points based on the provided symbol counts.
+     * The method takes a map of symbol counts and returns the total objective points.
+     */
     @Test
     public void countObjectivePoints_multipleSymbolsRequired_correctOutput(){
         Map<Symbol, Integer> mapRes = new HashMap<>();

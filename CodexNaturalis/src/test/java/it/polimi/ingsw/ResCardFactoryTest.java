@@ -8,7 +8,16 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * Unit test for ResCardFactoryTest.
+ */
 public class ResCardFactoryTest {
+
+    /**
+     * Test case for creating an item list with no input, using resource cards.
+     *
+     * @throws AssertionError if the test fails (e.g., if assertions are not met)
+     */
     @Test
     public void createItemList_noInput_resCardList(){
         List<ResourceCard> cards = null;

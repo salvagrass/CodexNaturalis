@@ -9,10 +9,16 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Unit test for LTypeTest.
+ */
 public class LTypeTest {
     LType l1, l2, l3, l4;
     ResourceCard c, d;
 
+    /**
+     * Sets up the test environment by initializing objects for testing.
+     */
     @Before
     public void setUp(){
         l1 = new LType(Symbol.GRASS, Symbol.BUTTERFLY, 0);
@@ -27,6 +33,9 @@ public class LTypeTest {
                 1, null);
     }
 
+    /**
+     * Tests the disposition of cards in various edge cases.
+     */
     @Test
     public void checkDisposition_noOverlappedDispositionsEdgeCases_correctOutput(){
         assertEquals(l1.checkDisposition(new Card[][]
@@ -103,6 +112,9 @@ public class LTypeTest {
                 }), 2);
     }
 
+    /**
+     * Tests the disposition of cards in cases with overlapped dispositions.
+     */
     @Test
     public void checkDisposition_overlappedDispositions_correctOutput(){
         assertEquals(l1.checkDisposition(new Card[][]
@@ -147,6 +159,9 @@ public class LTypeTest {
                 }), 2);
     }
 
+    /**
+     * Tests the disposition of cards with invalid cells (null values).
+     */
     @Test
     public void checkDisposition_unvalidCells_correctOutput(){
         assertEquals(l1.checkDisposition(new Card[][]
