@@ -10,9 +10,11 @@ import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.util.PawnColor;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
 import it.polimi.ingsw.util.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.Symbol;
+import it.polimi.ingsw.view.GameScene;
 
 import java.util.List;
 import java.util.Map;
@@ -90,6 +92,15 @@ public class MsgCreator {
         return displayMessage(displayText) + "|CHOOSE;" + choose.toString().replace('[', '{').replace(']', '}') + ";" + MsgCreator.format(error);
     }
 
+    public static String chooseColorMsg(List<PawnColor> colors){
+        String s = cat(displayMessage("Choose a color: " + colors.toString()), updColorMsg(colors) + "\n");
+        return cat(s,  "CHOOSECOLOR;" + format("Color not available, try again!"));
+    }
+
+    public static String updColorMsg(List<PawnColor> colors){
+        return "UPDCOLORS;" + gson.toJson(colors);
+    }
+
     /**
      * Creates a message to send the secret objective.
      * 
@@ -131,7 +142,7 @@ public class MsgCreator {
      * @param leaderboard The cards in the player's hand.
      * @return The message created.
      */
-    public static String leadeboarMessage(Map<Player, Integer> leaderboard) {
+    public static String leadeboarMessage(Map<String, Integer> leaderboard) {
         return "LEADERBOARD;" + gson.toJson(leaderboard);
     }
 
@@ -178,6 +189,10 @@ public class MsgCreator {
         return value ? "CONFIRM" : "DENIED";
     }
 
+    public static String changeScenary(GameScene scene){
+        return "SETSCENE;" + scene;
+    }
+
     /**
      * Creates a message containing the updated ground state.
      * 
@@ -217,6 +232,10 @@ public class MsgCreator {
         JsonObject object = gson.toJsonTree(player).getAsJsonObject();
         msg += gson.toJson(object.get("hand"),DrawableCard[].class);
         return msg;
+    }
+
+    public static String setNameMsg(String name){
+        return "NAME;"+name;
     }
     
     /**

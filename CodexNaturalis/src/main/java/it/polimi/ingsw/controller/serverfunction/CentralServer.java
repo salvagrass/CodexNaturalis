@@ -9,9 +9,7 @@ import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.util.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
-import it.polimi.ingsw.util.ObjectiveSerializeLogic;
 
-import java.io.FileNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -20,7 +18,6 @@ import java.net.ServerSocket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +27,7 @@ import java.util.concurrent.Executors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.polimi.ingsw.view.GameScene;
 
 /**
  * A class that waits for players to connect, creates a Comm object for each one, and sends them to a game lobby.
@@ -128,6 +126,9 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                     valid = loadGame(id, comm);
                     break;
             }
+            if(!valid){
+                comm.sendMsg(MsgCreator.changeScenary(GameScene.MENU));
+            }
         }while(!valid);
     }
 
@@ -146,10 +147,12 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
             }
             activeGames.add(id);
         }
+        comm.sendMsg(MsgCreator.changeScenary(GameScene.NOTHING));
         comm.sendMsg(MsgCreator.chooseMessage("Insert lobby capacity: ", 2,4, "Invalid choice, try again!"));
         int numPlayers = Integer.parseInt(comm.getMsg());
         GameLogic game = new GameLogic(this,numPlayers);
         games.put(id, game);
+
         comm.sendMsg(MsgCreator.displayMessage("Game with ID created\n"));
         return true;
     }

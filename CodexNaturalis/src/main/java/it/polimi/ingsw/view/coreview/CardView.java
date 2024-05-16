@@ -129,8 +129,8 @@ public class CardView {
         this.setCorners(card.getShowingCorners(),false);
 
         Symbol[] center = card.getCenter();
-        for(Symbol symbol : center) {
-            this.asciiArt.put(new Coord(4 - (center.length / 2), (asciiArtYDim - 1) / 2, false), symbol.INITIAL);
+        for(int i = 0; i < center.length; i++){
+            this.asciiArt.put(new Coord(4 - (center.length / 2) + i, (asciiArtYDim - 1) / 2, false), center[i].INITIAL);
         }
     }
 

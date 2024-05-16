@@ -30,6 +30,17 @@
       <version>2.10.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>21.0.3</version> <!-- Replace with the version you want to use -->
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>21.0.3</version> <!-- Replace with the version you want to use -->
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -73,6 +84,14 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.4.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>${javafx.maven.plugin.version}</version>
+          <configuration>
+            <mainClass>it.polimi.ingsw.JavaFxTest</mainClass>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

@@ -13,7 +13,6 @@ import it.polimi.ingsw.util.exception.InvalidPlacementException;
 import it.polimi.ingsw.util.exception.InvalidSelectionException;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -125,14 +124,16 @@ public class GameLogic {
      */
     private void gameFlow(){
         Comm.sendBroadcast(MsgCreator.gameStartMsg(), turnOrder);
-        while (!fullTurn());
-        fullTurn();
+        while (!fullTurn(false));
+        Comm.sendBroadcast(MsgCreator.displayMessage("Last round\n"), this.turnOrder);
+        fullTurn(true);
 
         for (Comm comm : turnOrder) {
             players.get(comm).addObjectivesScore(this.ground);
             Comm.sendBroadcast(MsgCreator.updPointsMsg(turnOrder.indexOf(comm), players.get(comm).getPoints()),
                     this.turnOrder);
         }
+        Comm.sendBroadcast(MsgCreator.displayMessage("GAME ENDED!\n"), this.turnOrder);
         declareWinner();
     }
 
@@ -146,20 +147,20 @@ public class GameLogic {
      * LEADERBOARD;{"player1":1,"player2":2,"player3":2}
      */
     private void declareWinner() {
-        Map<Player, Integer> leaderboard = new HashMap<>();
+        Map<String, Integer> leaderboard = new HashMap<>();
         int pos = 1;
         List<Player> ls = this.players.values().stream()
-                .sorted(Comparator.comparingInt(Player::getPoints)
-                        .thenComparingInt(Player::getCompletedObjs))
+                .sorted(Comparator.comparingInt(Player::getPoints).
+                        thenComparingInt(Player::getCompletedObjs).reversed())
                 .toList();
         for(int i = 0; i < ls.size() - 1; i++){
-            leaderboard.put(ls.get(i), pos);
+            leaderboard.put(ls.get(i).getNickname(), pos);
             if(!(ls.get(i).getPoints() == ls.get(i+1).getPoints() &&
                     ls.get(i).getCompletedObjs() == ls.get(i+1).getCompletedObjs())){
                 pos++;
             }
         }
-        leaderboard.put(ls.getLast(), pos);
+        leaderboard.put(ls.getLast().getNickname(), pos);
         Comm.sendBroadcast(MsgCreator.leadeboarMessage(leaderboard), turnOrder);
     }
 
@@ -168,7 +169,7 @@ public class GameLogic {
      *
      * @return True if someone reached 20 points or both decks are empty, False otherwise.
      */
-    private boolean fullTurn() {
+    private boolean fullTurn(boolean end) {
         boolean endGame = false;
         for (int i = 0; i < players.size(); i++) {
             this.currPlayer = this.turnOrder.get(i);
@@ -176,8 +177,11 @@ public class GameLogic {
             this.cardDrawn = false;
             playTurn(this.turnOrder.get(i));
             try {
-                endGame = endGame || players.get(this.turnOrder.get(i)).getPoints() >= 20 ||
-                        (ground.isEmpty(0) && ground.isEmpty(1));
+                if(!end && !endGame &&players.get(this.turnOrder.get(i)).getPoints() >= 1 ||
+                        (ground.isEmpty(0) && ground.isEmpty(1))){
+                    endGame = true;
+                    Comm.sendBroadcast(MsgCreator.displayMessage("Triggered the end of game\n"), this.turnOrder);
+                }
             } catch (InvalidSelectionException e) {
                 System.out.println("can't occur");
             }
@@ -282,7 +286,7 @@ public class GameLogic {
 
             idx = Integer.parseInt(s[1]);
             if(idx == 1 || idx == 2){
-                cmd = MsgCreator.updGroundViewMsg(idx, ground.getGroundResourceCards()[idx-2]);
+                cmd = MsgCreator.updGroundViewMsg(idx, ground.getGroundResourceCards()[idx-1]);
                 idx = 0;
             } else if (idx == 4 || idx == 5) {
                 cmd = MsgCreator.updGroundViewMsg(idx, this.ground.getGroundGoldCard()[idx-4]);

@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.gameplane.Player;
 import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.util.PawnColor;
+import it.polimi.ingsw.view.GameScene;
 
 import java.util.*;
 
@@ -49,6 +50,7 @@ class SetUpLogic {
      */
     public Player addPlayer(Comm comm, CommonGround ground) {
         StartingCard card;
+
         String playerName = linkName(comm);
         record.put(comm, State.STARTING);
         synchronized (this){
@@ -109,8 +111,9 @@ class SetUpLogic {
         String name;
         boolean available = true;
 
+        game.sendMsg(comm,MsgCreator.changeScenary(GameScene.NAME));
         do{
-            game.sendMsg(comm, MsgCreator.chooseMessage("Insert name (1-8 length, starts with a letter, no special characters): ",
+            game.sendMsg(comm,MsgCreator.chooseMessage("Insert name (1-8 length, starts with a letter, no special characters): ",
                     "^[a-zA-Z][a-zA-Z0-9]{0,7}$",
                     "Invalid name: 1-8 length, starts with a letter, no special characters"));
             name = game.getMsg(comm);
@@ -118,11 +121,13 @@ class SetUpLogic {
                 if (nameToComm.get(name) == null) {
                     nameToComm.put(name, comm);
                     available = false;
+                }else{
+                    game.sendMsg(comm,MsgCreator.changeScenary(GameScene.NOTHING));
                 }
             }
         }while(available);
-        game.sendMsg(comm, MsgCreator.displayMessage("valid name\n"));
-
+        String msg = MsgCreator.cat(MsgCreator.displayMessage("valid name\n"), MsgCreator.setNameMsg(name));
+        game.sendMsg(comm, msg);
         return name;
     }
 
@@ -133,6 +138,7 @@ class SetUpLogic {
      * @param card The chosen orientation.
      */
     private void chooseStartingCard(Comm comm, StartingCard card){
+        game.sendMsg(comm,MsgCreator.changeScenary(GameScene.CHOOSEITEM));
         String cardToJson = MsgCreator.sendStartingCardMsg(card);
         String chooseOrientation = MsgCreator.chooseMessage("Choose an orientation for the starting card (0 back, 1 front): ", 0, 1,"Invalid orientation, try again!");
         game.sendMsg(comm,MsgCreator.cat(cardToJson,chooseOrientation));
@@ -149,16 +155,17 @@ class SetUpLogic {
         PawnColor color = null;
         boolean chosen;
 
+        game.sendMsg(comm,MsgCreator.changeScenary(GameScene.COLOR));
         chosen = true;
         while (chosen) {
-            game.sendMsg(comm, 
-                    MsgCreator.chooseMessage(this.availableColors.toString() +
-                            ": ", this.availableColors, "Color not available, try again!"));
+            game.sendMsg(comm, MsgCreator.chooseColorMsg(this.availableColors));
             color = PawnColor.valueOf(game.getMsg(comm));
             synchronized (this.availableColors) {
                 if (availableColors.contains(color)) {
                     availableColors.remove(color);
                     chosen = false;
+                }else{
+                    game.sendMsg(comm,MsgCreator.changeScenary(GameScene.NOTHING));
                 }
             }
         }
@@ -167,11 +174,11 @@ class SetUpLogic {
         Map<Comm,State> copy = new HashMap<>(record);
 
         //TODO handle this case
-        /*for (Comm c : copy.keySet()) {
+        for (Comm c : copy.keySet()) {
             if (c != comm && copy.get(c) == State.COLOR) {
-                game.sendMsg(comm, "DISPLAY;"+availableColors.toString());
+                game.sendMsg(comm, MsgCreator.updColorMsg(this.availableColors));
             }
-        }*/
+        }
         return color;
     }
 
@@ -183,6 +190,7 @@ class SetUpLogic {
      */
     private Objective chooseObjective(Comm comm, CommonGround ground) {
         Objective[] objs;
+        game.sendMsg(comm,MsgCreator.changeScenary(GameScene.CHOOSEITEM));
         synchronized (ground) {
             objs = new Objective[] { ground.getRandomObjective(),
                     ground.getRandomObjective() };
