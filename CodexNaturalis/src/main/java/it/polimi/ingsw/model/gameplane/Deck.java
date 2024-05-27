@@ -43,7 +43,9 @@ public class Deck <T extends DrawableCard>{
     public T draw() {
         if (deck.isEmpty())
             return null;
-        return deck.removeLast();
+        T card = deck.removeLast();
+        card.setShowingFace(!card.getShowingFace());
+        return card;
     }
 
     //TODO javadoc

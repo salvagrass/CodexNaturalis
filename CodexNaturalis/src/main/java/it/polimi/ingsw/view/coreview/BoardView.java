@@ -31,11 +31,31 @@ public class BoardView {
     public BoardView(){
         this.placedCards = new HashMap<>();
         this.inventory = new HashMap<>();
+        this.counter = -1;
+        this.xMax = 0;
+        this.xMin = 0;
+        this.yMax = 0;
+        this.yMin = 0;
+    }
+
+    public BoardView(Card[][] board,Map<Symbol,Integer> inventory){
+        int i,j,xDiv,yDiv;
+        this.xMax = 0;
+        this.xMin = 0;
+        this.yMax = 0;
+        this.yMin = 0;
+        xDiv = (board.length-1)/2;
+        yDiv = (board.length-1)/2;
+        this.placedCards = new HashMap<>();
         counter = -1;
-        xMax = 0;
-        xMin = 0;
-        yMax = 0;
-        yMin = 0;
+        for(i=0;i<board.length;i++){
+            for(j=0;j<board[0].length;j++){
+                if(board[i][j]!=null){
+                    this.updBoardView(new CardView(board[i][j]),i-xDiv,j-yDiv,null);
+                }
+            }
+        }
+        this.inventory = inventory;
     }
 
     /**
@@ -46,8 +66,7 @@ public class BoardView {
      * @param y         The y-coordinate of the position on the board.
      * @param inventory The inventory to be updated.
      */
-    public void updBoardView(Card card, int x, int y, Map<Symbol,Integer> inventory){
-        CardView view = new CardView(card);
+    public void updBoardView(CardView card, int x, int y, Map<Symbol,Integer> inventory){
         counter++;
         if(x>=xMax)
             xMax = x;
@@ -60,7 +79,7 @@ public class BoardView {
             yMin = y;
         }
         this.inventory = inventory;
-        placedCards.put(new Coord(x,y),view);
+        placedCards.put(new Coord(x,y),card);
     }
 
     /**
@@ -77,7 +96,8 @@ public class BoardView {
             for(j=yMin;j<=yMax;j++){
                 view = placedCards.get(new Coord(i,j));
                 if(view!=null)
-                    board.append(String.format("%-14s","["+view.getColor().ANSI_COLOR+"X"+Symbol.ANSI_RESET+"]"));
+                    board.append(String.format("%-13s","["+view.getColor().ANSI_COLOR+"X"+Symbol.ANSI_RESET+"]"))
+                            .append(view.getColor().ANSI_COLOR.equals(Symbol.ANSI_RESET) ? "" : " ");
                 else
                     board.append(String.format("%-5s","[ ]"));
             }

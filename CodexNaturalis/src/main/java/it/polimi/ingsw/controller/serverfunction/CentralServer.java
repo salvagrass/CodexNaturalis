@@ -1,33 +1,27 @@
 package it.polimi.ingsw.controller.serverfunction;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.controller.connection.Comm;
 import it.polimi.ingsw.controller.connection.RMIComm;
 import it.polimi.ingsw.controller.connection.RemoteComm;
 import it.polimi.ingsw.controller.connection.SocketComm;
-import it.polimi.ingsw.controller.userclient.RemoteClient;
-import it.polimi.ingsw.model.item.card.Card;
-import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.util.ObjectiveSerializeLogic;
-import it.polimi.ingsw.util.json.CardSerializeLogic;
+import it.polimi.ingsw.controller.userclient.ClientRemote;
+import it.polimi.ingsw.util.Phase;
+import it.polimi.ingsw.util.json.SaveData;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.view.GameScene;
 
 /**
  * A class that waits for players to connect, creates a Comm object for each one, and sends them to a game lobby.
@@ -36,9 +30,9 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
     private final int port;
     private final ExecutorService executor;
     private final Map<String,GameLogic> games;
-    private final List<String> activeGames;
-    private final List<String> savedGamesId;
-    private final Map<String,SaveLogic> loadedGames;
+    private final Map<String, LoadLogic> loadingGames;
+    private final Set<String> memorized;
+    private final Map<String,Object> loadLocks;
     final Object lock;
 
     /**
@@ -51,10 +45,19 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
         this.port = port;
         this.executor = Executors.newFixedThreadPool(30);
         this.games = new ConcurrentHashMap<>();
-        this.loadedGames = new ConcurrentHashMap<>();
+        this.loadingGames = new ConcurrentHashMap<>();
+        this.memorized = new HashSet<>();
+        try {
+            BufferedReader fw = new BufferedReader (new FileReader("memorized_games.txt"));
+            String line;
+            while((line = fw.readLine())!=null){
+                memorized.add(line);
+            }
+        } catch (IOException e) {
+            //LOG CAN'T OPEN THE LOADED GAMES
+        }
+        this.loadLocks = new ConcurrentHashMap<>();
         this.lock = new Object();
-        this.activeGames = Collections.synchronizedList(new ArrayList<>());
-        this.savedGamesId = Collections.synchronizedList(new ArrayList<>());
     }
 
     /**
@@ -71,7 +74,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
         }
         while(true){
             try {
-                SocketComm socketComm = new SocketComm(serverSocket.accept());
+                Socket socket = serverSocket.accept();
+                SocketComm socketComm = new SocketComm(socket);
                 executor.submit(()->handleClient(socketComm));
             } catch (IOException e) {
                 String s = "Can't open the client socket: " + e.getMessage();
@@ -80,10 +84,9 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
         }
     }
 
-    public RemoteComm join(RemoteClient client) throws RemoteException {
+    public RemoteComm join(ClientRemote client) throws RemoteException {
         RMIComm comm = new RMIComm(client);
-        client.setComm(comm);
-        handleClient(comm);
+        executor.submit(()->handleClient(comm));
         return comm;
     }
 
@@ -108,134 +111,183 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
      * @param comm The connection to the specific client.
      */
     private void handleClient(Comm comm){
-        boolean valid = true;
+        boolean valid;
         do {
-            comm.sendMsg(MsgCreator.chooseMessage("1)Create Game\n2)Join Game\n3)Load Game\n",1,3, "Invalid choice, try again!"));
+            comm.sendMsg(MsgCreator.changePhaseMsg(Phase.MENU));
+            comm.sendMsg(MsgCreator.chooseMsg());
             String cmd = comm.getMsg();
-            comm.sendMsg(MsgCreator.chooseMessage("Insert Room ID (6 alphanumeric characters): ", "^[a-zA-Z0-9]{6}$", "Invalid ID: 6 alphanumeric characters"));
-            String id = comm.getMsg();
-            switch (cmd) {
-                case "1":
-                    valid = createGame(id, comm);
-                    if(!valid)
-                        break;
-                case "2":
-                    valid = joinGame(id, comm);
-                    break;
-                case "3":
-                    valid = loadGame(id, comm);
-                    break;
-            }
-            if(!valid){
-                comm.sendMsg(MsgCreator.changeScenary(GameScene.MENU));
-            }
-        }while(!valid);
+            valid = switch(cmd) {
+                case "1" -> createGame(comm);
+                case "2" -> joinGame(comm);
+                case "3" -> loadGame(comm);
+                case "exit" -> {
+                    comm.sendMsg(MsgCreator.changePhaseMsg(Phase.EXIT));
+                    comm.close();
+                    yield true;
+                }
+                default -> false;
+            };
+        } while(!valid);
     }
 
     /**
      * Creates a GameLogic instance to handle a game.
-     *
-     * @param id The ID of the lobby.
      * @param comm The connection to the specific client.
-     * @return True if the creation succeeds, false otherwise.
      */
-    private boolean createGame(String id, Comm comm) {
-        synchronized (this.activeGames) {
-            if(this.activeGames.contains(id)||this.savedGamesId.contains(id)) {
-                comm.sendMsg(MsgCreator.displayMessage("ID already exists\n"));
+    private boolean createGame(Comm comm) {
+        String input, id;
+        int numPlayers;
+        boolean isContained;
+        comm.sendMsg(MsgCreator.changePhaseMsg(Phase.CREATE));
+        do{
+            comm.sendMsg(MsgCreator.chooseMsg());
+            input = comm.getMsg();
+            id = input.split(" ")[0];
+            if (id.equals("exit")) {
+                comm.sendMsg(MsgCreator.confirmMsg(true, "Returned to menu"));
                 return false;
             }
-            activeGames.add(id);
-        }
-        comm.sendMsg(MsgCreator.changeScenary(GameScene.NOTHING));
-        comm.sendMsg(MsgCreator.chooseMessage("Insert lobby capacity: ", 2,4, "Invalid choice, try again!"));
-        int numPlayers = Integer.parseInt(comm.getMsg());
-        GameLogic game = new GameLogic(this,numPlayers);
-        games.put(id, game);
-
-        comm.sendMsg(MsgCreator.displayMessage("Game with ID created\n"));
+            synchronized(this.games) {
+                numPlayers = Integer.parseInt(input.split(" ")[1]);
+                if (this.games.containsKey(id)||this.memorized.contains(id)) {
+                    comm.sendMsg(MsgCreator.confirmMsg(false, "ID already exists"));
+                    isContained = true;
+                }
+                else {
+                    comm.sendMsg(MsgCreator.confirmMsg(true, "ID available"));
+                    isContained = false;
+                    GameLogic game = new GameLogic(this, id, numPlayers);
+                    comm.setGame(game);
+                    game.addRecord(comm);
+                    games.put(id, game);
+                    executor.submit(() -> game.addPlayer(comm));
+                }
+            }
+        } while (isContained);
         return true;
     }
 
     /**
      * Connects a client with a game.
      *
-     * @param id The ID of the lobby.
      * @param comm The connection to the specific client.
-     * @return True if the connection succeeds, false otherwise.
      */
-    private boolean joinGame(String id, Comm comm) {
-        GameLogic game;
-        synchronized(lock){
-            if (!games.containsKey(id)) {
-                comm.sendMsg(MsgCreator.displayMessage("Game with ID doesn't exist\n"));
+    private boolean joinGame(Comm comm) {
+        GameLogic game = null;
+        String id;
+        boolean isAvailable;
+
+        comm.sendMsg(MsgCreator.changePhaseMsg(Phase.JOIN));
+        do{
+            comm.sendMsg(MsgCreator.chooseMsg());
+            id = comm.getMsg();
+            if (id.equals("exit")) {
+                comm.sendMsg(MsgCreator.confirmMsg(true, "Returned to menu"));
                 return false;
             }
-            game = games.get(id);
-            synchronized(game){
-                if(game.isFull()){
-                    comm.sendMsg(MsgCreator.displayMessage("Full lobby\n"));
-                    return false;
+            synchronized(lock){
+                if (!games.containsKey(id)) {
+                    comm.sendMsg(MsgCreator.confirmMsg(false, "Game with ID doesn't exist"));
+                    isAvailable = false;
+                } else {
+                    game = games.get(id);
+                    synchronized (games.get(id)) {
+                        if (game.isFull()) {
+                            comm.sendMsg(MsgCreator.confirmMsg(false, "Full lobby"));
+                            isAvailable = false;
+                        } else{
+                            comm.sendMsg(MsgCreator.confirmMsg(true, "Joining Game"));
+                            isAvailable = true;
+                            comm.setGame(game);
+                            game.addRecord(comm);
+                        }
+                    }
                 }
-                comm.sendMsg(MsgCreator.displayMessage("Joining Game\n"));
-                comm.setGame(game);
-                game.addRecord(comm);
             }
-        }
-        executor.submit(()->game.addPlayer(comm));
+        } while(!isAvailable);
+        GameLogic tmp = game;
+        this.executor.submit(()->tmp.addPlayer(comm));
         return true;
     }
 
     /**
      * Load a previously saved game.
      *
-     * @param id The ID of the lobby.
      * @param comm The connection to the specific client.
-     * @return True if the load succeeds, false otherwise.
      */
-    private boolean loadGame(String id, Comm comm) {
-        SaveLogic game;
-        synchronized (this.activeGames) {
-            if (this.activeGames.contains(id)) {
-                game = this.loadedGames.get(id);
-                if (game.isFull()) {
-                    comm.sendMsg(MsgCreator.displayMessage("Game already full\n"));
-                    return false;
-                }
-            } else {
-                try {
-                    FileReader fileReader = new FileReader(id + "_saved.json");
-                    Gson gson = new GsonBuilder().registerTypeHierarchyAdapter(Card.class, new CardSerializeLogic())
-                            .registerTypeHierarchyAdapter(Objective.class, new ObjectiveSerializeLogic())
-                            .setPrettyPrinting()
-                            .create();
-                    game = gson.fromJson(fileReader, SaveLogic.class);
-                    this.activeGames.add(id);
-                    this.loadedGames.put(id, game);
-                    fileReader.close();
-                }catch(FileNotFoundException e) {
-                    comm.sendMsg(MsgCreator.displayMessage("Id does not exist\n"));
-                    return false;
-                }catch(IOException e){
-                    //TODO HANDLE
-                    throw new RuntimeException("Can't close saved file");
+    private boolean loadGame(Comm comm) {
+        String id=null;
+        boolean available = false;
+        comm.sendMsg(MsgCreator.changePhaseMsg(Phase.JOIN));
+        while(!available) {
+            comm.sendMsg(MsgCreator.chooseMsg());
+            id = comm.getMsg();
+            if(id.equals("exit")){
+                comm.sendMsg(MsgCreator.confirmMsg(true,"returned to menu"));
+                return false;
+            }
+            synchronized (this.games) {
+                if (!this.memorized.contains(id)) {
+                    comm.sendMsg(MsgCreator.confirmMsg(false, "id not memorized"));
+                }else{
+                    available = true;
                 }
             }
-            game.addRecord(comm);
         }
-        game.join(comm, this);
+        available = false;
+        while(!available) {
+            this.loadLocks.putIfAbsent(id, new Object());
+            synchronized (this.loadLocks.get(id)) {
+                if (this.loadingGames.containsKey(id)) {
+                    LoadLogic logic = loadingGames.get(id);
+                    if (logic.isFull()) {
+                        comm.sendMsg(MsgCreator.confirmMsg(false, "full lobby"));
+                    } else {
+                        logic.addRecord(comm);
+                        available = true;
+                    }
+                } else {
+                    try {
+                        LoadLogic logic = new LoadLogic(id);
+                        this.loadingGames.put(id, logic);
+                        logic.addRecord(comm);
+                        available = true;
+                    } catch (IOException e) {
+                        //TODO HANDLE
+                    }
+                }
+
+            }
+        }
+        String tmp = id;
+        comm.sendMsg(MsgCreator.confirmMsg(true,"Linking name"));
+        executor.submit(()->this.loadingGames.get(tmp).linkName(this,comm));
         return true;
     }
 
-    public void saveGame(GameLogic game, String jsonGame){
-        String s = this.games.keySet().stream().filter(x->games.get(x)==game).findFirst().get();
-        try(FileWriter fw = new FileWriter(s+"_saved.json")){
+
+    void saveGame(String id,String jsonGame){
+        try {
+            FileWriter fw = new FileWriter(id+"_saved.json");
             fw.write(jsonGame);
-            synchronized (this.activeGames) {
-                this.savedGamesId.add(s);
-            }
+            fw.flush();
+            fw.close();
+            //TODO CHANGE AND APPEND ONLY ONCE
+            fw = new FileWriter("memorized_games.txt",true);
+            fw.write(id+'\n');
+            fw.flush();
+            fw.close();
         } catch (IOException e) {
-            //TODO log file cannot save
+            //TODO LOG FILE
+            System.out.println("Can't save game");
         }
+    }
+
+    void submitClient(Comm comm) {
+        this.executor.submit(() -> handleClient(comm));
+    }
+    
+    void closeGame(String id) {
+        this.games.remove(id);
     }
 }

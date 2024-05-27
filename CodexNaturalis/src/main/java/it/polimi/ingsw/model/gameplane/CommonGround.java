@@ -60,7 +60,7 @@ public class CommonGround {
      * Creates an array of strings with the information of the gold cards on the ground
      * @return the array with the cards info
      */
-    public DrawableCard[] getGroundGoldCard(){
+    public DrawableCard[] getGroundGoldCards(){
         return this.groundGoldCards;
     }
 
@@ -109,7 +109,6 @@ public class CommonGround {
         }
         if(tmp==null)
             throw new InvalidDrawException("Deck Empty");
-        tmp.setShowingFace(true);
         return tmp;
     }
 

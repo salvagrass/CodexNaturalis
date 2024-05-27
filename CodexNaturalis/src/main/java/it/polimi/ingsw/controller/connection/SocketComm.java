@@ -10,9 +10,9 @@ import java.util.Scanner;
  */
 public class SocketComm extends Comm {
 
-  Socket socket;
-  Scanner in;
-  PrintWriter out;
+  private final Socket socket;
+  private final Scanner in;
+  private final PrintWriter out;
 
   /**
    * Constructs a new SocketComm instance.
@@ -33,8 +33,11 @@ public class SocketComm extends Comm {
    */
   @Override
   public void sendMsg(String msg){
-    out.println(msg);
-    out.flush();
+    if(!socket.isClosed()) {
+      out.println(msg);
+      out.flush();
+    }else
+      System.out.println("socket closed");
   }
 
   /**
@@ -44,7 +47,10 @@ public class SocketComm extends Comm {
    */
   @Override
   public String getMsg() {
-    return in.nextLine();
+    if(!socket.isClosed()) {
+      return in.nextLine();
+    }else
+      return "Socket closed";
   }
 
   /**
@@ -52,20 +58,27 @@ public class SocketComm extends Comm {
    */
   @Override
   public void waitMsg() {
-    boolean isValid = false;
-    while(!isValid){
+    //TODO CHANGE THIS WHILE LOOP
+    while(true){
       String s = in.nextLine();
-      isValid = switch(s.split(";")[0]){
+      switch (s.split(";")[0]) {
         case "PLACECARD" -> this.getGame().placeCard(this, s);
-        case "DRAW" -> this.getGame().drawCard(this, s);
-        default -> false;
-      };
+        case "DRAWCARD" -> this.getGame().drawCard(this, s);
+        case "CHAT" -> this.getGame().chat(s);
+      }
     }
   }
 
   @Override
   public void close(){
-    //TODO implement
+    try {
+      this.in.close();
+      this.out.close();
+      this.socket.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      System.out.println("Can't close the connection");
+    }
   }
 }
 

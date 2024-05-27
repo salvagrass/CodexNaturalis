@@ -17,48 +17,31 @@ import java.util.HashMap;
  * A class representing a view of the common ground.
  */
 public class GroundView {
-  private final Gson gson;
-  private final CardView[] resGroundView; // 2-3 RESOURCE CARDS
-  private final CardView[] goldGroundView; // 4-5 GOLD CARDS
+  private final CardView[] resGroundView; // 0-1-2 RESOURCE CARDS
+  private final CardView[] goldGroundView; // 3-4-5 GOLD CARDS
   private final ObjectiveView[] objViews;
 
   /**
    * Constructor for the GroundView class.
    * Initializes the Gson instance and arrays for resource cards, gold cards, and objectives.
    */
-  public GroundView() {
-    this.gson = new GsonBuilder().
-            registerTypeHierarchyAdapter(Card.class, new CardSerializeLogic()).
-            registerTypeHierarchyAdapter(Objective.class,new ObjectiveSerializeLogic()).
-            create();
-    this.resGroundView = new CardView[3];
-    this.goldGroundView = new CardView[3];
-    this.objViews = new ObjectiveView[2];
+  public GroundView(CardView[] resCards,CardView[] goldCards,ObjectiveView[] objs) {
+    this.resGroundView = resCards;
+    this.goldGroundView = goldCards;
+    this.objViews = objs;
   }
 
   /**
    * Updates the ground view with a new card or objective.
    *
    * @param idx     The index representing the type of item being updated.
-   * @param updated The JSON string representing the updated card or objective.
+   * @param card    The card placed on the ground
    */
-  public void updGround(int idx, String updated) {
+  public void updGround(int idx,CardView card) {
     if (idx>=0 && idx<=2) {
-      if(idx==0){
-        Symbol center = this.gson.fromJson(updated,Symbol.class);
-        this.resGroundView[idx] = new CardView(new ResourceCard(new Symbol[]{Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE},new Symbol[]{center}, 0, "backView"));
-      }else{
-        this.resGroundView[idx] = new CardView(this.gson.fromJson(updated, ResourceCard.class));
-      }
-    } else if (idx>=3 && idx<=5) {
-      if(idx==3){
-        Symbol center = this.gson.fromJson(updated,Symbol.class);
-        this.goldGroundView[idx-3] = new CardView(new GoldCard(new Symbol[]{Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE,Symbol.NOTAVAILABLE},new Symbol[]{center},new HashMap<>() ,0, "backView"));
-      }else{
-        this.goldGroundView[idx-3] = new CardView(this.gson.fromJson(updated, GoldCard.class));
-      }
-    } else {
-      this.objViews[idx - 6] = new ObjectiveView(this.gson.fromJson(updated,Objective.class));
+        this.resGroundView[idx] = card;
+    }else if(idx>=3 && idx<=5){
+        this.goldGroundView[idx-3] = card;
     }
   }
 

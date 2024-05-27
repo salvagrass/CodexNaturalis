@@ -10,17 +10,9 @@ import java.util.List;
  * A class that handles communication with the server based on the connected client type.
  * It is intended to be inherited by classes that implement specific types of connections.
  */
-public abstract class Comm extends UnicastRemoteObject {
+public abstract class Comm{
     private GameLogic game;
 
-    /**
-     * Constructs a new Comm instance.
-     *
-     * @throws RemoteException if a communication-related exception occurs.
-     */
-    public Comm() throws RemoteException {
-
-    }
 
     /**
      * Sends a message to the client.
@@ -60,7 +52,6 @@ public abstract class Comm extends UnicastRemoteObject {
      * Waits for a message.
      */
     public abstract void waitMsg();
-
     /**
      * Closes the connection.
      */
