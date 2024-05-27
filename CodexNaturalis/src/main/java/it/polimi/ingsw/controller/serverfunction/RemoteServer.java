@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller.serverfunction;
 
 import it.polimi.ingsw.controller.connection.RemoteComm;
-import it.polimi.ingsw.controller.userclient.RemoteClient;
+import it.polimi.ingsw.controller.userclient.ClientRemote;
 
 import java.rmi.*;
 
@@ -14,8 +14,7 @@ public interface RemoteServer extends Remote{
      * Establishes a connection with a remote client.
      *
      * @param client The client initiating the connection.
-     * @return The communication interface connected to the client.
      * @throws RemoteException If there is a connection problem.
      */
-    RemoteComm join(RemoteClient client) throws RemoteException;
+    RemoteComm join(ClientRemote client) throws RemoteException;
 }

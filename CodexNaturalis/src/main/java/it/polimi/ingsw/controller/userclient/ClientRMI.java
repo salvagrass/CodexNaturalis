@@ -1,154 +1,115 @@
 package it.polimi.ingsw.controller.userclient;
 
+import it.polimi.ingsw.controller.serverfunction.MsgCreator;
+import it.polimi.ingsw.view.UserView;
 import it.polimi.ingsw.controller.connection.RemoteComm;
 import it.polimi.ingsw.controller.serverfunction.RemoteServer;
-import it.polimi.ingsw.view.UserView;
 
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.List;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+public class ClientRMI extends Client implements ClientRemote {
+  private RemoteComm comm;
+  private final ExecutorService executor;
 
-/** 
- * ClientRMI class represents a client RMI entity.
- */
-public class ClientRMI extends Client implements RemoteClient {
-    private RemoteComm comm;
+  public ClientRMI(UserView userView) throws RemoteException{
+    super(userView);
+    UnicastRemoteObject.exportObject(this,0);
+    this.executor = Executors.newFixedThreadPool(1);
+  }
 
-    /**
-     * Constructs a new ClientRMI instance.
-     *
-     * @throws RemoteException if a communication-related exception occurs.
-     */
-    public ClientRMI(UserView userView) throws RemoteException {
-        super(userView);
+  @Override
+  public void connect(String addr, int port) {
+    try {
+      Registry registry = LocateRegistry.getRegistry(addr, port);
+      RemoteServer server = (RemoteServer) registry.lookup("RMIServer");
+      RemoteComm tmp = server.join(this);
+      synchronized(this){
+        this.comm = tmp;
+        this.notifyAll();
+      }
+    } catch (Exception e) {
+      // TODO log file
+      e.printStackTrace();
+      throw new RuntimeException();
     }
+  }
 
-    /**
-     * Connects the client to the specified server address and port using RMI.
-     *
-     * @param addr the server address to connect to.
-     * @param port the port number to use for the connection.
-     */
-    public void connect(String addr, int port) {
+  @Override
+  void sendMsg(String msg) {
+    try {
+      synchronized (this) {
+        while (this.comm == null) {
+          try {
+            this.wait();
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }  
+      }
+      this.comm.setMsg(msg);
+    } catch (RemoteException e) {
+      System.out.println("Server crashed");
+      throw new RuntimeException();
+    }
+  }
+
+  @Override
+  public void placeCard(int idx, int x, int y,boolean face) {
+    //TODO handle exception
+    this.executor.submit(()->{
+      try{
+        comm.placeCard(MsgCreator.placeCardMsg(idx, x, y, face));
+      }catch(RemoteException e){
+        System.out.println("Server crashed");
+        throw new RuntimeException();
+      }
+    });
+  }
+
+  @Override
+  public void drawCard(int idx) {
+    this.executor.submit(()->{
+      try{
+        comm.drawCard(MsgCreator.drawCardMsg(idx));
+      }catch(RemoteException e){
+        System.out.println("Server crashed");
+        throw new RuntimeException();
+      }
+    });
+  }
+
+  @Override
+  public void sendChatMessage(String msg) {
+      this.executor.submit(() -> {
         try {
-            Registry registry = LocateRegistry.getRegistry(addr, port);
-            RemoteServer server = (RemoteServer) registry.lookup("RMIServer");
-            this.comm = server.join(this);
-        } catch (Exception e) {
-            //TODO handle
-        }
-    }
-
-    /**
-     * Sets the communication channel for RMI.
-     *
-     * @param comm The RemoteComm object representing the communication channel.
-     * @throws RemoteException If there is an issue with the remote communication.
-     */
-    @Override
-    public void setComm(RemoteComm comm) throws RemoteException{
-        if(this.comm==null) {
-            this.comm = comm;
-        }
-    }
-
-    /**
-     * It splits the input message using the pipe character ('|') as a delimiter
-     * and then processes each command individually.
-     *
-     * @param msg The input message containing one or more commands separated by '|'.
-     */
-    @Override
-    public void handleMsg(String msg){
-        String[] commands = msg.split("\\|");
-        for (String command : commands) {
-            super.handleMsg(command);
-        }
-    }
-
-    @Override
-    boolean choose(int min, int max) {
-        try{
-            int choice = Integer.parseInt(userView.getInput());
-            if(choice >= min && choice <= max){
-                comm.setMsg(choice + "");
-                return true;
-            }
-        }catch(RemoteException e){
-            System.out.println("choose error"); //TODO handle
-        }catch(NumberFormatException e){
-            return false;
-        }
-        return false;
-    }
-
-    @Override
-    boolean choose(List<String> choices) {
-        try{
-            String s = userView.getInput();
-            if(choices.contains(s)){
-                comm.setMsg(s);
-                return true;
-            }
-        }catch(RemoteException e){
-            System.out.println("choose error"); //TODO handle
-        }
-        return false;
-    }
-
-    @Override
-    boolean choose(String pattern) {
-        try{
-            String s = userView.getInput();
-            if(s.matches(pattern)){
-                comm.setMsg(s);
-                return true;
-            }
-        }catch(RemoteException e){
-            System.out.println("choose error"); //TODO handle
-        }
-        return false;
-    }
-
-    /**
-     * The `placeCard` method processes card placement based on the input message.
-     * Otherwise, it displays an error message to the user view: "Invalid Placement!".
-     */
-    public void placeCard() {
-        String msg = super.placeCardSetUp();
-        if (msg == null) {
-            return;
-        }
-        try {
-            if(this.comm.placeCard(msg)){
-                super.acceptedPlacement();
-            }else{
-                userView.show("Invalid Placement!");
-            }
+          this.comm.chat(msg);
         } catch (RemoteException e) {
-            //TODO handle
+          System.out.println("Server crashed");
+          throw new RuntimeException(e);
         }
+      });
+  }
+
+  @Override
+  public void handleMsgRemote(String message) throws RemoteException {
+    super.handleMsg(message);
+  }
+
+  @Override
+  public void closeConnection() {
+    this.comm = null;
+    try {
+      UnicastRemoteObject.unexportObject(this, true);
+    } catch (NoSuchObjectException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
-    
-    /**
-     * The `drawCard` method processes card drawing based on the input message.
-     * Otherwise, it displays an error message to the user view: "Invalid Draw!".
-     */
-    public void drawCard() {
-        String msg = super.drawCardSetUp();
-        if (msg == null) {
-            return;
-        }
-        try {
-            if (this.comm.drawCard(msg)) {
-                super.acceptedDraw();
-            } else {
-                userView.show("Invalid Draw!");
-            }
-        } catch (RemoteException e) {
-            // TODO handle
-        }
-    }
+  }
 }

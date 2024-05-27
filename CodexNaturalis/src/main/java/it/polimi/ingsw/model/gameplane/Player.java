@@ -48,6 +48,10 @@ public class Player {
         return this.points;
     }
 
+    public DrawableCard[] getHand() {
+        return this.hand;
+    }
+
     /**
      * Returns a map that associates a symbol to how many times is present on the board
      * @return the map associating symbols and integer
@@ -65,7 +69,7 @@ public class Player {
     }
 
     public Objective getSecretObjective(){
-        return getSecretObjective();
+        return this.secretObjective;
     }
 
     /**

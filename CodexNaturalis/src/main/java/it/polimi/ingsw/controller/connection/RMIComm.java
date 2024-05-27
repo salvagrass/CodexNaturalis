@@ -1,15 +1,16 @@
 package it.polimi.ingsw.controller.connection;
 
-import it.polimi.ingsw.controller.userclient.RemoteClient;
+import it.polimi.ingsw.controller.userclient.ClientRemote;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Extends Comm to implement an RMI (Remote Method Invocation) connection.
  */
 public class RMIComm extends Comm implements RemoteComm {
 
-    private final RemoteClient client;
+    private ClientRemote client;
     private String chosen;
 
     /**
@@ -18,8 +19,9 @@ public class RMIComm extends Comm implements RemoteComm {
      * @param client the remote client to communicate with using RMI.
      * @throws RemoteException if a communication-related exception occurs.
      */
-    public RMIComm(RemoteClient client) throws RemoteException{
+    public RMIComm(ClientRemote client) throws RemoteException{
         this.client = client;
+        UnicastRemoteObject.exportObject(this,0);
     }
 
     /**
@@ -30,15 +32,18 @@ public class RMIComm extends Comm implements RemoteComm {
     @Override
     public void sendMsg(String msg){
         try{
-            this.client.handleMsg(msg);
+            this.client.handleMsgRemote(msg);
         } catch (RemoteException e) {
-            //TODO handle
+            System.out.println("Client crashed");
         }
     }
 
     @Override
     public void setMsg(String msg) throws RemoteException{
-        this.chosen = msg;
+        synchronized (this) {
+            this.chosen = msg;
+            this.notifyAll();
+        }
     }
 
     /**
@@ -48,7 +53,19 @@ public class RMIComm extends Comm implements RemoteComm {
      */
     @Override
     public String getMsg() {
-        return this.chosen;
+        String s;
+        synchronized (this) {
+            while (this.chosen == null) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException();
+                }
+            }
+            s = this.chosen;
+            this.chosen = null;
+        }
+        return s;
     }
 
     /**
@@ -63,26 +80,28 @@ public class RMIComm extends Comm implements RemoteComm {
      * Method called from the Client to place a card.
      * 
      * @param msg A string containing the placement information.
-     * @return True if the placement is successful, False otherwise.
      */
     @Override
-    public boolean placeCard(String msg) throws RemoteException {
-        return getGame().placeCard(this, msg);
+    public void placeCard(String msg) throws RemoteException {
+        getGame().placeCard(this, msg);
     }
 
     /**
      * Method called from the Client to draw a card.
      * 
      * @param msg A string containing the draw index.
-     * @return True if the draw succeeds, False otherwise.
      */
     @Override
-    public boolean drawCard(String msg) throws RemoteException{
-        return getGame().drawCard(this, msg);
+    public void drawCard(String msg) throws RemoteException{
+         getGame().drawCard(this, msg);
+    }
+
+    public void chat(String msg) throws RemoteException{
+        this.getGame().chat(msg);
     }
 
     @Override
     public void close(){
-        //TODO implement
+        this.client = null;
     }
 }

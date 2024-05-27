@@ -2,22 +2,28 @@ package it.polimi.ingsw.controller.serverfunction;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
-import it.polimi.ingsw.model.gameplane.GameBoard;
-import it.polimi.ingsw.model.gameplane.Player;
 import it.polimi.ingsw.model.item.card.Card;
-import it.polimi.ingsw.model.item.card.DrawableCard;
-import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.util.PawnColor;
+import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
-import it.polimi.ingsw.util.ObjectiveSerializeLogic;
+import it.polimi.ingsw.view.coreview.BoardView;
+import it.polimi.ingsw.view.coreview.CardView;
+import it.polimi.ingsw.view.coreview.ItemView;
+import it.polimi.ingsw.view.coreview.ObjectiveView;
 import it.polimi.ingsw.util.Symbol;
-import it.polimi.ingsw.view.GameScene;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class that handles the creation of messages from the server to the client.
@@ -25,15 +31,18 @@ import java.util.Map;
 public class MsgCreator {
 
     private final static Gson gson = new GsonBuilder().
-            registerTypeHierarchyAdapter(Card.class, new CardSerializeLogic()).
-            registerTypeHierarchyAdapter(Objective.class,new ObjectiveSerializeLogic())
+            enableComplexMapKeySerialization()
+            .registerTypeAdapter(Card.class,new CardSerializeLogic())
             .create();
+
+    public static String chooseMsg(){
+        return "CHOOSE";
+    }
 
     /**
      * Creates a message containing information to update a specific board's
      * position.
-     * 
-     * @param <T>       The type of the card being placed.
+     *
      * @param idx       The index of the player whose board is to be updated.
      * @param x         Relative x-position.
      * @param y         Relative y-position.
@@ -41,74 +50,13 @@ public class MsgCreator {
      * @param inventory The new inventory values.
      * @return          The message created.
      */
-    public static <T extends Card> String updBoardMessage(int idx, int x, int y, T card, Map<Symbol, Integer> inventory) {
-        return ("UPDBOARDVIEW;" + idx + ";" + "(" + x
-                + "," + y + ");" + gson.toJson(card,Card.class) + ";" + gson.toJson(inventory));
+    public static String updBoardMsg(int idx, int x, int y, CardView card, Map<Symbol, Integer> inventory) {
+        return ("UPDBOARDVIEW;" + idx + ";" + x
+                + ";" + y + ";" + gson.toJson(card, CardView.class) + ";" + gson.toJson(inventory));
     }
 
-    /**
-     * Creates a message containing a string to be displayed.
-     * 
-     * @param displayText The string to be displayed.
-     * @return The message created.
-     */
-    public static String displayMessage(String displayText) {
-        return "DISPLAY;" + format(displayText);
-    }
-
-    /**
-     * Creates a message containing a string to be displayed and information about the choice to make.
-     *
-     * @param displayText The string to be displayed.
-     * @param pattern The regex pattern to be satisfied.
-     * @return The message created.
-     */
-    public static String chooseMessage(String displayText, String pattern, String error) {
-        return displayMessage(displayText) + "|CHOOSE;" + pattern + ";" + MsgCreator.format(error);
-    }
-
-    /**
-     * Creates a message containing a string to be displayed and information about
-     * the choice to make.
-     * 
-     * @param displayText The string to be displayed.
-     * @param min         The lower bound value.
-     * @param max         The upper bound value.
-     * @return The message created.
-     */
-    public static String chooseMessage(String displayText, int min, int max, String error) {
-        return displayMessage(displayText) + "|CHOOSE;[" + min + "," + max + "];" + MsgCreator.format(error);
-    }
-    
-    /**
-     * Creates a message containing a string to be displayed and information about
-     * the choice to make.
-     * 
-     * @param displayText The string to be displayed.
-     * @param choose      A list of the possible choices.
-     * @return The message created.
-     */
-    public static <T> String chooseMessage(String displayText, List<T> choose, String error) {
-        return displayMessage(displayText) + "|CHOOSE;" + choose.toString().replace('[', '{').replace(']', '}') + ";" + MsgCreator.format(error);
-    }
-
-    public static String chooseColorMsg(List<PawnColor> colors){
-        String s = cat(displayMessage("Choose a color: " + colors.toString()), updColorMsg(colors) + "\n");
-        return cat(s,  "CHOOSECOLOR;" + format("Color not available, try again!"));
-    }
-
-    public static String updColorMsg(List<PawnColor> colors){
+    public static String updColorMsg(Set<PawnColor> colors){
         return "UPDCOLORS;" + gson.toJson(colors);
-    }
-
-    /**
-     * Creates a message to send the secret objective.
-     * 
-     * @param obj The Objective to be sent.
-     * @return The message created.
-     */
-    public static String secretObjectiveMessage(Objective obj) {
-        return "SECROBJ;" + gson.toJson(obj);
     }
 
     /**
@@ -117,7 +65,7 @@ public class MsgCreator {
      * @param names The orderd list of nicknames.
      * @return The message created.
      */
-    public static String turnOrderMessage(List<String> names) {
+    public static String turnOrderMsg(List<String> names) {
         return "TURNORDER;" + gson.toJson(names);
     }
 
@@ -127,13 +75,15 @@ public class MsgCreator {
      * @param hand The cards in the player's hand.
      * @return The message created.
      */
-    public static String createHandViewMsg(DrawableCard[] hand) {
-        return "CREATEHANDVIEW;" + gson.toJson(hand, DrawableCard[].class);
+    public static String createHandViewMsg(CardView[] hand) {
+        return "CREATEHANDVIEW;" + gson.toJson(hand, CardView[].class);
     }
 
-
-    public static String sendStartingCardMsg(StartingCard card){
-        return "STARTINGCARD;" + gson.toJson(card);
+    public static String createGroundViewMsg(CardView[] resCards,CardView[] goldCards,ObjectiveView[] objs){
+        String items = gson.toJson(resCards, CardView[].class);
+        items += ";" + gson.toJson(goldCards,CardView[].class);
+        items += ";" + gson.toJson(objs,ObjectiveView[].class);
+        return "CREATEGROUNDVIEW;" + items;
     }
 
     /**
@@ -142,20 +92,8 @@ public class MsgCreator {
      * @param leaderboard The cards in the player's hand.
      * @return The message created.
      */
-    public static String leadeboarMessage(Map<String, Integer> leaderboard) {
+    public static String leadeboardMsg(Map<String, Integer> leaderboard) {
         return "LEADERBOARD;" + gson.toJson(leaderboard);
-    }
-
-    /**
-     * Creates a message to set the player's ability to place or draw cards.
-     * 
-     * @param displayText Text to be displayed.
-     * @param idx     0 for the placeCard token, 1 for the drawCard token.
-     * @return The message created.
-     */
-    public static String tokenMsg(String displayText, int idx) {
-        String msg = displayMessage(displayText);
-        return msg + "|TOKEN;" + idx;
     }
 
     /**
@@ -164,8 +102,8 @@ public class MsgCreator {
      * @param card The card that has been drawn.
      * @return The message created.
      */
-    public static String updHandViewMsg(DrawableCard card) {
-        return "UPDHANDVIEW;" + gson.toJson(card, DrawableCard.class);
+    public static String updHandViewMsg(CardView card) {
+        return "UPDHANDVIEW;" + gson.toJson(card, CardView.class);
     }
 
     /**
@@ -185,12 +123,8 @@ public class MsgCreator {
      * @param value True if the action succeded, False otherwise.
      * @return The message created.
      */
-    public static String confirmMsg(boolean value) {
-        return value ? "CONFIRM" : "DENIED";
-    }
-
-    public static String changeScenary(GameScene scene){
-        return "SETSCENE;" + scene;
+    public static String confirmMsg(boolean value,String info) {
+        return (value ? "CONFIRM" : "DENIED") + ";" + MsgCreator.format(info);
     }
 
     /**
@@ -200,44 +134,71 @@ public class MsgCreator {
      * @param item The new item on the board value.
      * @return The message created.
      */
-    public static <T> String updGroundViewMsg(int idx, T item) {
+    public static String updGroundViewMsg(int idx, CardView item) {
         return "UPDGROUNDVIEW;" + idx + ";" + gson.toJson(item);
     }
+
+    public static String nameMsg(String name) {
+        return "NAME;" + name;
+    }
     
-    /**
-     * Creates a message containing the common objectives for the game
-     */
-    public static String sendCommonObjectivesMsg(Objective[] objs) {
-        return "COMMONOBJECTIVES;" + gson.toJson(objs);
+    public static String capacityMsg(int cap) {
+        return "CAPACITY;" + cap;
     }
 
-    /**
-     * Creates a message instructing the client to start the game.
-     * 
-     * @return The message created.
-     */
-    public static String gameStartMsg() {
-        return displayMessage("Game started\n") + "|GAMESTART";
+    public static String joinedMsg(Set<String> names) {
+        return "JOINED;" + gson.toJson(names, new TypeToken<Set<String>>() {
+        }.getType());
     }
-
-
-    public static String createBoardViewMsg(Player player, int idx) {
-        JsonObject object = gson.toJsonTree(player).getAsJsonObject();
-        String msg = "CREATEBOARDVIEW;" + gson.toJson(object.get("playingField"), GameBoard.class);
+    
+    public static String changePhaseMsg(Phase phase,ItemView... items) {
+        String msg = "CHANGEPHASE;" + phase.name();
+        if(items.length>0){
+            msg += ";";
+            msg += switch(phase){
+                case Phase.STARTCARD -> gson.toJson(items,CardView[].class);
+                case Phase.OBJECTIVE -> gson.toJson(items, ObjectiveView[].class);
+                default -> "";
+            };
+        }
         return msg;
     }
 
-    public static String createHandViewMsg(Player player) {
-        String msg = "CREATEHANDVIEW;";
-        JsonObject object = gson.toJsonTree(player).getAsJsonObject();
-        msg += gson.toJson(object.get("hand"),DrawableCard[].class);
+    public static String loadHiddenObjMsg(Objective objective){
+        return "LOADHIDDENOBJ;" + gson.toJson(new ObjectiveView(objective),ObjectiveView.class);
+    }
+
+    public static String loadBoardMsg(String id,int index) throws IOException{
+        String msg = "LOADBOARD;" + index + ";";
+        FileReader fr = new FileReader(id+"_saved.json");
+        JsonObject savedGame = gson.fromJson(fr, JsonElement.class).getAsJsonObject();
+        fr.close();
+        JsonObject jsonBoard = savedGame.get("turnOrder")
+                .getAsJsonArray().get(index).getAsJsonObject().get("playingField").getAsJsonObject();
+        JsonElement jsonMatrix = jsonBoard.get("board");
+        Map<Symbol,Integer> inventory =
+                gson.fromJson(jsonBoard.get("countResources"),new TypeToken<HashMap<Symbol,Integer>>(){}.getType());
+        Card[][] matrix = gson.fromJson(jsonMatrix,Card[][].class);
+        BoardView loadedView = new BoardView(matrix,inventory);
+        msg += gson.toJson(loadedView,BoardView.class);
         return msg;
     }
 
-    public static String setNameMsg(String name){
-        return "NAME;"+name;
+    public static String currPlayerMsg(String name) {
+        return "CURRPLAYER;" + name;
     }
-    
+
+
+    public static String placeCardMsg(int idx,int x,int y,boolean face){
+        return "PLACECARD;" + idx + ";" + x + ";" + y + ";" + face;
+    }
+
+    public static String drawCardMsg(int idx){
+        return "DRAWCARD;" + idx;
+    }
+    public static String chatMsg(String sender, String receiver, String text){
+        return "CHAT;" + receiver + ";" + sender + ";" + text;
+    }
     /**
      * Concatenates two messages with a command separator.
      * 
@@ -245,19 +206,15 @@ public class MsgCreator {
      * @param s2 The second message.
      * @return The concatenated message.
      */
-    public static String cat(String s1, String s2){
+    public static String cat(String s1, String s2) {
         return s1 + "|" + s2;
     }
     
-    //TODO CHANGE METHOD NAME
-    /**
-     * Formats a string for displaying in-game messages.
-     * 
-     * @param msg The input message.
-     * @return The formatted message.
-     */
-    private static String format(String msg){
-        return msg.replace(' ','_').replace('\n','&');
+    private static String format(String msg) {
+        return msg.replace(' ', '_').replace('\n', '&');
     }
-    public static String deformat(String msg){return msg.replace('_',' ').replace('&',' ');}
+
+    public static String deformat(String msg) {
+        return msg.replace('_', ' ').replace('&', ' ');
+    }
 }

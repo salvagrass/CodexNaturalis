@@ -1,46 +1,492 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.serverfunction.MsgCreator;
+import it.polimi.ingsw.util.Message;
+import it.polimi.ingsw.util.PawnColor;
+import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.view.coreview.CardView;
+import it.polimi.ingsw.view.coreview.ObjectiveView;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-public class CLI implements UserView {
-  private final Scanner input;
+public class CLI extends UserView{
+    private final Scanner in;
+    private String command;
 
-  public CLI() {
-    input = new Scanner(System.in);
-  }
-
-  @Override
-  public void outcome(GameScene scene) {
-
-  }
-
-  public String getInput() {
-    return input.nextLine();
-  }
-
-  public void show(String s) {
-    System.out.print(s);
-  }
-
-  public void showCards(List<CardView> cards){
-    this.show(CardView.showAsciiArt(cards));
-  }
-
-  @Override
-  public void showWinner(Map<String, Integer> positions, Map<String, Integer> points, String name) {
-    if(positions.get(name) == 1){
-      System.out.println("WINNER!");
+    
+    public CLI(boolean type) throws RemoteException{
+        super(type);
+        this.in = new Scanner(System.in);
     }
-    List<String> names = positions.keySet().stream().sorted(Comparator.comparingInt(positions::get)).toList();
-    for(String n : names){
-      System.out.println(positions.get(n) + " " + n + ": " + points.get(n) + " points");
-    }
-  }
 
-  public void showCards(CardView... cards){this.show(CardView.showAsciiArt(cards));}
+    private synchronized void setCommand(String msg){
+        this.command = msg;
+        this.notifyAll();
+    }
+
+    private synchronized String getCommand(int timeoutMillis) throws TimeoutException{
+        while(this.command==null){
+            try {
+                this.wait(timeoutMillis);
+                if(this.command==null){
+                    throw new TimeoutException();
+                }
+            } catch (InterruptedException e) {
+                //TODO MAYBE RUNTIME EXCEPTION IS OVERKILL
+                throw new RuntimeException(e);
+            }
+        }
+        String tmp = this.command;
+        this.command = null;
+        return tmp;
+    }
+
+    private synchronized String getCommand(){
+        while(this.command==null){
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                //TODO MAYBE RUNTIME EXCEPTION IS OVERKILL
+                throw new RuntimeException(e);
+            }
+        }
+        String tmp = this.command;
+        this.command = null;
+        return tmp;
+    }
+
+    @Override
+    public void playerJoined(Set<String> players){
+        synchronized(this.confirmValue){
+            super.playerJoined(players);
+        }
+    }
+
+    @Override
+    public void tryConnection(String addr, int port) {
+        this.client.connect(addr,port);
+        super.waitChangePhase();
+    }
+
+    private void showMenu(){
+        System.out.println("1)Create Game\n2)Join Game\n3)Load Game");
+        System.out.print("Insert choice: ");
+        String choice = this.in.nextLine();
+        while (!choice.matches("^(exit|[1-3])$")) {
+            System.out.print("Choice not valid\nRetry: ");
+            choice = in.nextLine();
+        }
+        scanInput(choice);
+        super.waitChangePhase();
+    }
+
+    private void create() {
+        String constraint = "ID: 6 alphanumeric characters - Capacity: 2-4 players";
+        String regex = "^(exit)|([a-zA-Z0-9]{6}\\s[2-4])$";
+        System.out.print("Insert Room ID (" + constraint+") : ");
+        String input = in.nextLine();
+        while(!input.matches(regex)){
+            System.out.print("Invalid choice ("+ constraint +")\nRetry: ");
+            input = in.nextLine();
+        }
+        sendUntilConfirm(input, constraint, (x) -> x.matches(regex));
+        super.waitChangePhase();
+    }
+    
+    private void join() {
+        String constraint = "6 alphanumeric characters";
+        String regex = "^(exit)|([a-zA-Z0-9]{6})";
+        System.out.print("Insert Room ID (" + constraint + "): " );
+        String input = in.nextLine();
+        while(!input.matches(regex)){
+            System.out.print("Invalid ID (" + constraint +")\nRetry: ");
+            input = in.nextLine();
+        }
+        sendUntilConfirm(input,constraint,(x)->x.matches(regex));
+        super.waitChangePhase();
+    }
+
+    private void chooseName(){
+        String constraint = "1 to 8 alphabetical characters";
+        String regex = "^[a-zA-Z]{1,8}$";
+        System.out.print("Choose your name (" + constraint +"): ");
+        String name = in.nextLine();
+        while(!name.matches(regex)){
+            System.out.print("Invalid name ("+ constraint +")\nRetry: ");
+            name = in.nextLine();
+        }
+        sendUntilConfirm(name, constraint, (x)->x.matches(regex));
+        this.waitForPlayers.set(true);
+        super.waitChangePhase();
+    }
+
+    private void chooseStartingFace() {
+        this.playersInLobby.clear();
+        this.waitForPlayers.set(false);
+        System.out.println(CardView.showAsciiArt(this.starts));
+        System.out.print("Choose your starting card face (back, front): ");
+        String choose = in.nextLine();
+        while (!choose.matches("^(front|back)$")) {
+            System.out.print("Invalid choice (back, front)\nRetry: ");
+            choose = in.nextLine();
+        }
+        choose = choose.equals("back") ? "0" : "1";
+        scanInput(choose);
+        this.starts = null;
+        super.waitChangePhase();
+    }
+
+    private void chooseColor() {
+        Set<String> copy;
+        synchronized(this.colors){
+            copy = this.colors.stream().map(Enum::name).collect(Collectors.toSet());
+        }
+        System.out.print(copy+"\nChoose color: ");
+        String color = in.nextLine();
+        while (!copy.contains(color.toUpperCase())) {
+            System.out.print("Color not available\nRetry: ");
+            color = in.nextLine();
+        }
+        sendUntilConfirm(color,"",(x)->{
+            synchronized (this.colors) {
+                try{
+                    return this.colors.contains(PawnColor.valueOf(x.toUpperCase()));
+                }catch(IllegalArgumentException e){
+                    return false;
+                }
+            }
+        });
+        super.waitChangePhase();
+    }
+    
+    private void chooseObjective() {
+        System.out.println(ObjectiveView.showAsciiArt(this.scrtObjs));
+        System.out.print("Choose your objective (1, 2): ");
+        String choose = in.nextLine();
+        while (!choose.matches("^[12]$")) {
+            System.out.print("Invalid choice (1, 2)\nRetry: ");
+            choose = in.nextLine();
+        }
+        choose = choose.equals("1") ? "0" : "1";
+        this.modelView.setObj(this.scrtObjs[Integer.parseInt(choose)]);
+        scanInput(choose);
+        this.scrtObjs = null;
+        this.waitForPlayers.set(true);
+        super.waitChangePhase();
+    }
+
+    private void gameFlow() {
+        AtomicBoolean stay = new AtomicBoolean(true);
+        boolean inserted = true;
+        String copyCurrPlayer=null;
+        this.waitForPlayers.set(false);
+        System.out.println("Game Started");
+        synchronized(currPlayerLock){
+            while(this.currPlayer == null){
+                try {
+                    this.currPlayerLock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        Thread t = new Thread(()->{
+            while(stay.get()){
+                String msg = in.nextLine();
+                setCommand(msg);
+            }
+        });
+        t.start();
+        while(stay.get()){
+            synchronized (this.currPlayerLock) {
+                if (!this.currPlayer.equals(copyCurrPlayer)) {
+                    char c = inserted ? ' ' : '\n';
+                    copyCurrPlayer = this.currPlayer;
+                    String showCurrPlayer = this.currPlayer.equals(this.name) ? "Your turn"
+                            : "Current player: " + this.currPlayer;
+                    System.out.println(c+showCurrPlayer);
+                    inserted = true;
+                }
+            }
+            if(inserted) {
+                System.out.print("-> ");
+            }
+            try {
+                String[] cmd = getCommand(15000).split(" ");
+                handleCommand(cmd);
+                inserted = true;
+            } catch (TimeoutException e) {
+                inserted = false;
+            }
+            synchronized(this.waitPhaseLock){
+                if(this.currPhase==Phase.ENDGAME || this.currPhase == Phase.EXIT){
+                    stay.set(false);
+                }
+            }
+        }
+        waitChangePhase();
+    }
+
+    private synchronized void handleCommand(String[] cmd){
+        switch (cmd[0]) { //TODO complete switch cases
+            case "show" -> {
+                switch(cmd[1]){
+                    case "hand" -> {
+                        synchronized (this.modelView) {
+                            System.out.print(CardView.showAsciiArt(this.modelView.getHand()));
+                        }
+                    }
+                    case "objective" -> {
+                        synchronized (this.modelView) {
+                            System.out.print(ObjectiveView.showAsciiArt(this.modelView.getSecrObj()));
+                        }
+                    }
+                    case "ground" -> {
+                        synchronized (this.modelView) {
+                            System.out.print(this.modelView.getGround().asciiGround());
+                        }
+                    }
+                    case "card" -> {
+                        synchronized (this.modelView) {
+                            try {
+                                int userIdx;
+                                int x,y;
+                                if(cmd.length == 5){
+                                    userIdx = Integer.parseInt(cmd[2]);
+                                    x = Integer.parseInt(cmd[3]);
+                                    y = Integer.parseInt(cmd[4]);
+                                } else{
+                                    userIdx = this.turnOrder.indexOf(this.name);
+                                    x = Integer.parseInt(cmd[2]);
+                                    y = Integer.parseInt(cmd[3]);
+                                }
+                                System.out.println(this.modelView.getBoard(userIdx).showCard(x,y));
+                            }catch(Exception e){
+                                System.out.println("Not an index");
+                            }
+                        }
+                    }
+                    case "board" -> {
+                        synchronized(this.modelView){
+                            try {
+                                if(cmd.length == 2){
+                                    System.out.println(this.modelView.getBoard(this.turnOrder.indexOf(this.name)).asciiBoard());
+                                }else{
+                                    int idx = Integer.parseInt(cmd[2]);
+                                    System.out.println(this.modelView.getBoard(idx).asciiBoard());
+                                }
+
+                            }catch(Exception e) {
+                                System.out.println("Not an index");
+                            }
+                        }
+                    }
+                    case "leaderboard" -> {
+                        synchronized (this.leaderboard) {
+                            List<String> tmp = this.leaderboard.keySet().stream()
+                                .sorted(Comparator.comparingInt(leaderboard::get).reversed())
+                                .toList();
+                            for (String name : tmp) {
+                                System.out.println(
+                                        name + " (id: " + this.turnOrder.indexOf(name) + "): " + leaderboard.get(name));
+                            }
+                        }
+                    }
+                }
+            }
+            case "flip" -> {
+                try{
+                    int idx = Integer.parseInt(cmd[1]);
+                    if(idx>=0 && idx<this.modelView.getHand().size()){
+                        CardView view = this.modelView.getHandCard(idx);
+                        view.setFace(!view.getFace());
+                    }else{
+                        System.out.println("Index not valid");
+                    }
+                }catch(NumberFormatException e){
+                    System.out.println("Not a number");
+                }
+            }
+            case "place" -> placeCard();
+            case "draw" -> drawCard();
+            case "chat" -> {
+                synchronized (this.chats) {
+                    if(cmd[1].equals("All")){
+                        printChat(this.chats.stream().filter(x -> x.receiver.equals("All")).toList());
+                    }else if(!cmd[1].equals(this.name)){
+                        String chat = cmd[1];
+                        printChat(this.chats.stream().
+                                filter(x -> (x.sender.equals(chat) && x.receiver.equals(this.name)) ||
+                                        (x.sender.equals(this.name) && x.receiver.equals(chat))).toList());
+                    }else{
+                        System.out.println("This chat doesn't exist\n");
+                    }
+                }
+            }
+            case "message" -> {
+                if(!this.name.equals(cmd[1]) && (cmd[1].equals("All") || this.turnOrder.contains(cmd[1]))){
+                    this.client.sendChatMessage(MsgCreator.chatMsg(this.name, cmd[1], in.nextLine()));
+                }else{
+                    System.out.println("Receiver not available\n");
+                }
+            }
+            case "help" -> printFile("help");
+            default -> System.out.println("Command not supported\n");
+        }
+    }
+
+    private void printFile(String file) {
+        try {
+            InputStream inputStream = getClass().getResourceAsStream("/util/" + file + ".txt");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            //TODO log file
+            e.printStackTrace();
+        }
+    }
+
+    private void showWinner() {
+        synchronized(this.positions){
+            while(this.positions.isEmpty()){
+                try{
+                    this.positions.wait();
+                }catch(InterruptedException e){
+                    throw new RuntimeException();
+                }
+            }
+        }
+        
+        if (this.positions.get(this.name) == 1) {
+            System.out.println("WINNER!");
+        }
+        List<String> names = this.positions.keySet().stream().sorted(Comparator.comparingInt(
+                this.positions::get)).toList();
+        for (String n : names) {
+            System.out.println(this.positions.get(n) + " " + n + ": " + this.leaderboard.get(n) + " points");
+        }
+
+    
+        System.out.println("Press enter to continue");
+        in.nextLine();
+        waitChangePhase();
+    }
+
+    private void placeCard(){
+        int idx,x,y;
+        System.out.print("IDX: ");
+        try {
+            idx = Integer.parseInt(getCommand());
+            if (idx < 0 || idx >= this.modelView.getHandSize()) {
+                System.out.println("Invalid Card");
+                return;
+            }
+            this.idx = idx;
+        } catch (NumberFormatException e) {
+            System.out.println("Not a number");
+            return;
+        }
+        try {
+            System.out.print("X,Y: ");
+            String coordinates = getCommand();
+            String regex = "(-?\\d+),(-?\\d+)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher match = pattern.matcher(coordinates);
+            if(!match.matches()){
+                throw new NumberFormatException();
+            }
+            x = Integer.parseInt(match.group(1));
+            y = Integer.parseInt(match.group(2));
+            synchronized(this.confirmValue) {
+                this.client.placeCard(idx, x, y,this.modelView.getHandCard(idx).getFace());
+                waitConfirm();
+                System.out.println(this.confirmMsg);
+                if(this.confirmValue.get()){
+                    this.modelView.removeHandCard(idx);
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid coordinates");
+        }
+    }
+
+    private void drawCard(){
+        System.out.print("IDX: ");
+        String index = getCommand();
+        if(!index.matches("^[0-5]$")){
+            System.out.println("Index not valid");
+            return;
+        }
+        int idx = Integer.parseInt(index);
+        synchronized(this.confirmValue) {
+            client.drawCard(idx);
+            this.waitConfirm();
+            System.out.println(this.confirmMsg);
+        }
+    }
+
+    private void sendUntilConfirm(String input, String constraint, Predicate<String> t) {
+        String constraintMsg = constraint.isEmpty() ? constraint : "(" + constraint + ")";
+        synchronized (this.confirmValue) {
+            scanInput(input);
+            super.waitConfirm();
+            while (!this.confirmValue.get()) {
+                System.out.println(this.confirmMsg);
+                do {
+                    System.out.print("Retry " + constraintMsg + ": ");
+                    input = in.nextLine();
+                } while (!t.test(input));
+                scanInput(input);
+                super.waitConfirm();
+            }
+        }
+    }
+
+    private void scanInput(String toScan){
+        synchronized(this.toSendlock){
+            this.toSend = toScan;
+            this.toSendlock.notifyAll();
+        }
+    }
+
+    @Override
+    public void changePhase(Phase phase) {
+        switch(phase){
+            case Phase.MENU -> showMenu();
+            case Phase.CREATE -> create();
+            case Phase.JOIN -> join();
+            case Phase.NAME -> chooseName();
+            case Phase.STARTCARD -> chooseStartingFace();
+            case Phase.COLOR -> chooseColor();
+            case Phase.OBJECTIVE -> chooseObjective();
+            case Phase.GAME -> gameFlow();
+            case Phase.ENDGAME -> showWinner();
+            case Phase.EXIT -> System.out.println("Uscito gioco\nGame Terminato");
+            default -> throw new RuntimeException();
+        }
+    }
+
+    private void printChat(List<Message> msgs) {
+        for(Message msg : msgs){
+            System.out.println(msg.sender + ": " + msg.msg);
+        }
+    }
 }

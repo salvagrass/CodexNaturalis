@@ -1,9 +1,5 @@
 package it.polimi.ingsw.view.coreview;
 
-import it.polimi.ingsw.model.item.card.Card;
-import it.polimi.ingsw.model.item.card.DrawableCard;
-import it.polimi.ingsw.model.item.objective.Objective;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +8,7 @@ import java.util.List;
  * A class containing a view of every item in the model.
  */
 public class ModelView {
-  private final GroundView ground;
+  private GroundView ground;
   private final List<BoardView> boards;
   private final List<CardView> handView;
   private ObjectiveView secrObj;
@@ -21,9 +17,13 @@ public class ModelView {
    * Constructor of the class.
    */
   public ModelView() {
-    this.ground = new GroundView();
     this.boards = new ArrayList<>(4);
     this.handView = new LinkedList<>();
+  }
+
+
+  public void setGround(GroundView view){
+    this.ground = view;
   }
 
   /**
@@ -31,19 +31,17 @@ public class ModelView {
    *
    * @param obj The secret objective to be set.
    */
-  public void setObj(Objective obj){
-    this.secrObj = new ObjectiveView(obj);
+  public void setObj(ObjectiveView obj){
+    this.secrObj = obj;
   }
 
   /**
    * Sets the view of the hand of cards of the player.
    *
-   * @param cards The list of cards to be set as the hand.
+   * @param handView The list of cards to be set as the hand.
    */
-  public void setHand(List<DrawableCard> cards) {
-    for (DrawableCard card : cards) {
-      this.handView.add(new CardView(card));
-    }
+  public void setHand(List<CardView> handView) {
+      this.handView.addAll(handView);
   }
 
   /**
@@ -52,18 +50,17 @@ public class ModelView {
    * @param card The new card to be updated in the hand.
    * @param idx  The index of the hand where the card is updated.
    */
-  public void updHand(Card card,int idx){
-    handView.add(idx,new CardView(card));
+  public void updHand(CardView card,int idx){
+    handView.add(idx,card);
   }
 
   /**
    * Updates the ground view with a new card or objective.
    *
    * @param idx The index representing the type of item being updated.
-   * @param updString The JSON string representing the updated card or objective.
    */
-  public void updGround(int idx, String updString) {
-    this.ground.updGround(idx, updString);
+  public void updGround(int idx, CardView card) {
+    this.ground.updGround(idx,card);
   }
 
   /**
@@ -117,9 +114,15 @@ public class ModelView {
    *
    * @param numPlayers The number of players in the game.
    */
-  public void setBoards(int numPlayers){
+  public void allocateBoards(int numPlayers){
     for(int i=0;i<numPlayers;i++)
       this.boards.add(i,new BoardView());
+  }
+
+
+  public void setBoard(int idx,BoardView boardView){
+    this.boards.remove(idx);
+    this.boards.add(idx,boardView);
   }
 
   /**

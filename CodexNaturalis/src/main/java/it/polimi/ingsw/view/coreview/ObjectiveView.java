@@ -14,14 +14,12 @@ import it.polimi.ingsw.util.Symbol;
 /**
  * A class representing a view of the objective.
  */
-public class ObjectiveView {
+public class ObjectiveView implements ItemView{
 
     /**
      * A record representing coordinates for ASCII art representation.
      */
-    private record Coord(int x,int y){
-
-    }
+    private record Coord(int x,int y){}
 
     private final Map<Coord,Character> asciiObj;
     private final String id;
@@ -44,6 +42,7 @@ public class ObjectiveView {
      * Retrieves the id of the objective
      * @return the id of the objective
      */
+    @Override
     public String getId(){
         return id;
     }
