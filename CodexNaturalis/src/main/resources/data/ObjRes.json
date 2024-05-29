@@ -1,34 +1,34 @@
 [
   {
-    "id": "ObjRes01",
+    "id": "Obj9",
     "points": 2,
     "resources": {
       "FUNGUS": 3
     }
   },
   {
-    "id": "ObjRes02",
+    "id": "Obj10",
     "points": 2,
     "resources": {
       "GRASS": 3
     }
   },
   {
-    "id": "ObjRes03",
+    "id": "Obj11",
     "points": 2,
     "resources": {
       "WOLF": 3
     }
   },
   {
-    "id": "ObjRes04",
+    "id": "Obj12",
     "points": 2,
     "resources": {
       "BUTTERFLY": 3
     }
   },
   {
-    "id": "ObjRes05",
+    "id": "Obj13",
     "points": 3,
     "resources": {
       "FEATHER": 1,
@@ -37,21 +37,21 @@
     }
   },
   {
-    "id": "ObjRes06",
+    "id": "Obj14",
     "points": 2,
     "resources": {
       "SCROLL": 2
     }
   },
   {
-    "id": "ObjRes07",
+    "id": "Obj15",
     "points": 2,
     "resources": {
       "POTION": 2
     }
   },
   {
-    "id": "ObjRes08",
+    "id": "Obj16",
     "points": 2,
     "resources": {
       "FEATHER": 2

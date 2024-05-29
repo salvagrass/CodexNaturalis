@@ -127,6 +127,7 @@ class SetUpLogic {
             }
         }while(available);
         String msg = MsgCreator.cat(MsgCreator.confirmMsg(true, "Valid Name"), MsgCreator.nameMsg(name));
+        msg = MsgCreator.cat(msg, MsgCreator.changePhaseMsg(Phase.WAITFORPLAYERS));
         game.sendMsg(comm, msg);
         return name;
     }
@@ -140,7 +141,7 @@ class SetUpLogic {
     private void chooseStartingCard(Comm comm, StartingCard card) {
         CardView faceDown = new CardView(card);
         card.setShowingFace(true);
-        CardView faceUp = new CardView(card);;
+        CardView faceUp = new CardView(card);
         String cardToJson = MsgCreator.changePhaseMsg(Phase.STARTCARD,new CardView[] {faceDown, faceUp});
         String chooseOrientation = MsgCreator.chooseMsg();
         game.sendMsg(comm,MsgCreator.cat(cardToJson,chooseOrientation));
@@ -201,6 +202,8 @@ class SetUpLogic {
         game.sendMsg(comm, s);
         s = game.getMsg(comm);
         Objective obj = objs[Integer.parseInt(s)];
+        s = MsgCreator.changePhaseMsg(Phase.WAITFORPLAYERS);
+        game.sendMsg(comm, s);
         return obj;
     }
 
@@ -231,15 +234,6 @@ class SetUpLogic {
      */
     public boolean isFull(){
         return this.record.size() >= this.numPlayers;
-    }
-
-    /**
-     * Closes all the open connections.
-     */
-    void closeConnections(){
-        for(Comm comm : this.record.keySet()){
-            comm.close();
-        }
     }
 
 

@@ -12,7 +12,6 @@ import it.polimi.ingsw.view.coreview.BoardView;
 import it.polimi.ingsw.view.coreview.CardView;
 import it.polimi.ingsw.view.coreview.ObjectiveView;
 
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,9 +19,9 @@ import java.util.Set;
 public abstract class Client{
   private final UserView userView;
   private final Gson gson;
+  int port;
 
-  public Client(UserView userView) throws RemoteException {
-    super();
+  public Client(UserView userView) {
     this.userView = userView;
     this.gson = new Gson();
   }
@@ -56,9 +55,7 @@ public abstract class Client{
           this.userView.createGroundView(resCards, goldCards, objs);
         }
         case "LOADHIDDENOBJ" -> this.userView.loadObj(this.gson.fromJson(dictate[1],ObjectiveView.class));
-        case "LOADBOARD" -> {
-          this.userView.loadBoard(Integer.parseInt(dictate[1]), this.gson.fromJson(dictate[2], BoardView.class));
-        }
+        case "LOADBOARD" -> this.userView.loadBoard(Integer.parseInt(dictate[1]), this.gson.fromJson(dictate[2], BoardView.class));
         case "TURNORDER" -> {
           List<String> names = this.gson.fromJson(dictate[1], new TypeToken<List<String>>() {
           }.getType());
@@ -102,8 +99,7 @@ public abstract class Client{
           Phase phase = Phase.valueOf(dictate[1]);
           switch (phase) {
             case Phase.STARTCARD -> this.userView.setCurrPhase(phase, this.gson.fromJson(dictate[2], CardView[].class));
-            case Phase.OBJECTIVE ->
-              this.userView.setCurrPhase(phase, this.gson.fromJson(dictate[2], ObjectiveView[].class));
+            case Phase.OBJECTIVE -> this.userView.setCurrPhase(phase, this.gson.fromJson(dictate[2], ObjectiveView[].class));
             case Phase.EXIT -> {
               closeConnection();
               this.userView.setCurrPhase(phase);
@@ -122,5 +118,5 @@ public abstract class Client{
   public abstract void placeCard(int idx,int x,int y,boolean face);
   public abstract void drawCard(int idx);
   public abstract void sendChatMessage(String msg);
-  public abstract void connect(String address, int port);
+  public abstract void connect(String address);
 }

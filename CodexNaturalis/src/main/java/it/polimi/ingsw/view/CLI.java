@@ -5,16 +5,14 @@ import it.polimi.ingsw.util.Message;
 import it.polimi.ingsw.util.PawnColor;
 import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.view.coreview.CardView;
+import it.polimi.ingsw.view.coreview.ItemView;
 import it.polimi.ingsw.view.coreview.ObjectiveView;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.rmi.RemoteException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
@@ -29,7 +27,15 @@ public class CLI extends UserView{
     
     public CLI(boolean type) throws RemoteException{
         super(type);
+        this.colors = new HashSet<>();
+        this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
+        this.playersInLobby = new HashSet<>();
         this.in = new Scanner(System.in);
+    }
+
+    public void tryConnection(String addr){
+        super.tryConnection(addr);
+        waitChangePhase();
     }
 
     private synchronized void setCommand(String msg){
@@ -70,15 +76,55 @@ public class CLI extends UserView{
 
     @Override
     public void playerJoined(Set<String> players){
-        synchronized(this.confirmValue){
-            super.playerJoined(players);
+        synchronized (this.playersInLobby) {
+            this.playersInLobby.addAll(players);
+            if(this.waitForPlayers.get() && this.playersInLobby.size() < this.capacity){
+                System.out.println("Waiting for players\nRemaining: " + (this.capacity-this.playersInLobby.size()));
+            }
         }
     }
 
     @Override
-    public void tryConnection(String addr, int port) {
-        this.client.connect(addr,port);
-        super.waitChangePhase();
+    public void setCurrPhase(Phase phase, ItemView... items) {
+        synchronized(this){
+            this.currPhase = phase;
+            super.setCurrPhase(phase, items);
+            this.notifyAll();
+        }
+    }
+
+    private void waitChangePhase(){
+        Phase tmp;
+        synchronized (this) {
+            while (this.currPhase == null) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            tmp = this.currPhase;
+            this.currPhase = null;
+        }
+        changePhase(tmp);
+    }
+
+    public void waitConfirm(){
+        synchronized(this.confirmValue){
+            try {
+                this.confirmValue.wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public void sendConfirm(boolean confirmValue,String confirmMsg){
+        super.sendConfirm(confirmValue, confirmMsg);
+        synchronized (this.confirmValue){
+            this.confirmValue.notifyAll();
+        }
     }
 
     private void showMenu(){
@@ -90,7 +136,7 @@ public class CLI extends UserView{
             choice = in.nextLine();
         }
         scanInput(choice);
-        super.waitChangePhase();
+        waitChangePhase();
     }
 
     private void create() {
@@ -103,7 +149,7 @@ public class CLI extends UserView{
             input = in.nextLine();
         }
         sendUntilConfirm(input, constraint, (x) -> x.matches(regex));
-        super.waitChangePhase();
+        waitChangePhase();
     }
     
     private void join() {
@@ -116,7 +162,7 @@ public class CLI extends UserView{
             input = in.nextLine();
         }
         sendUntilConfirm(input,constraint,(x)->x.matches(regex));
-        super.waitChangePhase();
+        waitChangePhase();
     }
 
     private void chooseName(){
@@ -129,13 +175,10 @@ public class CLI extends UserView{
             name = in.nextLine();
         }
         sendUntilConfirm(name, constraint, (x)->x.matches(regex));
-        this.waitForPlayers.set(true);
-        super.waitChangePhase();
+        waitChangePhase();
     }
 
     private void chooseStartingFace() {
-        this.playersInLobby.clear();
-        this.waitForPlayers.set(false);
         System.out.println(CardView.showAsciiArt(this.starts));
         System.out.print("Choose your starting card face (back, front): ");
         String choose = in.nextLine();
@@ -146,7 +189,12 @@ public class CLI extends UserView{
         choose = choose.equals("back") ? "0" : "1";
         scanInput(choose);
         this.starts = null;
-        super.waitChangePhase();
+        waitChangePhase();
+    }
+
+    private void waitPlayers(){
+        this.waitForPlayers.set(true);
+        waitChangePhase();
     }
 
     private void chooseColor() {
@@ -169,7 +217,7 @@ public class CLI extends UserView{
                 }
             }
         });
-        super.waitChangePhase();
+        waitChangePhase();
     }
     
     private void chooseObjective() {
@@ -184,15 +232,13 @@ public class CLI extends UserView{
         this.modelView.setObj(this.scrtObjs[Integer.parseInt(choose)]);
         scanInput(choose);
         this.scrtObjs = null;
-        this.waitForPlayers.set(true);
-        super.waitChangePhase();
+        waitChangePhase();
     }
 
     private void gameFlow() {
         AtomicBoolean stay = new AtomicBoolean(true);
         boolean inserted = true;
         String copyCurrPlayer=null;
-        this.waitForPlayers.set(false);
         System.out.println("Game Started");
         synchronized(currPlayerLock){
             while(this.currPlayer == null){
@@ -343,7 +389,13 @@ public class CLI extends UserView{
                     System.out.println("Receiver not available\n");
                 }
             }
-            case "help" -> printFile("help");
+            case "help" -> {
+                if(cmd.length == 1){
+                    printFile("help");
+                }else{
+                    printHelpCmd(String.join(" ", cmd).split(" ", 2)[1]);
+                }
+            }
             default -> System.out.println("Command not supported\n");
         }
     }
@@ -351,11 +403,36 @@ public class CLI extends UserView{
     private void printFile(String file) {
         try {
             InputStream inputStream = getClass().getResourceAsStream("/util/" + file + ".txt");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
             }
+            bufferedReader.close();
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            //TODO log file
+            e.printStackTrace();
+        }
+    }
+
+    private void printHelpCmd(String cmd) {
+        try {
+            InputStream inputStream = getClass().getResourceAsStream("/util/help.txt");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+            String line;
+            do{
+                line = bufferedReader.readLine();
+            }
+            while (line != null && !line.matches("^<" + cmd + ".*"));
+            if(line == null){
+                System.out.println("Command unknown");
+                return;
+            }
+            do{
+                System.out.println(line);
+                line = bufferedReader.readLine();
+            }while(line != null && (!(line).contains("<") || line.matches("^<" + cmd + ".*")));
             bufferedReader.close();
         } catch (Exception e) {
             System.out.println("An error occurred.");
@@ -447,7 +524,7 @@ public class CLI extends UserView{
         String constraintMsg = constraint.isEmpty() ? constraint : "(" + constraint + ")";
         synchronized (this.confirmValue) {
             scanInput(input);
-            super.waitConfirm();
+            waitConfirm();
             while (!this.confirmValue.get()) {
                 System.out.println(this.confirmMsg);
                 do {
@@ -455,32 +532,29 @@ public class CLI extends UserView{
                     input = in.nextLine();
                 } while (!t.test(input));
                 scanInput(input);
-                super.waitConfirm();
+                waitConfirm();
             }
-        }
-    }
-
-    private void scanInput(String toScan){
-        synchronized(this.toSendlock){
-            this.toSend = toScan;
-            this.toSendlock.notifyAll();
         }
     }
 
     @Override
     public void changePhase(Phase phase) {
+        if(this.waitForPlayers.get()){
+            this.waitForPlayers.set(false);
+            this.playersInLobby.clear();
+        }
         switch(phase){
             case Phase.MENU -> showMenu();
             case Phase.CREATE -> create();
             case Phase.JOIN -> join();
             case Phase.NAME -> chooseName();
             case Phase.STARTCARD -> chooseStartingFace();
+            case Phase.WAITFORPLAYERS -> waitPlayers();
             case Phase.COLOR -> chooseColor();
             case Phase.OBJECTIVE -> chooseObjective();
             case Phase.GAME -> gameFlow();
             case Phase.ENDGAME -> showWinner();
             case Phase.EXIT -> System.out.println("Uscito gioco\nGame Terminato");
-            default -> throw new RuntimeException();
         }
     }
 

@@ -16,10 +16,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class UserView {
     final Client client;
     final ModelView modelView;
-    final Set<PawnColor> colors;
+    Set<PawnColor> colors;
     final Map<String,Integer> leaderboard;
     final Map<String,Integer> positions;
-    final Set<String> playersInLobby;
+    Set<String> playersInLobby;
     final AtomicBoolean confirmValue;
     String confirmMsg;
     List<String> turnOrder;
@@ -43,9 +43,7 @@ public abstract class UserView {
     public UserView(boolean type) throws RemoteException{
         this.client = type ? new ClientSocket(this) : new ClientRMI(this);
         this.modelView = new ModelView();
-        this.playersInLobby = new HashSet<>();
         this.confirmValue = new AtomicBoolean(false);
-        this.colors = new HashSet<>(Arrays.asList(PawnColor.values()));
         this.leaderboard = new HashMap<>();
         this.positions = new HashMap<>();
         this.chats = new LinkedList<>();
@@ -78,14 +76,7 @@ public abstract class UserView {
         }
     }
     
-    public void playerJoined(Set<String> players){
-        synchronized (this.playersInLobby) {
-            this.playersInLobby.addAll(players);
-            if(this.waitForPlayers.get() && this.playersInLobby.size() < this.capacity){
-                System.out.println("Waiting for players\nRemaining: " + (this.capacity-this.playersInLobby.size()));
-            }
-        }
-    }
+    public abstract void playerJoined(Set<String> players);
 
     public void updColors(Set<PawnColor> newColors){
         synchronized(this.colors){
@@ -167,45 +158,14 @@ public abstract class UserView {
         synchronized(this.confirmValue){
             this.confirmValue.set(confirmValue);
             this.confirmMsg = confirmMsg;
-            this.confirmValue.notifyAll();
-        }
-    }
-
-    public void waitConfirm(){
-        synchronized(this.confirmValue){
-            try {
-                this.confirmValue.wait();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
     
-    public void setCurrPhase(Phase phase, ItemView... items) {
-        synchronized(this){
-            this.currPhase = phase;
-            this.notifyAll();
-            switch(phase){
-                case Phase.STARTCARD -> this.starts = Arrays.copyOf(items,items.length,CardView[].class);
-                case Phase.OBJECTIVE -> this.scrtObjs = Arrays.copyOf(items,items.length,ObjectiveView[].class);
-            }
+    public void setCurrPhase(Phase phase, ItemView... items){
+        switch(phase){
+            case Phase.STARTCARD -> this.starts = Arrays.copyOf(items,items.length,CardView[].class);
+            case Phase.OBJECTIVE -> this.scrtObjs = Arrays.copyOf(items,items.length,ObjectiveView[].class);
         }
-    }
-
-    public void waitChangePhase() {
-        Phase tmp;
-        synchronized (this) {
-            while (this.currPhase == null) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            tmp = this.currPhase;
-            this.currPhase = null;
-        }
-        changePhase(tmp);
     }
 
     public void setPositions(Map<String, Integer> positions) {
@@ -215,6 +175,15 @@ public abstract class UserView {
         }
     }
 
-    public abstract void tryConnection(String addr, int port);
+    public void tryConnection(String addr){
+        this.client.connect(addr);
+    }
+
+    public void scanInput(String toScan){
+        synchronized(this.toSendlock){
+            this.toSend = toScan.trim();
+            this.toSendlock.notifyAll();
+        }
+    }
     public abstract void changePhase(Phase phase);
 }

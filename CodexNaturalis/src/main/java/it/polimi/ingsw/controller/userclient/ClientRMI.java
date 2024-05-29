@@ -21,12 +21,13 @@ public class ClientRMI extends Client implements ClientRemote {
     super(userView);
     UnicastRemoteObject.exportObject(this,0);
     this.executor = Executors.newFixedThreadPool(1);
+    this.port = 1099;
   }
 
   @Override
-  public void connect(String addr, int port) {
+  public void connect(String addr) {
     try {
-      Registry registry = LocateRegistry.getRegistry(addr, port);
+      Registry registry = LocateRegistry.getRegistry(addr, this.port);
       RemoteServer server = (RemoteServer) registry.lookup("RMIServer");
       RemoteComm tmp = server.join(this);
       synchronized(this){

@@ -17,7 +17,6 @@ import it.polimi.ingsw.view.coreview.ItemView;
 import it.polimi.ingsw.view.coreview.ObjectiveView;
 import it.polimi.ingsw.util.Symbol;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;

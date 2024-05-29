@@ -2,7 +2,6 @@ package it.polimi.ingsw.controller.userclient;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -14,16 +13,17 @@ public class ClientSocket extends Client{
   private SocketComm comm;
   private final AtomicBoolean stopConnection;
 
-  public ClientSocket(UserView userView) throws RemoteException{
+  public ClientSocket(UserView userView){
     super(userView);
     this.stopConnection = new AtomicBoolean(false);
+    this.port = 5432;
   }
 
   @Override
-  public void connect(String addr, int port) {
+  public void connect(String addr) {
     this.comm = null;
     try {
-      this.comm = new SocketComm(new Socket(addr, port));
+      this.comm = new SocketComm(new Socket(addr, this.port));
     } catch (IOException e) {
       //TODO log file
       throw new RuntimeException();

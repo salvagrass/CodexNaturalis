@@ -1,6 +1,6 @@
 [
   {
-    "id": "ObjDisp01",
+    "id": "Obj1",
     "points": 2,
     "disposition": {
       "dispType": "DiagonalType",
@@ -10,7 +10,7 @@
     }
   },
   {
-    "id": "ObjDisp02",
+    "id": "Obj2",
     "points": 2,
     "disposition": {
       "dispType": "DiagonalType",
@@ -20,7 +20,7 @@
     }
   },
   {
-    "id": "ObjDisp03",
+    "id": "Obj3",
     "points": 2,
     "disposition": {
       "dispType": "DiagonalType",
@@ -30,7 +30,7 @@
     }
   },
   {
-    "id": "ObjDisp04",
+    "id": "Obj4",
     "points": 2,
     "disposition": {
       "dispType": "DiagonalType",
@@ -40,7 +40,7 @@
     }
   },
   {
-    "id": "ObjDisp05",
+    "id": "Obj5",
     "points": 3,
     "disposition": {
       "dispType": "LType",
@@ -50,7 +50,7 @@
     }
   },
   {
-    "id": "ObjDisp06",
+    "id": "Obj6",
     "points": 3,
     "disposition": {
       "dispType": "LType",
@@ -60,7 +60,7 @@
     }
   },
   {
-    "id": "ObjDisp07",
+    "id": "Obj7",
     "points": 3,
     "disposition": {
       "dispType": "LType",
@@ -70,7 +70,7 @@
     }
   },
   {
-    "id": "ObjDisp08",
+    "id": "Obj8",
     "points": 3,
     "disposition": {
       "dispType": "LType",
