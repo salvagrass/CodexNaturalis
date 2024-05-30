@@ -1,0 +1,25 @@
+<show hand> Shows the cards in the hand.
+<show objective> Shows the secret objective.
+<show ground> Shows the common ground:
+                    -Common Objectives
+                    -Decks
+                    -Ground Cards
+<show board "idx"> Shows the board of the "idx"th player.
+<show board> Shows your board.
+<show card "boardIdx" "x" "y"> Shows the card placed in ("x","y") in the "boardIdx" board.
+<show card "x" "y"> Shows the card placed in (x,y) in your board.
+<show leaderboard> Shows the current leaderboard based only on players' points.
+<flip card "idx"> Flip the hand's card in position "idx".
+<place card> Asks for index and relative position of the card you want to place.
+<draw card> Asks for the index of the item you want to draw:
+                    -0: Resource Deck
+                    -1: First Resource Card
+                    -2: Second Resource Card
+                    -3: Gold Deck
+                    -4: First Gold Card
+                    -5: Second Gold Card
+<chat "nick"> Shows the chat between you and the "nick" player.
+                    ("nick" = All -> chat broadcast)
+<message "nick"> Asks for a message to be sent to "nick" player.
+                    ("nick" = All -> chat broadcast)
+<help> Opens this help's page.

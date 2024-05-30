@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.IdController">
+   <children>
+      <TextField fx:id="getId" layoutX="325.0" layoutY="157.0" promptText="ID..." />
+      <Label layoutX="301.0" layoutY="56.0" text="INSERT ID">
+         <font>
+            <Font size="45.0" />
+         </font>
+      </Label>
+      <Button fx:id="submit" disable="true" layoutX="356.0" layoutY="237.0" mnemonicParsing="false" onAction="#submit" text="submit">
+         <font>
+            <Font size="20.0" />
+         </font></Button>
+   </children>
+</AnchorPane>
