@@ -1,28 +1,19 @@
 package it.polimi.ingsw.view.coreview;
 
 import it.polimi.ingsw.model.item.card.Card;
+import it.polimi.ingsw.util.Coord;
 import it.polimi.ingsw.util.Symbol;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A class representing a view of the game board
  */
 public class BoardView {
-
-    /**
-     * A record representing coordinates for board positions.
-     */
-    private record Coord(int x, int y){
-
-    }
     private final Map<Coord,CardView> placedCards;
     private Map<Symbol,Integer> inventory;
-    private int counter;
     private int yMax,yMin,xMax,xMin;
+    private List<Coord> cardOrder;
 
     /**
      * Constructor for the BoardView class.
@@ -31,14 +22,13 @@ public class BoardView {
     public BoardView(){
         this.placedCards = new HashMap<>();
         this.inventory = new HashMap<>();
-        this.counter = -1;
         this.xMax = 0;
         this.xMin = 0;
         this.yMax = 0;
         this.yMin = 0;
     }
 
-    public BoardView(Card[][] board,Map<Symbol,Integer> inventory){
+    public BoardView(Card[][] board,Map<Symbol,Integer> inventory, List<Coord> cardOrder){
         int i,j,xDiv,yDiv;
         this.xMax = 0;
         this.xMin = 0;
@@ -47,7 +37,6 @@ public class BoardView {
         xDiv = (board.length-1)/2;
         yDiv = (board.length-1)/2;
         this.placedCards = new HashMap<>();
-        counter = -1;
         for(i=0;i<board.length;i++){
             for(j=0;j<board[0].length;j++){
                 if(board[i][j]!=null){
@@ -55,6 +44,7 @@ public class BoardView {
                 }
             }
         }
+        this.cardOrder = cardOrder;
         this.inventory = inventory;
     }
 
@@ -67,7 +57,6 @@ public class BoardView {
      * @param inventory The inventory to be updated.
      */
     public void updBoardView(CardView card, int x, int y, Map<Symbol,Integer> inventory){
-        counter++;
         if(x>=xMax)
             xMax = x;
         else if(x<=xMin) {
@@ -79,7 +68,7 @@ public class BoardView {
             yMin = y;
         }
         this.inventory = inventory;
-        placedCards.put(new Coord(x,y),card);
+        this.placedCards.put(new Coord(x,y),card);
     }
 
     /**
@@ -90,7 +79,7 @@ public class BoardView {
     public String asciiBoard(){
         int i,j;
         StringBuilder board = new StringBuilder();
-        CardView view=null;
+        CardView view;
         for(i=xMin;i<=xMax;i++){
             board.append(String.format("%-5s",i));
             for(j=yMin;j<=yMax;j++){
@@ -129,4 +118,15 @@ public class BoardView {
             return "Card not placed in this position\n";
     }
 
+    public Map<Coord, CardView> getPlacedCards(){
+        return this.placedCards;
+    }
+
+    public Map<Symbol, Integer> getInventory(){
+        return this.inventory;
+    }
+
+    public List<Coord> getCardOrder(){
+        return this.cardOrder;
+    }
 }

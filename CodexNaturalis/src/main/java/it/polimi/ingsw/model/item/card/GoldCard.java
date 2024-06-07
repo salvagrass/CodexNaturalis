@@ -45,6 +45,9 @@ public class GoldCard extends DrawableCard {
      * @return true if the requirements are satisfied, false otherwise.
      */
     public boolean checkRequirements(Map<Symbol, Integer> inventory) {
+        if(!getShowingFace()){
+            return true;
+        }
         for (Map.Entry<Symbol, Integer> set : requirements.entrySet()) {
             if (inventory.get(set.getKey()) < set.getValue()) {
                 return false;

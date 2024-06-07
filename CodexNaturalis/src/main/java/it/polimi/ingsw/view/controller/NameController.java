@@ -19,6 +19,11 @@ public class NameController extends Controller {
             if(this.error.isVisible())
                 this.error.setVisible(false);
         });
+        this.getName.setOnAction(event -> {
+            if(!this.submit.isDisable()){
+                submit();
+            }
+        });
     }
     public void submit() {
         this.gui.scanInput(this.getName.getText());

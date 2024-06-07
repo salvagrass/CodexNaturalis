@@ -11,7 +11,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0"
             prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.ingsw.view.controller.ColorController">
+            fx:controller="it.polimi.ingsw.view.controller.ColorController" fx:id="pane">
     <Label alignment="CENTER" contentDisplay="CENTER" layoutX="281.0" layoutY="93.0" prefHeight="40.0" prefWidth="237.0"
            text="CHOOSE COLOR">
         <font>

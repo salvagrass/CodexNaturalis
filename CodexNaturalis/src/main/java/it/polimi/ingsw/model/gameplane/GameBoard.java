@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.gameplane;
 
+import it.polimi.ingsw.util.Coord;
 import it.polimi.ingsw.util.Symbol;
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.card.DrawableCard;
@@ -7,9 +8,7 @@ import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.util.exception.InvalidPlacementException;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents the game board for the game.
@@ -20,6 +19,7 @@ import java.util.Map;
 public class GameBoard {
     private Card[][] board;
     private final Map<Symbol,Integer> countResources;
+    private final List<Coord> cardOrder;
 
     /**
      * Constructor for GameBoard.
@@ -32,6 +32,7 @@ public class GameBoard {
         for(Symbol s : Symbol.values())
             if(s!=Symbol.EMPTY && s!=Symbol.NOTAVAILABLE)
                 countResources.put(s,0);
+        this.cardOrder = new ArrayList<>();
     }
 
     /**
@@ -42,6 +43,7 @@ public class GameBoard {
         int xAbs = (board.length-1)/2;
         int yAbs = (board[0].length-1)/2;
         board[xAbs][yAbs] = start;
+        this.cardOrder.add(new Coord(0,0));
         updResources(start,xAbs,yAbs);
     }
 
@@ -167,6 +169,7 @@ public class GameBoard {
        updResources(card,x,y);
        if(x==board.length-1||y==board[0].length-1||x==0||y==0)
             expandBoard();
+       this.cardOrder.add(new Coord(xRel, yRel));
        return card.givePoints(this.board,this.countResources,x,y);
 
     }

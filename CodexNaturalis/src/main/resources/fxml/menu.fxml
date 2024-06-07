@@ -5,32 +5,32 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.MenuController">
-   <children>
-      <Label layoutX="309.0" layoutY="34.0" text="MENU">
-         <font>
-            <Font size="64.0" />
-         </font>
-      </Label>
-      <Button layoutX="343.0" layoutY="148.0" mnemonicParsing="false" onAction="#create" text="CREATE">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Button>
-      <Button layoutX="358.0" layoutY="224.0" mnemonicParsing="false" onAction="#join" text="JOIN">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Button>
-      <Button layoutX="353.0" layoutY="300.0" mnemonicParsing="false" onAction="#load" text="LOAD">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Button>
-      <Button layoutX="357.0" layoutY="375.0" mnemonicParsing="false" onAction="#exit" text="QUIT">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Button>
-   </children>
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.controller.MenuController">
+   <Label layoutX="309.0" layoutY="34.0" text="MENU">
+      <font>
+         <Font size="64.0"/>
+      </font>
+   </Label>
+   <Button layoutX="343.0" layoutY="148.0" mnemonicParsing="false" onAction="#create" text="CREATE">
+      <font>
+         <Font size="24.0"/>
+      </font>
+   </Button>
+   <Button layoutX="358.0" layoutY="224.0" mnemonicParsing="false" onAction="#join" text="JOIN">
+      <font>
+         <Font size="24.0"/>
+      </font>
+   </Button>
+   <Button layoutX="353.0" layoutY="300.0" mnemonicParsing="false" onAction="#load" text="LOAD">
+      <font>
+         <Font size="24.0"/>
+      </font>
+   </Button>
+   <Button layoutX="357.0" layoutY="375.0" mnemonicParsing="false" onAction="#exit" text="QUIT">
+      <font>
+         <Font size="24.0"/>
+      </font>
+   </Button>
+   <Button layoutX="616.0" layoutY="68.0" mnemonicParsing="false" text="RULES" onAction="#rules"/>
 </AnchorPane>

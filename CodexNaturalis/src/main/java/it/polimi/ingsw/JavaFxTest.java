@@ -2,15 +2,14 @@ package it.polimi.ingsw;
 
 import it.polimi.ingsw.util.GameScene;
 import it.polimi.ingsw.view.GUI;
-import it.polimi.ingsw.view.controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class JavaFxTest extends Application {
@@ -20,23 +19,18 @@ public class JavaFxTest extends Application {
     }
 
     public void start(Stage stage) {
-        try {
-            gui = new GUI(false, stage);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
-
+        Map<GameScene, FXMLLoader> roots = new HashMap<>();
+        stage.setResizable(false);
+        stage.setFullScreenExitHint("");
+        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         for(GameScene g : GameScene.values()){
             FXMLLoader fxml = new FXMLLoader(getClass().getResource(g.path));
-            Parent root;
-            try {
-                root = fxml.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Controller c = fxml.getController();
-            c.setGui(this.gui);
-            this.gui.addScene(g, new Scene(root, 800, 500), c);
+            roots.put(g, fxml);
+        }
+        try {
+            gui = new GUI(true, stage, roots);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
         this.gui.start();
         stage.setTitle("CODEX NATURALIS");

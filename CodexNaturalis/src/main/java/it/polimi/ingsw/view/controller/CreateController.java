@@ -22,6 +22,11 @@ public class CreateController extends Controller {
             if(this.error.isVisible())
                 this.error.setVisible(false);
         });
+        this.getId.setOnAction(event -> {
+            if(!this.submit.isDisable()){
+                getIdCapacity();
+            }
+        });
     }
     public void exit(){
         this.gui.scanInput("exit");

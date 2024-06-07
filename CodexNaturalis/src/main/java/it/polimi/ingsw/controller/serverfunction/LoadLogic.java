@@ -35,7 +35,6 @@ public class LoadLogic {
         record = new HashSet<>();
     }
 
-
     void linkName(CentralServer server,Comm comm){
         String msg;
         String name = null;
@@ -60,7 +59,7 @@ public class LoadLogic {
             }
         }
 
-
+        comm.sendMsg(MsgCreator.changePhaseMsg(Phase.WAITFORPLAYERS));
         synchronized(this.names){
             comm.sendMsg(MsgCreator.joinedMsg(this.nameToComm.keySet()));
             while(!this.names.isEmpty()){

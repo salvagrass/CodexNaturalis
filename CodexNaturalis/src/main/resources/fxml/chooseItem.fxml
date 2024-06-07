@@ -8,30 +8,31 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.ChooseItemController">
-   <children>
-      <Label layoutX="222.0" layoutY="47.0" text="CHOOSE ITEM">
-         <font>
-            <Font size="56.0" />
-         </font>
-      </Label>
-      <ToggleButton fx:id="b0" layoutX="90.0" layoutY="195.0" mnemonicParsing="false">
-         <graphic>
-            <ImageView fx:id="img0" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-         </graphic>
-         <toggleGroup>
-            <ToggleGroup fx:id="items" />
-         </toggleGroup>
-      </ToggleButton>
-      <ToggleButton fx:id="b1" layoutX="501.0" layoutY="195.0" mnemonicParsing="false" toggleGroup="$items">
-         <graphic>
-            <ImageView fx:id="img1" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-         </graphic>
-      </ToggleButton>
-      <Button fx:id="submit" disable="true" layoutX="344.0" layoutY="403.0" mnemonicParsing="false" onAction="#submit" text="CONFIRM">
-         <font>
-            <Font size="21.0" />
-         </font>
-      </Button>
-   </children>
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.controller.ChooseItemController">
+   <Label fx:id="title" alignment="CENTER" layoutX="111.0" layoutY="43.0" prefHeight="83.0" prefWidth="586.0"
+          text="CHOOSE ITEM" textAlignment="CENTER">
+      <font>
+         <Font size="56.0"/>
+      </font>
+   </Label>
+   <ToggleButton fx:id="b0" layoutX="90.0" layoutY="195.0" mnemonicParsing="false">
+      <graphic>
+         <ImageView fx:id="img0" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"/>
+      </graphic>
+      <toggleGroup>
+         <ToggleGroup fx:id="items"/>
+      </toggleGroup>
+   </ToggleButton>
+   <ToggleButton fx:id="b1" layoutX="501.0" layoutY="195.0" mnemonicParsing="false" toggleGroup="$items">
+      <graphic>
+         <ImageView fx:id="img1" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"/>
+      </graphic>
+   </ToggleButton>
+   <Button fx:id="submit" disable="true" layoutX="344.0" layoutY="403.0" mnemonicParsing="false" onAction="#submit"
+           text="CONFIRM">
+      <font>
+         <Font size="21.0"/>
+      </font>
+   </Button>
 </AnchorPane>

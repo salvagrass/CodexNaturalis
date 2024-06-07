@@ -1,31 +1,38 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.util.GameScene;
-import it.polimi.ingsw.util.PawnColor;
-import it.polimi.ingsw.util.Phase;
-import it.polimi.ingsw.view.controller.ChooseItemController;
-import it.polimi.ingsw.view.controller.ColorController;
-import it.polimi.ingsw.view.controller.Controller;
-import it.polimi.ingsw.view.controller.WaitController;
+import it.polimi.ingsw.controller.serverfunction.MsgCreator;
+import it.polimi.ingsw.util.*;
+import it.polimi.ingsw.view.controller.*;
+import it.polimi.ingsw.view.coreview.BoardView;
+import it.polimi.ingsw.view.coreview.CardView;
 import it.polimi.ingsw.view.coreview.ItemView;
+import it.polimi.ingsw.view.coreview.ObjectiveView;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.collections.ObservableSet;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class GUI extends UserView{
     private final Map<GameScene, Scene> scenes;
     private final Map<Scene, Controller> sceneToController;
     private final Stage stage;
     private Controller currController;
-    public GUI(boolean type, Stage stage) throws RemoteException {
+    private final StringProperty currPlayer;
+    private final IntegerProperty capacity;
+    public GUI(boolean type, Stage stage, Map<GameScene, FXMLLoader> roots) throws RemoteException {
         super(type);
         this.colors = FXCollections.observableSet();
         this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
@@ -33,6 +40,36 @@ public class GUI extends UserView{
         this.sceneToController = new HashMap<>();
         this.playersInLobby = FXCollections.observableSet();
         this.stage = stage;
+        this.currPlayer = new SimpleStringProperty("");
+        this.capacity = new SimpleIntegerProperty();
+        this.turnOrder = FXCollections.observableArrayList();
+        this.leaderboard = FXCollections.observableHashMap();
+        this.chats = FXCollections.observableArrayList();
+        load(roots);
+        bind();
+    }
+
+    private void load(Map<GameScene, FXMLLoader> roots){
+        Parent root;
+        for(GameScene g : roots.keySet()){
+            try{
+                root = roots.get(g).load();
+            }catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Controller c = roots.get(g).getController();
+            c.setGui(this);
+            this.addScene(g, new Scene(root, 800, 500), c);
+        }
+    }
+
+    private void bind(){
+        WaitController wc = (WaitController) this.sceneToController.get(this.scenes.get(GameScene.WAITPLAYERS));
+        wc.bind(this.capacity, (ObservableSet<String>) this.playersInLobby);
+        ColorController cc = (ColorController) this.sceneToController.get(this.scenes.get(GameScene.COLOR));
+        cc.bind((ObservableSet<PawnColor>) this.colors);
+        GameController gc = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+        gc.bind(this.currPlayer, (ObservableList<String>) this.turnOrder, (ObservableMap<String, Integer>) this.leaderboard, (ObservableList<Message>) chats);
     }
 
     @Override
@@ -43,7 +80,7 @@ public class GUI extends UserView{
 
     @Override
     public void sendConfirm(boolean confirmValue,String confirmMsg){
-        this.currController.confirm(confirmValue, confirmMsg);
+        Platform.runLater(()->this.currController.confirm(confirmValue, confirmMsg));
     }
 
     @Override
@@ -52,65 +89,74 @@ public class GUI extends UserView{
         switch(phase){
             case Phase.MENU -> {
                 scene = this.scenes.get(GameScene.MENU);
-                Platform.runLater(()-> this.stage.setScene(scene));
                 this.currController = this.sceneToController.get(scene);
+                Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.CREATE -> {
                 scene = this.scenes.get(GameScene.CREATE);
-                Platform.runLater(()-> this.stage.setScene(scene));
                 this.currController = this.sceneToController.get(scene);
+                Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.JOIN -> {
                 scene = this.scenes.get(GameScene.IDSCENE);
-                Platform.runLater(()-> this.stage.setScene(scene));
                 this.currController = this.sceneToController.get(scene);
+                Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.NAME -> {
                 scene = this.scenes.get(GameScene.NAME);
-                Platform.runLater(()-> this.stage.setScene(scene));
                 this.currController = this.sceneToController.get(scene);
+                Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.WAITFORPLAYERS -> {
                 scene = this.scenes.get(GameScene.WAITPLAYERS);
                 this.currController = this.sceneToController.get(scene);
-                WaitController c = (WaitController) this.currController;
-                c.bind(this.capacity, (ObservableSet<String>) this.playersInLobby);
                 Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.STARTCARD -> {
                 scene = this.scenes.get(GameScene.CHOOSEITEM);
                 this.currController = this.sceneToController.get(scene);
                 ChooseItemController c = (ChooseItemController) this.currController;
-                c.showImgs(this.starts[0].getId(), this.starts[1].getId());
-                Platform.runLater(()-> this.stage.setScene(scene));
+                Platform.runLater(()-> {
+                    c.showImgs(this.starts[0].getId(), this.starts[1].getId());
+                    c.bind(phase);
+                    this.stage.setScene(scene);
+                });
             }
             case Phase.COLOR -> {
                 scene = this.scenes.get(GameScene.COLOR);
                 this.currController = this.sceneToController.get(scene);
-                ColorController c = (ColorController) this.currController;
-                c.bind((ObservableSet<PawnColor>) this.colors);
                 Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.OBJECTIVE -> {
                 scene = this.scenes.get(GameScene.CHOOSEITEM);
                 this.currController = this.sceneToController.get(scene);
                 ChooseItemController c = (ChooseItemController) this.currController;
-                c.showImgs(this.scrtObjs[0].getId(), this.scrtObjs[1].getId());
-                Platform.runLater(()-> this.stage.setScene(scene));
+                Platform.runLater(()-> {
+                    c.showImgs(this.scrtObjs[0].getId(), this.scrtObjs[1].getId());
+                    c.bind(phase);
+                    this.stage.setScene(scene);
+                });
             }
             case Phase.GAME -> {
                 scene = this.scenes.get(GameScene.GAME);
-                Platform.runLater(()-> this.stage.setScene(scene));
                 this.currController = this.sceneToController.get(scene);
+                Platform.runLater(()-> {
+                    ((GameController)this.currController).switchBoard(this.turnOrder.indexOf(this.name));
+                    ((GameController)this.currController).setSecretObj(this.modelView.getSecrObj());
+                    this.stage.setScene(scene);
+                    this.stage.setFullScreen(true);
+                });
             }
             case Phase.ENDGAME -> {}
             case Phase.EXIT -> System.exit(0);
         }
         if(this.currPhase == Phase.WAITFORPLAYERS){
-            Platform.runLater(()->{
-                this.playersInLobby.clear();
-                this.playersInLobby = FXCollections.observableSet();
-            });
+            Platform.runLater(()-> this.playersInLobby.clear());
+            if(phase != Phase.GAME){
+                Platform.runLater(() ->
+                        ((GameController)this.sceneToController.get(this.scenes.get(GameScene.GAME)))
+                                .setName(this.name, this.currPlayer, this.turnOrder));
+            }
         }
         this.currPhase = phase;
     }
@@ -125,6 +171,46 @@ public class GUI extends UserView{
     }
 
     @Override
+    public void createGroundView(CardView[] resCards, CardView[] goldCards, ObjectiveView[] objs){
+        super.createGroundView(resCards, goldCards, objs);
+        GameController c = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+        Platform.runLater(()->{
+            c.updGroundView(0, resCards[0]);
+            c.updGroundView(1, resCards[1]);
+            c.updGroundView(2, resCards[2]);
+            c.updGroundView(3, goldCards[0]);
+            c.updGroundView(4, goldCards[1]);
+            c.updGroundView(5, goldCards[2]);
+            c.updGroundView(6, objs[0]);
+            c.updGroundView(7, objs[1]);
+        });
+    }
+
+    public void updGroundView(int idx,CardView card){
+        super.updGroundView(idx, card);
+        GameController c = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+        Platform.runLater(()-> c.updGroundView(idx, card));
+    }
+
+    @Override
+    public void setHand(List<CardView> hand){
+        super.setHand(hand);
+        GameController c = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+        Platform.runLater(()->{
+            c.updHandView(0, hand.get(0));
+            c.updHandView(1, hand.get(1));
+            c.updHandView(2, hand.get(2));
+        });
+    }
+
+    @Override
+    public void updHandView(CardView card){
+        super.updHandView(card);
+        GameController c = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+        Platform.runLater(()-> c.updHandView(this.idx, card));
+    }
+
+    @Override
     public void updColors(Set<PawnColor> newColors){
         Platform.runLater(()-> super.updColors(newColors));
     }
@@ -136,5 +222,63 @@ public class GUI extends UserView{
 
     public void start(){
         stage.setScene(this.scenes.get(GameScene.START));
+    }
+
+    public void placeCard(int idx, int x, int y){
+        this.client.placeCard(idx, x, y, this.modelView.getHand().get(idx).getFace());
+        this.tmpIdx = idx;
+    }
+
+    public void drawCard(int idx){
+        this.client.drawCard(idx);
+    }
+
+    public void flip(int idx){
+        CardView card = this.modelView.getHand().get(idx);
+        card.setFace(!card.getFace());
+        GameController c = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+        Platform.runLater(()-> c.updHandView(idx, card));
+    }
+
+    @Override
+    public void updBoardView(int turnIdx, CardView card, int x, int y, Map<Symbol,Integer> inventory){
+        super.updBoardView(turnIdx, card, x, y, inventory);
+        GameController c = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+        Platform.runLater(()->c.updBoardView(turnIdx, card, x, y, inventory));
+    }
+
+    @Override
+    public void setCurrPlayer(String currPlayer) {
+        synchronized (this.currPlayerLock) {
+            this.currPlayer.set(currPlayer);
+        }
+    }
+
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity.set(capacity);
+        super.setCapacity(capacity);
+    }
+
+    @Override
+    public void loadBoard(int idx, BoardView boardView){
+        super.loadBoard(idx, boardView);
+        Map<Coord, CardView> board = boardView.getPlacedCards();
+        List<Coord> cardOrder = boardView.getCardOrder();
+        for(Coord c : cardOrder){
+            updBoardView(idx, board.get(c), c.x(), c.y(), boardView.getInventory());
+        }
+    }
+
+    public void setIdx(){
+        this.idx = this.tmpIdx;
+    }
+
+    public void setObj(int idx){
+        this.modelView.setObj(this.scrtObjs[idx]);
+    }
+
+    public void sendChatMsg(String text, String receiver) {
+        this.client.sendChatMessage(MsgCreator.chatMsg(this.name, receiver, text));
     }
 }

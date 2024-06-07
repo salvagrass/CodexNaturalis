@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.util.Coord;
 import it.polimi.ingsw.util.PawnColor;
 import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
@@ -178,7 +179,8 @@ public class MsgCreator {
         Map<Symbol,Integer> inventory =
                 gson.fromJson(jsonBoard.get("countResources"),new TypeToken<HashMap<Symbol,Integer>>(){}.getType());
         Card[][] matrix = gson.fromJson(jsonMatrix,Card[][].class);
-        BoardView loadedView = new BoardView(matrix,inventory);
+        List<Coord> cardOrder = gson.fromJson(jsonBoard.get("cardOrder"), new TypeToken<List<Coord>>(){}.getType());
+        BoardView loadedView = new BoardView(matrix,inventory,cardOrder);
         msg += gson.toJson(loadedView,BoardView.class);
         return msg;
     }

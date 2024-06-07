@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.controller;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.fxml.FXML;
@@ -11,7 +12,8 @@ public class WaitController extends Controller{
     private VBox list;
     @FXML
     private Label ready;
-    public void bind(int capacity, ObservableSet<String> players){
+    private int capacity;
+    public void bind(IntegerProperty capacity, ObservableSet<String> players){
         players.addListener((SetChangeListener<String>) change -> {
             if (change.wasAdded()) {
                 Label label = new Label(change.getElementAdded());
@@ -20,8 +22,9 @@ public class WaitController extends Controller{
             if (change.wasRemoved()) {
                 this.list.getChildren().removeIf(node -> ((Label) node).getText().equals(change.getElementRemoved()));
             }
-            this.ready.setText(players.size() + "/" + capacity);
+            this.ready.setText(players.size() + "/" + this.capacity);
         });
+        capacity.addListener((observable, oldVal, newVal)->this.capacity = (int) newVal);
     }
 
 }

@@ -17,23 +17,21 @@ public abstract class UserView {
     final Client client;
     final ModelView modelView;
     Set<PawnColor> colors;
-    final Map<String,Integer> leaderboard;
+    Map<String,Integer> leaderboard;
     final Map<String,Integer> positions;
     Set<String> playersInLobby;
     final AtomicBoolean confirmValue;
     String confirmMsg;
     List<String> turnOrder;
     String name;
-    String currPlayer;
     Phase currPhase;
     CardView[] starts;
     ObjectiveView[] scrtObjs;
 
-    final List<Message> chats;
+    List<Message> chats;
 
     String toSend;
-    int capacity;
-    int idx;
+    int idx, tmpIdx;
     final AtomicBoolean waitForPlayers;
     final Object toSendlock;
     final Object waitPhaseLock;
@@ -44,9 +42,7 @@ public abstract class UserView {
         this.client = type ? new ClientSocket(this) : new ClientRMI(this);
         this.modelView = new ModelView();
         this.confirmValue = new AtomicBoolean(false);
-        this.leaderboard = new HashMap<>();
         this.positions = new HashMap<>();
-        this.chats = new LinkedList<>();
         this.toSend = null;
         this.waitForPlayers = new AtomicBoolean(false);
         this.toSendlock = new Object();
@@ -69,8 +65,7 @@ public abstract class UserView {
         }
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
+    public void setCapacity(int capacity){
         synchronized(this.modelView){
             this.modelView.allocateBoards(capacity);
         }
@@ -105,7 +100,7 @@ public abstract class UserView {
     }
 
     public void setNames(List<String> turnOrder){
-        this.turnOrder = turnOrder;
+        this.turnOrder.addAll(turnOrder);
         synchronized(this.leaderboard){
             for(String name : turnOrder){
                 this.leaderboard.put(name,0);
@@ -115,7 +110,7 @@ public abstract class UserView {
 
     public void updHandView(CardView card){
         synchronized(this.modelView){
-            this.modelView.updHand(card,idx);
+            this.modelView.updHand(card,this.idx);
         }
     }
 
@@ -141,12 +136,7 @@ public abstract class UserView {
         this.name = name;
     }
 
-    public void setCurrPlayer(String currPlayer){
-        synchronized (this.currPlayerLock) {
-            this.currPlayer = currPlayer;
-            this.currPlayerLock.notifyAll();
-        }
-    }
+    public abstract void setCurrPlayer(String currPlayer);
 
     public void addChatMessage(Message msg) {
         synchronized(this.chats){

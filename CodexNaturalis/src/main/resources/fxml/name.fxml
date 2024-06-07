@@ -6,18 +6,20 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.NameController">
-   <children>
-      <Label layoutX="286.0" layoutY="22.0" prefHeight="141.0" prefWidth="253.0" text="INSERT NAME">
-         <font>
-            <Font size="40.0" />
-         </font>
-      </Label>
-      <TextField fx:id="getName" layoutX="291.0" layoutY="183.0" prefHeight="25.0" prefWidth="236.0" promptText="NAME (1 to 8 alphabetical characters)..." />
-      <Button fx:id="submit" layoutX="371.0" layoutY="273.0" mnemonicParsing="false" onAction="#submit" text="submit">
-         <font>
-            <Font size="20.0" />
-         </font></Button>
-      <Label fx:id="error" layoutX="359.0" layoutY="234.0" text="Name already taken" textFill="RED" visible="false" />
-   </children>
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.view.controller.NameController">
+   <Label layoutX="286.0" layoutY="22.0" prefHeight="141.0" prefWidth="253.0" text="INSERT NAME">
+      <font>
+         <Font size="40.0"/>
+      </font>
+   </Label>
+   <TextField fx:id="getName" layoutX="291.0" layoutY="183.0" prefHeight="25.0" prefWidth="236.0"
+              promptText="NAME (1 to 8 alphabetical characters)..."/>
+   <Button fx:id="submit" disable="true" layoutX="371.0" layoutY="273.0" mnemonicParsing="false" onAction="#submit"
+           text="submit">
+      <font>
+         <Font size="20.0"/>
+      </font>
+   </Button>
+   <Label fx:id="error" layoutX="359.0" layoutY="234.0" text="Name already taken" textFill="RED" visible="false"/>
 </AnchorPane>

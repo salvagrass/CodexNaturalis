@@ -1,18 +1,5 @@
 package it.polimi.ingsw.view.coreview;
 
-import com.google.gson.Gson;
-
-import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.model.item.card.Card;
-import it.polimi.ingsw.model.item.card.GoldCard;
-import it.polimi.ingsw.model.item.card.ResourceCard;
-import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.util.json.CardSerializeLogic;
-import it.polimi.ingsw.util.ObjectiveSerializeLogic;
-import it.polimi.ingsw.util.Symbol;
-
-import java.util.HashMap;
-
 /**
  * A class representing a view of the common ground.
  */
@@ -54,5 +41,17 @@ public class GroundView {
       return CardView.showAsciiArt(resGroundView) + '\n' +
             CardView.showAsciiArt(goldGroundView) + '\n' +
             ObjectiveView.showAsciiArt(objViews) + '\n';
+  }
+
+  public ObjectiveView[] getObjViews(){
+    return this.objViews;
+  }
+
+  public CardView[] getResGroundView(){
+    return this.resGroundView;
+  }
+
+  public CardView[] getGoldGroundView(){
+    return this.goldGroundView;
   }
 }

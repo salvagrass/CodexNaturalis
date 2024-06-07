@@ -71,7 +71,6 @@ public abstract class Client{
           this.userView.updGroundView(idx, card);
         }
         case "UPDBOARDVIEW" -> {
-          // TODO:  REVISE; CHANGE MESSAGE IN MSGCREATOR
           int turnIdx = Integer.parseInt(dictate[1]);
           int x = Integer.parseInt(dictate[2]);
           int y = Integer.parseInt(dictate[3]);

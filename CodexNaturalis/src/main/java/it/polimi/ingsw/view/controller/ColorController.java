@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.controller;
 
 import it.polimi.ingsw.util.PawnColor;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.ObservableSet;
@@ -9,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 
 public class ColorController extends Controller {
     @FXML
@@ -19,11 +21,17 @@ public class ColorController extends Controller {
     private Button submit;
     @FXML
     private Label error;
+    @FXML
+    private AnchorPane pane;
     public void initialize(){
         this.color.selectedToggleProperty().addListener((observable,oldVal,newVal) -> {
             this.submit.setDisable(newVal == null);
             this.error.setVisible(false);
+            if(newVal == null){
+                Platform.runLater(()->this.pane.requestFocus());
+            }
         });
+        Platform.runLater(()->this.pane.requestFocus());
         this.red.disableProperty().addListener((observable, oldValue, newValue) -> this.submit.setDisable(newValue));
         this.blue.disableProperty().addListener((observable, oldValue, newValue) -> this.submit.setDisable(newValue));
         this.green.disableProperty().addListener((observable, oldValue, newValue) -> this.submit.setDisable(newValue));

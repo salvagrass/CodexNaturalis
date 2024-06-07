@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 public class CLI extends UserView{
     private final Scanner in;
     private String command;
+    private String currPlayer;
+    private int capacity;
 
     
     public CLI(boolean type) throws RemoteException{
@@ -31,11 +33,28 @@ public class CLI extends UserView{
         this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
         this.playersInLobby = new HashSet<>();
         this.in = new Scanner(System.in);
+        this.turnOrder = new ArrayList<>(4);
+        this.leaderboard = new HashMap<>();
+        this.chats = new LinkedList<>();
     }
 
     public void tryConnection(String addr){
         super.tryConnection(addr);
         waitChangePhase();
+    }
+
+    @Override
+    public void setCurrPlayer(String currPlayer){
+        synchronized (this.currPlayerLock) {
+            this.currPlayer = currPlayer;
+            this.currPlayerLock.notifyAll();
+        }
+    }
+
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+        super.setCapacity(capacity);
     }
 
     private synchronized void setCommand(String msg){
@@ -384,7 +403,7 @@ public class CLI extends UserView{
             }
             case "message" -> {
                 if(!this.name.equals(cmd[1]) && (cmd[1].equals("All") || this.turnOrder.contains(cmd[1]))){
-                    this.client.sendChatMessage(MsgCreator.chatMsg(this.name, cmd[1], in.nextLine()));
+                    this.client.sendChatMessage(MsgCreator.chatMsg(this.name, cmd[1], getCommand()));
                 }else{
                     System.out.println("Receiver not available\n");
                 }
@@ -476,7 +495,7 @@ public class CLI extends UserView{
                 System.out.println("Invalid Card");
                 return;
             }
-            this.idx = idx;
+            this.tmpIdx = idx;
         } catch (NumberFormatException e) {
             System.out.println("Not a number");
             return;
@@ -497,6 +516,7 @@ public class CLI extends UserView{
                 waitConfirm();
                 System.out.println(this.confirmMsg);
                 if(this.confirmValue.get()){
+                    this.idx = this.tmpIdx;
                     this.modelView.removeHandCard(idx);
                 }
             }

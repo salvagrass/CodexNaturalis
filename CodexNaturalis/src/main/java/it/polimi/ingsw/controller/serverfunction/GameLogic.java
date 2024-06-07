@@ -28,8 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
-
 /**
  * Class that manages the flow of the game.
  */
@@ -272,7 +270,7 @@ public class GameLogic {
         int y = Integer.parseInt(s[3]);
         boolean face = s[4].equals("true");
         if(currPlayer != comm || this.cardPlaced) {
-            comm.sendMsg(MsgCreator.confirmMsg(false,"Not your turn"));
+            sendMsg(comm, MsgCreator.confirmMsg(false,"Not your turn"));
             return;
         }
         try {
@@ -280,11 +278,11 @@ public class GameLogic {
             updBoardView(card, x, y, comm);
             synchronized(this) {
                 this.cardPlaced = true;
-                comm.sendMsg(MsgCreator.confirmMsg(true,"Successeful placement"));
+                sendMsg(comm, MsgCreator.confirmMsg(true,"Successful placement"));
                 this.notifyAll();
             }
         } catch (InvalidPlacementException e) {
-            comm.sendMsg(MsgCreator.confirmMsg(false,"Invalid placement"));
+            sendMsg(comm, MsgCreator.confirmMsg(false,"Invalid placement"));
         }
     }
 
@@ -299,12 +297,12 @@ public class GameLogic {
         String cmd = "";
         int idx;
         if(currPlayer != comm || !this.cardPlaced) {
-            comm.sendMsg(MsgCreator.confirmMsg(false,"Not your turn"));
+            sendMsg(comm, MsgCreator.confirmMsg(false,"Not your turn"));
             return;
         }
         try {
             DrawableCard drawnCard  = this.players.get(comm).draw(ground, Integer.parseInt(s[1]));
-            comm.sendMsg(MsgCreator.updHandViewMsg(new CardView(drawnCard)));
+            sendMsg(comm, MsgCreator.updHandViewMsg(new CardView(drawnCard)));
 
             idx = Integer.parseInt(s[1]);
             if(idx == 1 || idx == 2){
@@ -320,15 +318,15 @@ public class GameLogic {
             } else {
                 back = createBackView(false);
             }
-            MsgCreator.updGroundViewMsg(idx, back);
+            cmd = MsgCreator.cat(cmd, MsgCreator.updGroundViewMsg(idx, back));
             Comm.sendBroadcast(cmd, turnOrder);
             synchronized(this){
                 this.cardDrawn = true;
-                comm.sendMsg(MsgCreator.confirmMsg(true,"Draw successful"));
+                sendMsg(comm, MsgCreator.confirmMsg(true,"Draw successful"));
                 this.notifyAll();
             }
         } catch (InvalidDrawException | InvalidSelectionException e) {
-            comm.sendMsg(MsgCreator.confirmMsg(false,"Invalid draw"));
+            sendMsg(comm, MsgCreator.confirmMsg(false,"Invalid draw"));
         }
     }
 
