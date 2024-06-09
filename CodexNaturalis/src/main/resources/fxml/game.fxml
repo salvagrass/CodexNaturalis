@@ -71,7 +71,7 @@
             <StackPane fx:id="stack" prefHeight="370.0" prefWidth="980.0">
                 <ScrollPane fx:id="scroll" hbarPolicy="NEVER" pannable="true" prefHeight="511.0" prefWidth="1060.0"
                             vbarPolicy="NEVER">
-                    <StackPane fx:id="board"/>
+                    <StackPane fx:id="field"/>
                 </ScrollPane>
             </StackPane>
         </StackPane>

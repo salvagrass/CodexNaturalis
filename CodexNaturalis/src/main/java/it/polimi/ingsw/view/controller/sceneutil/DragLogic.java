@@ -6,6 +6,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -15,9 +16,14 @@ public class DragLogic {
     private double mouseX, mouseY;
     private boolean draggable;
 
-    public DragLogic(List<VBox> boxes, ScrollPane scrollPane) {
-        this.boxes = boxes;
-        this.scrollPane = scrollPane;    }
+    public DragLogic(ScrollPane scrollPane) {
+        this.boxes = new ArrayList<>();
+        this.scrollPane = scrollPane;
+    }
+
+    public List<VBox> getBoxes(){
+        return this.boxes;
+    }
 
     public void setDraggable(boolean value){
         this.draggable = value;
