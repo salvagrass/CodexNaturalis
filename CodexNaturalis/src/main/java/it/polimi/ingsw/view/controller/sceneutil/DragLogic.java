@@ -6,23 +6,18 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class DragLogic {
     private final List<VBox> boxes;
     private final ScrollPane scrollPane;
-    private final Map<ImageView, String> graphic;
     private double mouseX, mouseY;
     private boolean draggable;
 
     public DragLogic(List<VBox> boxes, ScrollPane scrollPane) {
         this.boxes = boxes;
-        this.scrollPane = scrollPane;
-        this.graphic = new HashMap<>();
-    }
+        this.scrollPane = scrollPane;    }
 
     public void setDraggable(boolean value){
         this.draggable = value;
@@ -63,9 +58,5 @@ public class DragLogic {
                 view.setTranslateY(initialPosition[1]);
             }
         });
-    }
-
-    public void addGraphic(ImageView img, String id){
-        this.graphic.put(img, id);
     }
 }

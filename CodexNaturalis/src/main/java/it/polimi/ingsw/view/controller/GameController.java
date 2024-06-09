@@ -65,7 +65,7 @@ public class GameController extends Controller{
     private int placingIdx;
     private List<String> names;
     private ChatLogic chat;
-    private boolean firstCell;
+    private boolean dragStart;
 
     public void initialize(){
         this.resDeck.imageProperty().addListener((observable, oldVal, newVal) -> this.resDeck.setOnMouseClicked(newVal == null ? null : this.resDeck.getOnMouseClicked()));
@@ -81,6 +81,7 @@ public class GameController extends Controller{
         this.boxes = new ArrayList<>();
         this.dragLogic = new DragLogic(boxes, this.scroll);
         this.names = new ArrayList<>(4);
+        this.dragStart = false;
 
         this.scroll.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.isControlDown()) {
@@ -107,7 +108,9 @@ public class GameController extends Controller{
 
     public void updBoardView(int turnIdx, CardView card, int x, int y, Map<Symbol,Integer> inventory){
         updInventory(turnIdx, inventory);
-        addCard(turnIdx, card, x, y);
+        if(turnIdx!=myIdx || !dragStart) {
+            addCard(turnIdx, card, x, y);
+        }
     }
 
     private void updInventory(int turnIdx, Map<Symbol, Integer> inventory) {
@@ -128,11 +131,6 @@ public class GameController extends Controller{
         int i = GridPane.getRowIndex(v);
         int j = GridPane.getColumnIndex(v);
         int turnIdx = this.boards.indexOf((GridPane) v.getParent());
-        int startX = this.starts.get(turnIdx).x();
-        int startY = this.starts.get(turnIdx).y();
-        expand(turnIdx, i, j);
-        i += this.starts.get(turnIdx).x() - startX;
-        j += this.starts.get(turnIdx).y() - startY;
         if(card.equals(this.hand0)){
             this.placingIdx = 0;
         }else if(card.equals(this.hand1)){
@@ -147,9 +145,6 @@ public class GameController extends Controller{
     private void addCard(int turnIdx, CardView card, int x, int y){
         int j = this.starts.get(turnIdx).y() + y;
         int i = this.starts.get(turnIdx).x() + x;
-        expand(turnIdx, i, j);
-        j = this.starts.get(turnIdx).y() + y;
-        i = this.starts.get(turnIdx).x() + x;
         addImage(turnIdx, i, j, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + card.getId() + ".png"))));
     }
 
@@ -173,122 +168,126 @@ public class GameController extends Controller{
             return false;
         });
         this.boards.get(idx).add(v, j, i);
+        expand(idx,i,j);
         this.lastPlaced = v;
     }
 
     private void expand(int turnIdx, int i, int j){
-        int opt = -1;
-        //FIX VBOX position
         if(i == 1){
-            addNewFirstRow(this.boards.get(turnIdx));
-            this.starts.set(turnIdx, new Coord(this.starts.get(turnIdx).x() + 1, this.starts.get(turnIdx).y()));
-            opt = 0;
+            addRowAbove(turnIdx);
         }else if(i == this.boards.get(turnIdx).getRowCount() - 2){
-            RowConstraints row = new RowConstraints(79);
-            this.boards.get(turnIdx).getRowConstraints().addLast(row);
-            opt = 2;
-        }
-        if(turnIdx == this.myIdx && opt != -1){
-            addVboxes(opt, this.boards.get(turnIdx));
+            addRowBelow(turnIdx);
         }
         if(j == 1){
-            addNewFirstColumn(this.boards.get(turnIdx));
-            this.starts.set(turnIdx, new Coord(this.starts.get(turnIdx).x(), this.starts.get(turnIdx).y() + 1));
-            opt = 1;
+            addColumnLeft(turnIdx);
         }else if(j == this.boards.get(turnIdx).getColumnCount() - 2){
-            ColumnConstraints column = new ColumnConstraints(156);
-            this.boards.get(turnIdx).getColumnConstraints().addLast(column);
-            opt = 3;
-        }
-        if(turnIdx == this.myIdx && opt != -1){
-            addVboxes(opt, this.boards.get(turnIdx));
+            addColumnRight(turnIdx);
         }
     }
 
-    private void addNewFirstColumn(GridPane gridPane) {
-        int cols = gridPane.getColumnCount();
-        ColumnConstraints newCol = new ColumnConstraints(156);
-        gridPane.getColumnConstraints().addFirst(newCol);
+    private void addRowAbove(int turnIdx){
+        GridPane gridPane = this.boards.get(turnIdx);
+        boolean startVbox = (Boolean) gridPane.getUserData();
+        List<RowConstraints> constraints = gridPane.getRowConstraints();
+        constraints.add(constraints.getFirst());
+        gridPane.getChildren().forEach(node -> {
+            Integer row = GridPane.getRowIndex(node);
+            if (row != null) {
+                GridPane.setRowIndex(node, row + 1);
+            }
+        });
 
-        for (int row = 0; row < gridPane.getRowCount(); row++) {
-            for (int col = cols - 1; col >= 0; col--) {
-                VBox v = getNodeFromGridPane(gridPane, col, row);
-                if (v != null) {
-                    gridPane.getChildren().remove(v);
-                    gridPane.add(v, col + 1, row);
-                }
+        if(this.myIdx==turnIdx) {
+            for (int i = (startVbox ? 1 : 0); i < gridPane.getColumnCount(); i += 2) {
+                VBox vbox = new VBox();
+                gridPane.add(vbox, i, 0);
+                vbox.setStyle("-fx-background-color: #55ff00;");
+                boxes.add(vbox);
+                gridPane.setUserData(!startVbox);
+            }
+        }
+        this.starts.set(turnIdx, new Coord(this.starts.get(turnIdx).x() + 1, this.starts.get(turnIdx).y()));
+    }
+
+    private void addRowBelow(int turnIdx){
+        GridPane gridPane = this.boards.get(turnIdx);
+        boolean startVbox = (Boolean) gridPane.getUserData();
+        int start,end;
+        List<RowConstraints> constraints = gridPane.getRowConstraints();
+        constraints.add(constraints.getFirst());
+
+        if(gridPane.getRowCount()%2==0){
+            start = 1;
+            end = 0;
+        }else{
+            start = 0;
+            end = 1;
+        }
+
+        if(this.myIdx == turnIdx) {
+            for (int i = (startVbox ? start : end); i < gridPane.getColumnCount(); i += 2) {
+                VBox vbox = new VBox();
+                gridPane.add(vbox, i, gridPane.getRowCount() - 1);
+                vbox.setStyle("-fx-background-color: #55ff00;");
+                boxes.add(vbox);
             }
         }
     }
 
-    private void addNewFirstRow(GridPane gridPane) {
-        int rows = gridPane.getRowCount();
-        RowConstraints newRow = new RowConstraints(79);
-        gridPane.getRowConstraints().addFirst(newRow);
-
-        for (int row = rows - 1; row >= 0; row--) {
-            for (int col = 0; col < gridPane.getColumnCount(); col++) {
-                VBox v = getNodeFromGridPane(gridPane, col, row);
-                if (v != null) {
-                    gridPane.getChildren().remove(v);
-                    gridPane.add(v, col, row + 1);
-                }
+    private void addColumnLeft(int turnIdx){
+        GridPane gridPane = this.boards.get(turnIdx);
+        boolean startVbox = (Boolean) gridPane.getUserData();
+        List<ColumnConstraints> constraints = gridPane.getColumnConstraints();
+        constraints.add(constraints.getFirst());
+        gridPane.getChildren().forEach(node -> {
+            Integer columnIndex = GridPane.getColumnIndex(node);
+            if (columnIndex != null) {
+                GridPane.setColumnIndex(node,columnIndex+1);
             }
+        });
+
+        if(this.myIdx==turnIdx) {
+            for (int i = (startVbox ? 1 : 0); i < gridPane.getRowCount(); i += 2) {
+                VBox vbox = new VBox();
+                gridPane.add(vbox, 0, i);
+                vbox.setStyle("-fx-background-color: #f56969;");
+                boxes.add(vbox);
+                gridPane.setUserData(!startVbox);
+            }
+        }
+        this.starts.set(turnIdx, new Coord(this.starts.get(turnIdx).x(), this.starts.get(turnIdx).y() + 1));
+    }
+
+
+    private void addColumnRight(int turnIdx){
+        GridPane gridPane = this.boards.get(turnIdx);
+        boolean startVbox = (Boolean) gridPane.getUserData();
+        int start,end;
+        List<ColumnConstraints> constraints = gridPane.getColumnConstraints();
+        constraints.add(constraints.getFirst());
+
+        if(gridPane.getColumnCount()%2==0){
+            start = 1;
+            end = 0;
+        }else{
+            start = 0;
+            end = 1;
+        }
+
+        for(int i=(startVbox? start : end);i<gridPane.getRowCount();i+=2){
+            VBox vbox = new VBox();
+            gridPane.add(vbox,gridPane.getColumnCount()-1,i);
+            vbox.setStyle("-fx-background-color: #f56969;");
+            boxes.add(vbox);
         }
     }
 
-    private VBox getNodeFromGridPane(GridPane gridPane, int col, int row) {
-        for (javafx.scene.Node node : gridPane.getChildren()) {
-            if (GridPane.getColumnIndex(node) != null &&  GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node) == row) {
-                return (VBox) node;
-            }
-        }
-        return null;
-    }
 
-    private void addVboxes(int idx, GridPane gridPane){
-        switch(idx){
-            case 0 -> {
-                for(int i = this.firstCell ? 1 : 0; i < gridPane.getColumnCount(); i+=2){
-                    addVbox(gridPane, 0, i);
-                }
-                this.firstCell =  !this.firstCell;
-            }
-            case 1 -> {
-                for(int i = this.firstCell ? 1 : 0; i < gridPane.getRowCount(); i+=2){
-                    addVbox(gridPane, i, 0);
-                }
-                this.firstCell =  !this.firstCell;
-            }
-            case 2 -> {
-                int i;
-                if(this.firstCell && gridPane.getRowCount() % 2 == 0 || !this.firstCell && gridPane.getRowCount() % 2 != 0){
-                    i = 0;
-                }else{
-                    i = 1;
-                }
-                for(; i < gridPane.getColumnCount(); i+=2){
-                    addVbox(gridPane, gridPane.getRowCount() - 1, i);
-                }
-            }
-            case 3 -> {
-                int i;
-                if(this.firstCell && gridPane.getColumnCount() % 2 == 0 || !this.firstCell && gridPane.getColumnCount() % 2 != 0){
-                    i = 0;
-                }else{
-                    i = 1;
-                }
-                for(; i < gridPane.getRowCount(); i+=2){
-                    addVbox(gridPane, i, gridPane.getColumnCount() - 1);
-                }
-            }
-        }
-    }
 
     private void addVbox(GridPane gridPane, int i, int j){
         VBox v = new VBox();
         this.boxes.add(v);
-
+        v.setStyle("-fx-background-color: #11e5e5;");
         v.visibleProperty().addListener((observable, oldVal, newVal) -> v.setMouseTransparent(!newVal));
 
         gridPane.add(v, j, i);
@@ -313,17 +312,14 @@ public class GameController extends Controller{
             case 0 -> {
                 this.hand0.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + card.getId() + ".png"))));
                 this.hand0.setVisible(true);
-                this.dragLogic.addGraphic(this.hand0, card.getId());
             }
             case 1 -> {
                 this.hand1.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + card.getId() + ".png"))));
                 this.hand1.setVisible(true);
-                this.dragLogic.addGraphic(this.hand1, card.getId());
             }
             case 2 -> {
                 this.hand2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + card.getId() + ".png"))));
                 this.hand2.setVisible(true);
-                this.dragLogic.addGraphic(this.hand2, card.getId());
             }
         }
     }
@@ -368,6 +364,7 @@ public class GameController extends Controller{
                         GridPane gp;
                         VBox v;
                         gp = createGrid(rows, cols);
+                        gp.setUserData(true);
                         gp.setVisible(false);
                         this.boards.add(gp);
 
@@ -500,6 +497,7 @@ public class GameController extends Controller{
         this.name.setText(name);
         this.chat.setName(name);
         this.myIdx = turnOrder.indexOf(name);
+        this.dragStart = true;
         this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name));
         this.currIdx.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == (int)newVal) && this.currPlayer.equals(name)));
         currPlayer.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name)));
@@ -507,7 +505,6 @@ public class GameController extends Controller{
     }
 
     private void addBoardVBoxes(GridPane gp){
-        this.firstCell = true;
         int rows = gp.getRowCount();
         int cols = gp.getColumnCount();
         for (int row = 0; row < rows; row++) {
