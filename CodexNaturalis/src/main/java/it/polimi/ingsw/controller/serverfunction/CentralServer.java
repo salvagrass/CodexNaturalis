@@ -1,21 +1,20 @@
 package it.polimi.ingsw.controller.serverfunction;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.controller.connection.Comm;
 import it.polimi.ingsw.controller.connection.RMIComm;
 import it.polimi.ingsw.controller.connection.RemoteComm;
 import it.polimi.ingsw.controller.connection.SocketComm;
 import it.polimi.ingsw.controller.userclient.ClientRemote;
 import it.polimi.ingsw.util.Phase;
-import it.polimi.ingsw.util.json.SaveData;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -47,8 +46,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
         this.games = new ConcurrentHashMap<>();
         this.loadingGames = new ConcurrentHashMap<>();
         this.memorized = new HashSet<>();
-        try {
-            BufferedReader fw = new BufferedReader (new FileReader("memorized_games.txt"));
+        try(BufferedReader fw = new BufferedReader(new FileReader("memorized_games.txt"))) {
             String line;
             while((line = fw.readLine())!=null){
                 memorized.add(line);
@@ -88,20 +86,6 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
         RMIComm comm = new RMIComm(client);
         executor.submit(()->handleClient(comm));
         return comm;
-    }
-
-    /**
-     * Closes a game lobby.
-     *
-     * @param game The GameLogic associated with the lobby to be removed.
-     */
-    public void close(GameLogic game) {
-        String id = games.entrySet().stream().
-                filter(x -> (x.getValue() == game)).
-                findFirst().
-                get().
-                getKey();
-        this.games.remove(id);
     }
 
     /**
@@ -160,7 +144,9 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                     comm.setGame(game);
                     game.addRecord(comm);
                     games.put(id, game);
-                    executor.submit(() -> game.addPlayer(comm));
+                    synchronized(this.games.get(id)){
+                        game.submitPlayer(comm);
+                    }
                 }
             }
         } while (isContained);
@@ -206,7 +192,9 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
             }
         } while(!isAvailable);
         GameLogic tmp = game;
-        this.executor.submit(()->tmp.addPlayer(comm));
+        synchronized(this.games.get(id)) {
+            tmp.submitPlayer(comm);
+        }
         return true;
     }
 
@@ -286,8 +274,10 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
     void submitClient(Comm comm) {
         this.executor.submit(() -> handleClient(comm));
     }
-    
+
     void closeGame(String id) {
-        this.games.remove(id);
+        synchronized(this.games.get(id)) {
+            this.games.remove(id);
+        }
     }
 }

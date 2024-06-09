@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class UserView {
     final Client client;
-    final ModelView modelView;
+    ModelView modelView;
     Set<PawnColor> colors;
     Map<String,Integer> leaderboard;
     final Map<String,Integer> positions;
@@ -175,5 +175,29 @@ public abstract class UserView {
             this.toSendlock.notifyAll();
         }
     }
+
+    public void cleanView(){
+        this.modelView = new ModelView();
+        colors = new HashSet<>(Arrays.asList(PawnColor.values()));
+
+        //CLEAR COLLECTIONS IN CASE OF A CLIENT CRASHED
+        this.leaderboard.clear();
+        this.positions.clear();
+        this.playersInLobby.clear();
+        this.turnOrder.clear();
+        this.chats.clear();
+        this.confirmValue.set(false);
+
+        //SETTING THE FIELDS TO THEIR INITIAL VALUES
+        this.confirmMsg = null;
+        this.name = null;
+        this.starts = new CardView[2];
+        this.scrtObjs = new ObjectiveView[2];
+        this.waitForPlayers.set(false);
+    }
+
+
+
+
     public abstract void changePhase(Phase phase);
 }

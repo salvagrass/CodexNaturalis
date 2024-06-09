@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.controller;
+package it.polimi.ingsw.view.controller.sceneutil;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;

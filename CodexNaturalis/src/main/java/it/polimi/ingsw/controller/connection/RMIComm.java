@@ -11,7 +11,6 @@ import java.rmi.server.UnicastRemoteObject;
 public class RMIComm extends Comm implements RemoteComm {
 
     private ClientRemote client;
-    private String chosen;
 
     /**
      * Constructs a new RMIComm instance.
@@ -20,6 +19,7 @@ public class RMIComm extends Comm implements RemoteComm {
      * @throws RemoteException if a communication-related exception occurs.
      */
     public RMIComm(ClientRemote client) throws RemoteException{
+        super();
         this.client = client;
         UnicastRemoteObject.exportObject(this,0);
     }
@@ -31,49 +31,28 @@ public class RMIComm extends Comm implements RemoteComm {
      */
     @Override
     public void sendMsg(String msg){
-        try{
-            this.client.handleMsgRemote(msg);
-        } catch (RemoteException e) {
-            System.out.println("Client crashed");
-        }
-    }
-
-    @Override
-    public void setMsg(String msg) throws RemoteException{
-        synchronized (this) {
-            this.chosen = msg;
-            this.notifyAll();
-        }
-    }
-
-    /**
-     * Retrieves the answer previously obtained with the setMsg method.
-     *
-     * @return The answer obtained from the last message sent.
-     */
-    @Override
-    public String getMsg() {
-        String s;
-        synchronized (this) {
-            while (this.chosen == null) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException();
-                }
+        if(client!=null) {
+            try {
+                this.client.handleMsgRemote(msg);
+            } catch (RemoteException e) {
+                System.out.println("Client crashed");
             }
-            s = this.chosen;
-            this.chosen = null;
         }
-        return s;
     }
 
-    /**
-     * Empty method for RMIComm, intended to be used by other classes that inherit
-     * from Comm.
-     */
     @Override
-    public void waitMsg() {
+    public void pingMethod() {
+        try {
+            this.client.handleMsgRemote("");
+        } catch (RemoteException e) {
+            close();
+            this.getGame().handleCrash(this);
+            this.clientCrashed.set(true);
+        }
+    }
+
+    public void setMsg(String msg) throws RemoteException{
+        setChosen(msg);
     }
 
     /**

@@ -141,6 +141,7 @@ public class GUI extends UserView{
                 scene = this.scenes.get(GameScene.GAME);
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()-> {
+                    ((GameController)this.currController).setName(this.name, this.currPlayer, this.turnOrder);
                     ((GameController)this.currController).switchBoard(this.turnOrder.indexOf(this.name));
                     ((GameController)this.currController).setSecretObj(this.modelView.getSecrObj());
                     this.stage.setScene(scene);
@@ -152,11 +153,6 @@ public class GUI extends UserView{
         }
         if(this.currPhase == Phase.WAITFORPLAYERS){
             Platform.runLater(()-> this.playersInLobby.clear());
-            if(phase != Phase.GAME){
-                Platform.runLater(() ->
-                        ((GameController)this.sceneToController.get(this.scenes.get(GameScene.GAME)))
-                                .setName(this.name, this.currPlayer, this.turnOrder));
-            }
         }
         this.currPhase = phase;
     }

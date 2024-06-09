@@ -1,6 +1,7 @@
-package it.polimi.ingsw.view.controller;
+package it.polimi.ingsw.view.controller.sceneutil;
 
 import it.polimi.ingsw.util.Message;
+import it.polimi.ingsw.view.controller.GameController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;

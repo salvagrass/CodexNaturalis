@@ -1,29 +1,39 @@
 package it.polimi.ingsw.controller.userclient;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import it.polimi.ingsw.controller.connection.SocketComm;
 import it.polimi.ingsw.controller.serverfunction.MsgCreator;
 import it.polimi.ingsw.view.UserView;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class ClientSocket extends Client{
-  private SocketComm comm;
+  private Socket socket;
+  private Scanner in;
+  private PrintWriter out;
   private final AtomicBoolean stopConnection;
+
+  ExecutorService executor;
 
   public ClientSocket(UserView userView){
     super(userView);
     this.stopConnection = new AtomicBoolean(false);
     this.port = 5432;
+    this.executor = Executors.newSingleThreadExecutor();
   }
 
   @Override
   public void connect(String addr) {
-    this.comm = null;
+    this.socket = null;
     try {
-      this.comm = new SocketComm(new Socket(addr, this.port));
+      socket = new Socket(addr, this.port);
+      this.in = new Scanner(socket.getInputStream());
+      this.out = new PrintWriter(socket.getOutputStream());
     } catch (IOException e) {
       //TODO log file
       throw new RuntimeException();
@@ -31,10 +41,21 @@ public class ClientSocket extends Client{
     new Thread(this::listener).start();
   }
 
+
+  @Override
+  public void handleMsg(String msg){
+    if(msg.equals("PING")) {
+      sendMsg("ACK");
+    }
+    else {
+      executor.submit(() -> super.handleMsg(msg));
+    }
+  }
+
   private void listener(){
     while (!stopConnection.get()){
       try{
-        super.handleMsg(this.comm.getMsg());
+        handleMsg(this.in.nextLine());
       }catch(IllegalStateException | NoSuchElementException e){
         //TODO LOG FILE
       }
@@ -43,7 +64,10 @@ public class ClientSocket extends Client{
 
   @Override
   void sendMsg(String msg) {
-    this.comm.sendMsg(msg);
+    synchronized(this) {
+      this.out.println(msg);
+      this.out.flush();
+    }
   }
 
   @Override
@@ -58,13 +82,19 @@ public class ClientSocket extends Client{
 
   @Override
   public void sendChatMessage(String msg) {
-    this.comm.sendMsg(msg);
+    this.out.println(msg);
   }
 
   @Override
   public void closeConnection(){
     this.stopConnection.set(true);
-    this.comm.close();
-    this.comm = null;
+    try{
+      executor.shutdownNow();
+      in.close();
+      out.close();
+      socket.close();
+    }catch(IOException e){
+      //TODO LOG FILE CANT CLOSE THE SOCKET
+    }
   }
 }

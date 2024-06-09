@@ -2,9 +2,11 @@ package it.polimi.ingsw.controller.connection;
 
 import it.polimi.ingsw.controller.serverfunction.GameLogic;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A class that handles communication with the server based on the connected client type.
@@ -12,6 +14,13 @@ import java.util.List;
  */
 public abstract class Comm{
     private GameLogic game;
+    private String chosen;
+    final AtomicBoolean clientCrashed;
+    private ScheduledExecutorService pingExec;
+
+    public Comm() {
+        this.clientCrashed = new AtomicBoolean(false);
+    }
 
 
     /**
@@ -26,7 +35,32 @@ public abstract class Comm{
      *
      * @return The answer obtained from the Client.
      */
-    public abstract String getMsg();
+    public String getMsg() {
+        String s;
+        synchronized (this) {
+            while (this.chosen == null) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException();
+                }
+            }
+            s = this.chosen;
+            this.chosen = null;
+        }
+        return s;
+    }
+
+    public void clean(){
+        this.chosen = null;
+    }
+
+    void setChosen(String msg){
+        synchronized(this) {
+            this.chosen = msg;
+            this.notifyAll();
+        }
+    }
 
     public void setGame(GameLogic game){
         this.game = game;
@@ -48,10 +82,20 @@ public abstract class Comm{
         }
     }
 
-    /*
-     * Waits for a message.
-     */
-    public abstract void waitMsg();
+
+
+    public void stopPing(){
+        pingExec.shutdownNow();
+    }
+
+    public void startPing(){
+        this.clientCrashed.set(false);
+        pingExec = Executors.newSingleThreadScheduledExecutor();
+        pingExec.scheduleAtFixedRate(this::pingMethod, 0, 5, TimeUnit.SECONDS);
+    }
+
+
+    public abstract void pingMethod();
     /**
      * Closes the connection.
      */

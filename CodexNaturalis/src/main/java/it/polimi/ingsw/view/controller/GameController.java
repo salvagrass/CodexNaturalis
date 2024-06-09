@@ -3,6 +3,8 @@ package it.polimi.ingsw.view.controller;
 import it.polimi.ingsw.util.Coord;
 import it.polimi.ingsw.util.Message;
 import it.polimi.ingsw.util.Symbol;
+import it.polimi.ingsw.view.controller.sceneutil.ChatLogic;
+import it.polimi.ingsw.view.controller.sceneutil.DragLogic;
 import it.polimi.ingsw.view.coreview.CardView;
 import it.polimi.ingsw.view.coreview.ItemView;
 import it.polimi.ingsw.view.coreview.ObjectiveView;
@@ -45,13 +47,13 @@ public class GameController extends Controller{
     private ScrollPane scroll;
     @FXML
     private StackPane board, stack;
-    private List<GridPane> boards;
-    private List<VBox> inventories;
-    private List<Coord> starts;
     @FXML
     private Label name, boardView;
     @FXML
     private VBox leaderboard;
+    private List<GridPane> boards;
+    private List<VBox> inventories;
+    private List<Coord> starts;
     private IntegerProperty currIdx;
     private double scaleValue = 1.0;
     private final double scaleIncrement = 0.1;
@@ -105,9 +107,6 @@ public class GameController extends Controller{
 
     public void updBoardView(int turnIdx, CardView card, int x, int y, Map<Symbol,Integer> inventory){
         updInventory(turnIdx, inventory);
-        if(this.currPlayer != null && this.currPlayer.equals(this.names.get(this.myIdx))){
-            return;
-        }
         addCard(turnIdx, card, x, y);
     }
 

@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
@@ -23,12 +25,23 @@ import java.util.stream.Collectors;
 public class CLI extends UserView{
     private final Scanner in;
     private String command;
+    private final PriorityQueue<Phase> phaseQueue;
+    private ExecutorService executorService;
     private String currPlayer;
     private int capacity;
+
 
     
     public CLI(boolean type) throws RemoteException{
         super(type);
+        this.phaseQueue = new PriorityQueue<>((firstPhase, secondPhase) -> {
+            if(firstPhase == Phase.CRASHED)
+                return -1;
+            else if (secondPhase == Phase.CRASHED) {
+                return 1;
+            }
+            return 0;
+        });
         this.colors = new HashSet<>();
         this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
         this.playersInLobby = new HashSet<>();
@@ -105,30 +118,39 @@ public class CLI extends UserView{
 
     @Override
     public void setCurrPhase(Phase phase, ItemView... items) {
-        synchronized(this){
-            this.currPhase = phase;
+        synchronized(this.phaseQueue){
+            phaseQueue.add(phase);
+            this.phaseQueue.notifyAll();
             super.setCurrPhase(phase, items);
-            this.notifyAll();
         }
     }
 
     private void waitChangePhase(){
-        Phase tmp;
-        synchronized (this) {
-            while (this.currPhase == null) {
+        synchronized (this.phaseQueue) {
+            while (this.phaseQueue.isEmpty()) {
                 try {
-                    this.wait();
+                    this.phaseQueue.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            tmp = this.currPhase;
-            this.currPhase = null;
+            this.currPhase = this.phaseQueue.remove();
+            if(this.currPhase==Phase.CRASHED){
+                this.phaseQueue.removeIf(p->!(p==Phase.MENU));
+            }
         }
-        changePhase(tmp);
+        changePhase(this.currPhase);
     }
 
     public void waitConfirm(){
+        synchronized(this.phaseQueue){
+            if(this.phaseQueue.peek()==Phase.CRASHED){
+                synchronized(this.confirmValue) {
+                    this.confirmValue.set(true);
+                }
+                return;
+            }
+        }
         synchronized(this.confirmValue){
             try {
                 this.confirmValue.wait();
@@ -268,13 +290,13 @@ public class CLI extends UserView{
                 }
             }
         }
-        Thread t = new Thread(()->{
+        this.executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(()->{
             while(stay.get()){
                 String msg = in.nextLine();
                 setCommand(msg);
             }
         });
-        t.start();
         while(stay.get()){
             synchronized (this.currPlayerLock) {
                 if (!this.currPlayer.equals(copyCurrPlayer)) {
@@ -296,9 +318,11 @@ public class CLI extends UserView{
             } catch (TimeoutException e) {
                 inserted = false;
             }
-            synchronized(this.waitPhaseLock){
-                if(this.currPhase==Phase.ENDGAME || this.currPhase == Phase.EXIT){
+            synchronized(this.phaseQueue){
+                if(this.phaseQueue.contains(Phase.ENDGAME) || this.phaseQueue.contains(Phase.CRASHED)){
                     stay.set(false);
+                    executorService.shutdownNow();
+                    inserted = true;
                 }
             }
         }
@@ -574,13 +598,41 @@ public class CLI extends UserView{
             case Phase.OBJECTIVE -> chooseObjective();
             case Phase.GAME -> gameFlow();
             case Phase.ENDGAME -> showWinner();
+            case Phase.CRASHED -> {
+                System.out.print("A player has crashed\nPress enter and return to menu");
+                if(executorService == null) {
+                    in.nextLine();
+                }else{
+                    getCommand();
+                    executorService.shutdownNow();
+                }
+                super.cleanView();
+                waitChangePhase();
+            }
             case Phase.EXIT -> System.out.println("Uscito gioco\nGame Terminato");
         }
+    }
+
+    @Override
+    public void scanInput(String toScan){
+        synchronized(this.phaseQueue){
+            if(this.phaseQueue.peek() == Phase.CRASHED) {
+                return;
+            }
+        }
+        super.scanInput(toScan);
     }
 
     private void printChat(List<Message> msgs) {
         for(Message msg : msgs){
             System.out.println(msg.sender + ": " + msg.msg);
         }
+    }
+
+    @Override
+    public void cleanView(){
+        super.cleanView();
+        this.currPlayer = null;
+        this.capacity = 0;
     }
 }

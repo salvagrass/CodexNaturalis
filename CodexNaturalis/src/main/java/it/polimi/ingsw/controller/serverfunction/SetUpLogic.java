@@ -11,6 +11,7 @@ import it.polimi.ingsw.view.coreview.CardView;
 import it.polimi.ingsw.view.coreview.ObjectiveView;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A class that handles the setup of a game.
@@ -21,7 +22,6 @@ class SetUpLogic {
     }
     
     private final int numPlayers;
-    private final GameLogic game;
     private final Map<Comm, State> record;
     private final Set<PawnColor> availableColors;
     private final Map<String, Comm> nameToComm;
@@ -30,13 +30,11 @@ class SetUpLogic {
     /**
      * Constructor for the setUpLogic.
      *
-     * @param game The GameLogic that creates this setUpLogic.
      * @param num The number of players in the game.
      * @param turnOrder An empty list that will be updated during execution.
      */
-    SetUpLogic(GameLogic game, int num, List<Comm> turnOrder){
-        this.game = game;
-        this.record = new HashMap<>();
+    SetUpLogic(int num, List<Comm> turnOrder){
+        this.record = new ConcurrentHashMap<>();
         this.nameToComm = new HashMap<>();
         this.availableColors = new HashSet<>(List.of(PawnColor.values()));
         this.numPlayers=num;
@@ -54,7 +52,7 @@ class SetUpLogic {
         Map<String,Comm> tmp;
         String msg;
         StartingCard card;
-        game.sendMsg(comm, MsgCreator.capacityMsg(numPlayers));
+        comm.sendMsg(MsgCreator.capacityMsg(numPlayers));
         String playerName = linkName(comm);
         record.put(comm, State.STARTING);
         synchronized (this.nameToComm) {
@@ -113,22 +111,22 @@ class SetUpLogic {
         String name;
         boolean available = true;
 
-        game.sendMsg(comm,MsgCreator.changePhaseMsg(Phase.NAME));
+        comm.sendMsg(MsgCreator.changePhaseMsg(Phase.NAME));
         do{
-            game.sendMsg(comm,MsgCreator.chooseMsg());
-            name = game.getMsg(comm);
+            comm.sendMsg(MsgCreator.chooseMsg());
+            name = comm.getMsg();
             synchronized (nameToComm) {
                 if (nameToComm.get(name) == null) {
                     nameToComm.put(name, comm);
                     available = false;
                 }else{
-                    game.sendMsg(comm,MsgCreator.confirmMsg(false, "Name already taken"));
+                    comm.sendMsg(MsgCreator.confirmMsg(false, "Name already taken"));
                 }
             }
         }while(available);
         String msg = MsgCreator.cat(MsgCreator.confirmMsg(true, "Valid Name"), MsgCreator.nameMsg(name));
         msg = MsgCreator.cat(msg, MsgCreator.changePhaseMsg(Phase.WAITFORPLAYERS));
-        game.sendMsg(comm, msg);
+        comm.sendMsg(msg);
         return name;
     }
 
@@ -144,8 +142,8 @@ class SetUpLogic {
         CardView faceUp = new CardView(card);
         String cardToJson = MsgCreator.changePhaseMsg(Phase.STARTCARD,new CardView[] {faceDown, faceUp});
         String chooseOrientation = MsgCreator.chooseMsg();
-        game.sendMsg(comm,MsgCreator.cat(cardToJson,chooseOrientation));
-        card.setShowingFace(game.getMsg(comm).equals("1"));
+        comm.sendMsg(MsgCreator.cat(cardToJson,chooseOrientation));
+        card.setShowingFace(comm.getMsg().equals("1"));
     }
 
     /**
@@ -159,21 +157,21 @@ class SetUpLogic {
         boolean chosen;
 
         chosen = true;
-        game.sendMsg(comm,MsgCreator.changePhaseMsg(Phase.COLOR));
+        comm.sendMsg(MsgCreator.changePhaseMsg(Phase.COLOR));
         while (chosen) {
-            game.sendMsg(comm, MsgCreator.chooseMsg());
-            color = PawnColor.valueOf(game.getMsg(comm).toUpperCase());
+            comm.sendMsg(MsgCreator.chooseMsg());
+            color = PawnColor.valueOf(comm.getMsg().toUpperCase());
             synchronized (this.availableColors) {
                 if (availableColors.contains(color)) {
                     availableColors.remove(color);
                     chosen = false;
                 } else {
-                    game.sendMsg(comm, MsgCreator.confirmMsg(false, this.availableColors.toString()));
+                    comm.sendMsg(MsgCreator.confirmMsg(false, this.availableColors.toString()));
                 }
             }
         }
 
-        game.sendMsg(comm, MsgCreator.confirmMsg(true, "Valid color"));
+        comm.sendMsg(MsgCreator.confirmMsg(true, "Valid color"));
 
         synchronized (this.availableColors) {
             Comm.sendBroadcast(MsgCreator.updColorMsg(this.availableColors), this.turnOrder);
@@ -199,11 +197,11 @@ class SetUpLogic {
         
         String s = MsgCreator.changePhaseMsg(Phase.OBJECTIVE, objViews);
         s = MsgCreator.cat(s, MsgCreator.chooseMsg());
-        game.sendMsg(comm, s);
-        s = game.getMsg(comm);
+        comm.sendMsg(s);
+        s = comm.getMsg();
         Objective obj = objs[Integer.parseInt(s)];
         s = MsgCreator.changePhaseMsg(Phase.WAITFORPLAYERS);
-        game.sendMsg(comm, s);
+        comm.sendMsg(s);
         return obj;
     }
 
@@ -247,5 +245,9 @@ class SetUpLogic {
      */
     void waitReady() {
         waitStart(State.READY);
+    }
+
+    List<Comm> getComms(){
+        return new ArrayList<>(this.record.keySet());
     }
 }

@@ -53,7 +53,7 @@ public class GameLogic {
     public GameLogic(CentralServer server, String id, int size) {
         this.turnOrder = new ArrayList<>();
         this.executor = Executors.newFixedThreadPool(size);
-        this.setUp = new SetUpLogic(this, size, this.turnOrder);
+        this.setUp = new SetUpLogic(size, this.turnOrder);
         this.server = server;
         this.id = id;
         players = new ConcurrentHashMap<>();
@@ -74,8 +74,14 @@ public class GameLogic {
         this.currPlayer = currPlayer;
         this.executor = Executors.newFixedThreadPool(turnOrder.size());
         for(Comm comm: turnOrder){
+            comm.startPing();
             comm.setGame(this);
         }
+    }
+
+
+    public void submitPlayer(Comm comm){
+        executor.submit(()->addPlayer(comm));
     }
 
     /**
@@ -85,7 +91,7 @@ public class GameLogic {
      * @param comm The connection to the specific client.
      */
     public void addPlayer(Comm comm) {
-        this.executor.submit(()->heartBeat(comm));
+        comm.startPing();
         Player player = setUp.addPlayer(comm, ground);
         players.put(comm, player);
         setUp.setReady(comm);
@@ -119,8 +125,8 @@ public class GameLogic {
             for(i=0;i<player.getHand().length;i++){
                 loadedHand[i] = new CardView(player.getHand()[i]);
             }
-            sendMsg(comm,MsgCreator.createHandViewMsg(loadedHand));
-            sendMsg(comm,MsgCreator.loadHiddenObjMsg(player.getSecretObjective()));
+            comm.sendMsg(MsgCreator.createHandViewMsg(loadedHand));
+            comm.sendMsg(MsgCreator.loadHiddenObjMsg(player.getSecretObjective()));
             Comm.sendBroadcast(MsgCreator.updPointsMsg(this.turnOrder.indexOf(comm),points),this.turnOrder);
             try {
                 Comm.sendBroadcast(MsgCreator.loadBoardMsg(this.id,this.turnOrder.indexOf(comm)),this.turnOrder);
@@ -141,10 +147,11 @@ public class GameLogic {
             for (int j = 0; j < hand.length; j++) {
                 handView[j] = new CardView(hand[j]);
             }
-            sendMsg(this.turnOrder.get(i), MsgCreator.createHandViewMsg(handView));
+            this.turnOrder.get(i).sendMsg(MsgCreator.createHandViewMsg(handView));
         }
 
         createGroundView();
+        this.currPlayer = turnOrder.getFirst();
         gameFlow();
     }
 
@@ -153,9 +160,6 @@ public class GameLogic {
      */
     private void gameFlow(){
         Comm.sendBroadcast(MsgCreator.changePhaseMsg(Phase.GAME), turnOrder);
-        for(Comm comm:turnOrder){
-            new Thread(comm::waitMsg).start();
-        }
         while (!this.endGame){
             fullTurn();
         }
@@ -205,10 +209,11 @@ public class GameLogic {
      */
     private void fullTurn() {
         final int winPoints = 20;
-        for (int i = 0; i < players.size(); i++) {
+        for (int i = this.turnOrder.indexOf(this.currPlayer); i < players.size(); i++) {
             this.currPlayer = this.turnOrder.get(i);
             this.cardPlaced = false;
             this.cardDrawn = false;
+            this.saveGame();
             playTurn(this.turnOrder.get(i));
             try {
                 this.endGame = this.endGame || players.get(this.turnOrder.get(i)).getPoints() >= winPoints ||
@@ -217,6 +222,7 @@ public class GameLogic {
                 System.out.println("can't occur");
             }
         }
+        this.currPlayer = this.turnOrder.getFirst();
     }
 
     /**
@@ -245,7 +251,9 @@ public class GameLogic {
                 }
             }
         }
+    }
 
+    private void saveGame(){
         Gson gson = new GsonBuilder().
                 registerTypeHierarchyAdapter(Card.class,new CardSerializeLogic()).
                 registerTypeHierarchyAdapter(Objective.class,new ObjectiveSerializeLogic()).
@@ -270,7 +278,7 @@ public class GameLogic {
         int y = Integer.parseInt(s[3]);
         boolean face = s[4].equals("true");
         if(currPlayer != comm || this.cardPlaced) {
-            sendMsg(comm, MsgCreator.confirmMsg(false,"Not your turn"));
+            comm.sendMsg(MsgCreator.confirmMsg(false,"Not your turn"));
             return;
         }
         try {
@@ -278,11 +286,11 @@ public class GameLogic {
             updBoardView(card, x, y, comm);
             synchronized(this) {
                 this.cardPlaced = true;
-                sendMsg(comm, MsgCreator.confirmMsg(true,"Successful placement"));
+                comm.sendMsg(MsgCreator.confirmMsg(true,"Successful placement"));
                 this.notifyAll();
             }
         } catch (InvalidPlacementException e) {
-            sendMsg(comm, MsgCreator.confirmMsg(false,"Invalid placement"));
+            comm.sendMsg(MsgCreator.confirmMsg(false,"Invalid placement"));
         }
     }
 
@@ -297,12 +305,12 @@ public class GameLogic {
         String cmd = "";
         int idx;
         if(currPlayer != comm || !this.cardPlaced) {
-            sendMsg(comm, MsgCreator.confirmMsg(false,"Not your turn"));
+            comm.sendMsg(MsgCreator.confirmMsg(false,"Not your turn"));
             return;
         }
         try {
             DrawableCard drawnCard  = this.players.get(comm).draw(ground, Integer.parseInt(s[1]));
-            sendMsg(comm, MsgCreator.updHandViewMsg(new CardView(drawnCard)));
+            comm.sendMsg(MsgCreator.updHandViewMsg(new CardView(drawnCard)));
 
             idx = Integer.parseInt(s[1]);
             if(idx == 1 || idx == 2){
@@ -322,11 +330,11 @@ public class GameLogic {
             Comm.sendBroadcast(cmd, turnOrder);
             synchronized(this){
                 this.cardDrawn = true;
-                sendMsg(comm, MsgCreator.confirmMsg(true,"Draw successful"));
+                comm.sendMsg(MsgCreator.confirmMsg(true,"Draw successful"));
                 this.notifyAll();
             }
         } catch (InvalidDrawException | InvalidSelectionException e) {
-            sendMsg(comm, MsgCreator.confirmMsg(false,"Invalid draw"));
+            comm.sendMsg(MsgCreator.confirmMsg(false,"Invalid draw"));
         }
     }
 
@@ -374,36 +382,7 @@ public class GameLogic {
         Comm.sendBroadcast(MsgCreator.cat(updBoardMsg,updPointsMsg), turnOrder);
     }
 
-    /**
-     * Sends the specified message to the specified client.
-     *
-     * @param receiver The client to which the message is sent.
-     * @param msg The message to be sent.
-     */
-    void sendMsg(Comm receiver, String msg) {
-        try {
-            receiver.sendMsg(msg);
-        } catch (Exception e) { //TODO RemoteException
-            //TODO log file
-            shutdown();
-        }
-    }
 
-    /**
-     * Retrieves a message from the specified communication channel.
-     *
-     * @param sender the communication channel from which to retrieve the message.
-     * @return the received message, or `null` if an error occurs.
-     */
-    String getMsg(Comm sender) {
-        try{
-            return sender.getMsg();
-        } catch (IllegalStateException e) {
-            //TODO log file
-            shutdown();
-            return null;
-        }
-    }
 
     /**
      * Closes connections and shuts down the client.
@@ -414,6 +393,24 @@ public class GameLogic {
             this.server.submitClient(comm);
         }
         this.server.closeGame(this.id);
+    }
+
+
+    public synchronized void handleCrash(Comm comm){
+        executor.shutdownNow();
+        List<Comm> comms = this.setUp.getComms();
+        for(Comm iter: comms){
+            iter.stopPing();
+        }
+        comms.remove(comm);
+        String msg = MsgCreator.changePhaseMsg(Phase.CRASHED);
+        Comm.sendBroadcast(msg,comms);
+        this.server.closeGame(this.id);
+        for(Comm iter: comms){
+            //CLEAN THE PENDING MESSAGES
+            iter.clean();
+            this.server.submitClient(iter);
+        }
     }
 
     /**
@@ -457,16 +454,5 @@ public class GameLogic {
                         new Symbol[] {
                                 this.ground.peekGoldDeck() },
                         new HashMap<>(), 0, "backView"));
-    }
-
-    private void heartBeat(Comm comm) {
-        while (!endGame) {
-            sendMsg(comm, "PING");
-            try{
-                Thread.sleep(20000);
-            }catch(InterruptedException e){
-                throw new RuntimeException();
-            }
-        }
     }
 }
