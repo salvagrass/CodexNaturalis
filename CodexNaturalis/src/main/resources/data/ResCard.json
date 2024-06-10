@@ -93,10 +93,10 @@
   {
     "id": "CR8",
     "frontCorners": [
-      "FUNGUS",
       "EMPTY",
+      "FUNGUS",
       "NOTAVAILABLE",
-      "FUNGUS"
+      "EMPTY"
     ],
     "center": [
       "FUNGUS"

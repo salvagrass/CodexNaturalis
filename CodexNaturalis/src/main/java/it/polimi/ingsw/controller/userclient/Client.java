@@ -107,6 +107,7 @@ public abstract class Client{
           }
         }
         case "CHAT" -> this.userView.addChatMessage(new Message(dictate[2], dictate[1], dictate[3]));
+        case "COLORCHOSEN" -> this.userView.setPlayerColor(dictate[1], PawnColor.valueOf(dictate[2]));
       }
     }
   }

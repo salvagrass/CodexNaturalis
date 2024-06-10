@@ -35,7 +35,7 @@
     "disposition": {
       "dispType": "DiagonalType",
       "color": "BUTTERFLY",
-      "direction": -1,
+      "direction": 1,
       "len": 3
     }
   },

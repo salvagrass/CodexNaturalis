@@ -3,8 +3,8 @@
     "id": "CG1",
     "frontCorners": [
       "NOTAVAILABLE",
+      "EMPTY",
       "FEATHER",
-      "NOTAVAILABLE",
       "EMPTY"
     ],
     "center": [
@@ -210,7 +210,7 @@
     ],
     "requirements": {
       "BUTTERFLY": 2,
-      "FEATHER": 1
+      "FUNGUS": 1
     },
     "sym": "POTION",
     "cardPoints": 1

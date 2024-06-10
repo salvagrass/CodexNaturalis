@@ -332,6 +332,10 @@ public class CLI extends UserView{
     private synchronized void handleCommand(String[] cmd){
         switch (cmd[0]) { //TODO complete switch cases
             case "show" -> {
+                if(cmd.length < 2){
+                    System.out.println("Command incomplete");
+                    return;
+                }
                 switch(cmd[1]){
                     case "hand" -> {
                         synchronized (this.modelView) {
@@ -354,13 +358,16 @@ public class CLI extends UserView{
                                 int userIdx;
                                 int x,y;
                                 if(cmd.length == 5){
-                                    userIdx = Integer.parseInt(cmd[2]);
+                                    userIdx = Integer.parseInt(cmd[2]) - 1;
                                     x = Integer.parseInt(cmd[3]);
                                     y = Integer.parseInt(cmd[4]);
-                                } else{
+                                } else if(cmd.length == 4){
                                     userIdx = this.turnOrder.indexOf(this.name);
                                     x = Integer.parseInt(cmd[2]);
                                     y = Integer.parseInt(cmd[3]);
+                                } else{
+                                    System.out.println("Command incorrect");
+                                    return;
                                 }
                                 System.out.println(this.modelView.getBoard(userIdx).showCard(x,y));
                             }catch(Exception e){
@@ -373,11 +380,12 @@ public class CLI extends UserView{
                             try {
                                 if(cmd.length == 2){
                                     System.out.println(this.modelView.getBoard(this.turnOrder.indexOf(this.name)).asciiBoard());
-                                }else{
-                                    int idx = Integer.parseInt(cmd[2]);
+                                }else if(cmd.length == 3){
+                                    int idx = Integer.parseInt(cmd[2]) - 1;
                                     System.out.println(this.modelView.getBoard(idx).asciiBoard());
+                                }else{
+                                    System.out.println("Command incorrect");
                                 }
-
                             }catch(Exception e) {
                                 System.out.println("Not an index");
                             }
@@ -390,15 +398,19 @@ public class CLI extends UserView{
                                 .toList();
                             for (String name : tmp) {
                                 System.out.println(
-                                        name + " (id: " + this.turnOrder.indexOf(name) + "): " + leaderboard.get(name));
+                                        name + " (id: " + (this.turnOrder.indexOf(name) + 1) + "): " + leaderboard.get(name));
                             }
                         }
                     }
                 }
             }
             case "flip" -> {
+                if(cmd.length != 2){
+                    System.out.println("Command incorrect");
+                    return;
+                }
                 try{
-                    int idx = Integer.parseInt(cmd[1]);
+                    int idx = Integer.parseInt(cmd[1]) - 1;
                     if(idx>=0 && idx<this.modelView.getHand().size()){
                         CardView view = this.modelView.getHandCard(idx);
                         view.setFace(!view.getFace());
@@ -412,6 +424,10 @@ public class CLI extends UserView{
             case "place" -> placeCard();
             case "draw" -> drawCard();
             case "chat" -> {
+                if(cmd.length != 2){
+                    System.out.println("Command incorrect");
+                    return;
+                }
                 synchronized (this.chats) {
                     if(cmd[1].equals("All")){
                         printChat(this.chats.stream().filter(x -> x.receiver.equals("All")).toList());
@@ -426,6 +442,10 @@ public class CLI extends UserView{
                 }
             }
             case "message" -> {
+                if(cmd.length != 2){
+                    System.out.println("Command incorrect");
+                    return;
+                }
                 if(!this.name.equals(cmd[1]) && (cmd[1].equals("All") || this.turnOrder.contains(cmd[1]))){
                     this.client.sendChatMessage(MsgCreator.chatMsg(this.name, cmd[1], getCommand()));
                 }else{
@@ -514,7 +534,7 @@ public class CLI extends UserView{
         int idx,x,y;
         System.out.print("IDX: ");
         try {
-            idx = Integer.parseInt(getCommand());
+            idx = Integer.parseInt(getCommand()) - 1;
             if (idx < 0 || idx >= this.modelView.getHandSize()) {
                 System.out.println("Invalid Card");
                 return;
@@ -552,11 +572,11 @@ public class CLI extends UserView{
     private void drawCard(){
         System.out.print("IDX: ");
         String index = getCommand();
-        if(!index.matches("^[0-5]$")){
+        if(!index.matches("^[1-6]$")){
             System.out.println("Index not valid");
             return;
         }
-        int idx = Integer.parseInt(index);
+        int idx = Integer.parseInt(index) - 1;
         synchronized(this.confirmValue) {
             client.drawCard(idx);
             this.waitConfirm();

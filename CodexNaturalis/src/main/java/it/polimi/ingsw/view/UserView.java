@@ -23,6 +23,7 @@ public abstract class UserView {
     final AtomicBoolean confirmValue;
     String confirmMsg;
     List<String> turnOrder;
+    Map<String, PawnColor> colorsChosen;
     String name;
     Phase currPhase;
     CardView[] starts;
@@ -48,6 +49,7 @@ public abstract class UserView {
         this.toSendlock = new Object();
         this.waitPhaseLock = new Object();
         this.currPlayerLock = new Object();
+        this.colorsChosen = new HashMap<>();
     }
 
     public String getInput(){
@@ -72,6 +74,10 @@ public abstract class UserView {
     }
     
     public abstract void playerJoined(Set<String> players);
+
+    public void setPlayerColor(String player, PawnColor color){
+        this.colorsChosen.put(player, color);
+    }
 
     public void updColors(Set<PawnColor> newColors){
         synchronized(this.colors){

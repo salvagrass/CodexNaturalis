@@ -141,7 +141,7 @@ public class GUI extends UserView{
                 scene = this.scenes.get(GameScene.GAME);
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()-> {
-                    ((GameController)this.currController).gameStart(this.currPlayer,this.name);
+                    ((GameController)this.currController).gameStart(this.currPlayer,this.name, new HashMap<>(this.colorsChosen));
                     ((GameController)this.currController).switchBoard(this.turnOrder.indexOf(this.name));
                     ((GameController)this.currController).setSecretObj(this.modelView.getSecrObj());
                     this.stage.setScene(scene);

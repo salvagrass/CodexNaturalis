@@ -81,7 +81,7 @@ class SetUpLogic {
         }
         chooseStartingCard(comm, card);
         record.put(comm, State.COLOR);
-        PawnColor color = chooseColor(comm);
+        PawnColor color = chooseColor(comm, playerName);
         record.put(comm, State.OBJECTIVE);
         Objective obj = chooseObjective(comm,ground);
         Player player = new Player(playerName, obj, color);
@@ -152,7 +152,7 @@ class SetUpLogic {
      * @param comm The connection to the specific client.
      * @return The chosen color.
      */
-    private PawnColor chooseColor(Comm comm) {
+    private PawnColor chooseColor(Comm comm, String playerName) {
         PawnColor color = null;
         boolean chosen;
 
@@ -171,10 +171,12 @@ class SetUpLogic {
             }
         }
 
-        comm.sendMsg(MsgCreator.confirmMsg(true, "Valid color"));
+        String msg = MsgCreator.confirmMsg(true, "Valid color");
+        comm.sendMsg(msg);
 
         synchronized (this.availableColors) {
-            Comm.sendBroadcast(MsgCreator.updColorMsg(this.availableColors), this.turnOrder);
+            msg = MsgCreator.updColorMsg(this.availableColors);
+            Comm.sendBroadcast(MsgCreator.cat(msg, MsgCreator.colorChosenMsg(playerName, color)), this.turnOrder);
         }
         return color;
     }

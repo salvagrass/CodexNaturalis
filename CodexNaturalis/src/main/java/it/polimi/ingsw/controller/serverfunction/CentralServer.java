@@ -7,16 +7,14 @@ import it.polimi.ingsw.controller.connection.SocketComm;
 import it.polimi.ingsw.controller.userclient.ClientRemote;
 import it.polimi.ingsw.util.Phase;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -260,7 +258,18 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
             fw.write(jsonGame);
             fw.flush();
             fw.close();
-            //TODO CHANGE AND APPEND ONLY ONCE
+            try {
+                File myObj = new File("memorized_games.txt");
+                Scanner myReader = new Scanner(myObj);
+                while (myReader.hasNextLine()) {
+                    if(myReader.nextLine().contains(id)){
+                        return;
+                    }
+                }
+                myReader.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred.");
+            }
             fw = new FileWriter("memorized_games.txt",true);
             fw.write(id+'\n');
             fw.flush();

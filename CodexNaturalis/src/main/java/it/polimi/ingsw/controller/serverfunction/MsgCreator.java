@@ -197,9 +197,15 @@ public class MsgCreator {
     public static String drawCardMsg(int idx){
         return "DRAWCARD;" + idx;
     }
+
     public static String chatMsg(String sender, String receiver, String text){
         return "CHAT;" + receiver + ";" + sender + ";" + text;
     }
+
+    public static String colorChosenMsg(String player, PawnColor color){
+        return "COLORCHOSEN;" + player + ";" + color.name();
+    }
+
     /**
      * Concatenates two messages with a command separator.
      * 

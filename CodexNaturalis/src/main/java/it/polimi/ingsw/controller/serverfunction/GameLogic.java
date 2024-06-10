@@ -92,15 +92,15 @@ public class GameLogic {
      */
     public void addPlayer(Comm comm) {
         comm.startPing();
-        Player player = setUp.addPlayer(comm, ground);
-        players.put(comm, player);
-        setUp.setReady(comm);
+        Player player = this.setUp.addPlayer(comm, ground);
+        this.players.put(comm, player);
+        this.setUp.setReady(comm);
         synchronized (this.setUp) {
-            Set<String> names = players.values().stream().map(Player::getNickname).collect(Collectors.toSet());
-            Comm.sendBroadcast(MsgCreator.joinedMsg(names), turnOrder);
+            Set<String> names = this.players.values().stream().map(Player::getNickname).collect(Collectors.toSet());
+            Comm.sendBroadcast(MsgCreator.joinedMsg(names), this.turnOrder);
             if (this.currPlayer == null) {
                 this.currPlayer = comm;
-                setUp.waitReady();
+                this.setUp.waitReady();
                 gameStart();
             } else {
                 this.setUp.notifyAll();
@@ -127,7 +127,10 @@ public class GameLogic {
             }
             comm.sendMsg(MsgCreator.createHandViewMsg(loadedHand));
             comm.sendMsg(MsgCreator.loadHiddenObjMsg(player.getSecretObjective()));
-            Comm.sendBroadcast(MsgCreator.updPointsMsg(this.turnOrder.indexOf(comm),points),this.turnOrder);
+            String msg = MsgCreator.updPointsMsg(this.turnOrder.indexOf(comm),points);
+            Comm.sendBroadcast(MsgCreator.cat(msg,
+                    MsgCreator.colorChosenMsg(player.getNickname(),
+                            player.getPawnColor())),this.turnOrder);
             try {
                 Comm.sendBroadcast(MsgCreator.loadBoardMsg(this.id,this.turnOrder.indexOf(comm)),this.turnOrder);
             } catch (IOException e) {

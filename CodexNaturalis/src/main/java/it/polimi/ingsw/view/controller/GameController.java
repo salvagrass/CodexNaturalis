@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.controller;
 
 import it.polimi.ingsw.util.Message;
+import it.polimi.ingsw.util.PawnColor;
 import it.polimi.ingsw.util.Symbol;
 import it.polimi.ingsw.view.controller.sceneutil.BoardLogic;
 import it.polimi.ingsw.view.controller.sceneutil.ChatLogic;
@@ -60,6 +61,7 @@ public class GameController extends Controller{
 
     private double scaleValue = 1.0;
     private final double scaleIncrement = 0.1;
+    private Map<String, PawnColor> colors;
 
     public void initialize(){
         this.resDeck.imageProperty().addListener((observable, oldVal, newVal) -> this.resDeck.setOnMouseClicked(newVal == null ? null : this.resDeck.getOnMouseClicked()));
@@ -73,6 +75,7 @@ public class GameController extends Controller{
         this.dragLogic = new DragLogic(this.scroll);
         this.names = new ArrayList<>(4);
         this.dragStart = false;
+        this.colors = new HashMap<>();
 
         this.scroll.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.isControlDown()) {
@@ -114,16 +117,7 @@ public class GameController extends Controller{
     }
 
     public void bind(StringProperty currPlayer, ObservableMap<String, Integer> points){
-        currPlayer.addListener((observable, oldVal, newVal) -> {
-            this.currPlayer = newVal;
-            for(Node node : this.leaderboard.getChildren()){
-                if(((Label)node).getText().matches(currPlayer.get() + ": \\d*")){
-                    node.setStyle("-fx-text-fill: red;");
-                }else{
-                    node.setStyle("-fx-text-fill: black;");
-                }
-            }
-        });
+        currPlayer.addListener((observable, oldVal, newVal) -> this.currPlayer = newVal);
         points.addListener((MapChangeListener<String, Integer>) change -> Platform.runLater(()->{
             if (change.wasAdded()) {
                 for(Node node : this.leaderboard.getChildren()){
@@ -233,11 +227,17 @@ public class GameController extends Controller{
         this.gui.sendChatMsg(msg, receiver);
     }
 
-    public void gameStart(StringProperty currPlayer,String name){
+    public void gameStart(StringProperty currPlayer, String name, Map<String, PawnColor> colors){
         this.dragStart = true;
+        this.colors = colors;
         this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name));
         this.currIdx.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == (int)newVal) && this.currPlayer.equals(name)));
-        currPlayer.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name)));
+        currPlayer.addListener((observable, oldVal, newVal) -> {
+            this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && newVal.equals(name));
+            this.leaderboard.lookup("#label"+newVal).setStyle("-fx-text-fill: " + this.colors.get(newVal) + ";");
+            this.leaderboard.lookup("#label"+oldVal).setStyle("-fx-text-fill: black;");
+        });
+        this.leaderboard.lookup("#label"+currPlayer.get()).setStyle("-fx-text-fill: " + this.colors.get(currPlayer.get()) + ";");
     }
 
     public void switchBoard(int idx){
@@ -273,6 +273,7 @@ public class GameController extends Controller{
         for(String s : turnOrder){
             this.names.add(s);
             Label label = new Label(s + ": ");
+            label.setId("label" + s);
             label.setFont(new Font(25));
             label.setTextAlignment(TextAlignment.RIGHT);
             label.setOnMouseClicked(e -> switchBoard(turnOrder.indexOf(s)));
