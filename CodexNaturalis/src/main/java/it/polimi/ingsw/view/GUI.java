@@ -69,7 +69,7 @@ public class GUI extends UserView{
         ColorController cc = (ColorController) this.sceneToController.get(this.scenes.get(GameScene.COLOR));
         cc.bind((ObservableSet<PawnColor>) this.colors);
         GameController gc = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
-        gc.bind(this.currPlayer, (ObservableList<String>) this.turnOrder, (ObservableMap<String, Integer>) this.leaderboard, (ObservableList<Message>) chats);
+        gc.bind(this.currPlayer, (ObservableMap<String, Integer>) this.leaderboard);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class GUI extends UserView{
                 scene = this.scenes.get(GameScene.GAME);
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()-> {
-                    ((GameController)this.currController).setName(this.name, this.currPlayer, this.turnOrder);
+                    ((GameController)this.currController).gameStart(this.currPlayer,this.name);
                     ((GameController)this.currController).switchBoard(this.turnOrder.indexOf(this.name));
                     ((GameController)this.currController).setSecretObj(this.modelView.getSecrObj());
                     this.stage.setScene(scene);
@@ -272,6 +272,15 @@ public class GUI extends UserView{
 
     public void setObj(int idx){
         this.modelView.setObj(this.scrtObjs[idx]);
+    }
+
+    @Override
+    public void setNames(List<String> turnOrder){
+        super.setNames(turnOrder);
+        Platform.runLater(()->{
+            GameController gc = (GameController) this.sceneToController.get(this.scenes.get(GameScene.GAME));
+            gc.setName(this.name,(ObservableList<String>) this.turnOrder,(ObservableList<Message>) chats);
+        });
     }
 
     public void sendChatMsg(String text, String receiver) {

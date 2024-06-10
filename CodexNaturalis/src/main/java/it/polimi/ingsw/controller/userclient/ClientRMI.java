@@ -15,12 +15,14 @@ import java.util.concurrent.Executors;
 
 public class ClientRMI extends Client implements ClientRemote {
   private RemoteComm comm;
-  private final ExecutorService executor;
+  private final ExecutorService clientExecutor;
+  private final ExecutorService serverExecutor;
 
   public ClientRMI(UserView userView) throws RemoteException{
     super(userView);
     UnicastRemoteObject.exportObject(this,0);
-    this.executor = Executors.newFixedThreadPool(1);
+    this.clientExecutor = Executors.newSingleThreadExecutor();
+    this.serverExecutor = Executors.newSingleThreadExecutor();
     this.port = 1099;
   }
 
@@ -64,7 +66,7 @@ public class ClientRMI extends Client implements ClientRemote {
   @Override
   public void placeCard(int idx, int x, int y,boolean face) {
     //TODO handle exception
-    this.executor.submit(()->{
+    this.clientExecutor.submit(()->{
       try{
         comm.placeCard(MsgCreator.placeCardMsg(idx, x, y, face));
       }catch(RemoteException e){
@@ -76,7 +78,7 @@ public class ClientRMI extends Client implements ClientRemote {
 
   @Override
   public void drawCard(int idx) {
-    this.executor.submit(()->{
+    this.clientExecutor.submit(()->{
       try{
         comm.drawCard(MsgCreator.drawCardMsg(idx));
       }catch(RemoteException e){
@@ -88,7 +90,7 @@ public class ClientRMI extends Client implements ClientRemote {
 
   @Override
   public void sendChatMessage(String msg) {
-      this.executor.submit(() -> {
+      this.clientExecutor.submit(() -> {
         try {
           this.comm.chat(msg);
         } catch (RemoteException e) {
@@ -100,12 +102,14 @@ public class ClientRMI extends Client implements ClientRemote {
 
   @Override
   public void handleMsgRemote(String message) throws RemoteException {
-    super.handleMsg(message);
+    serverExecutor.submit(()->super.handleMsg(message));
   }
 
   @Override
   public void closeConnection() {
     this.comm = null;
+    serverExecutor.shutdownNow();
+    clientExecutor.shutdownNow();
     try {
       UnicastRemoteObject.unexportObject(this, true);
     } catch (NoSuchObjectException e) {

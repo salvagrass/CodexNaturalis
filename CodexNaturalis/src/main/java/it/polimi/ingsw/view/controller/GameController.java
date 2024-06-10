@@ -12,12 +12,11 @@ import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
-import javafx.geometry.*;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -26,7 +25,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Scale;
@@ -54,7 +55,6 @@ public class GameController extends Controller{
     private List<String> names;
     private String currPlayer;
     private IntegerProperty currIdx;
-    private ChatLogic chat;
     private DragLogic dragLogic;
     private boolean dragStart;
 
@@ -113,7 +113,7 @@ public class GameController extends Controller{
         this.boards.get(this.myIdx).setLastPlaced(null);
     }
 
-    public void bind(StringProperty currPlayer, ObservableList<String> turnOrder, ObservableMap<String, Integer> points, ObservableList<Message> chats){
+    public void bind(StringProperty currPlayer, ObservableMap<String, Integer> points){
         currPlayer.addListener((observable, oldVal, newVal) -> {
             this.currPlayer = newVal;
             for(Node node : this.leaderboard.getChildren()){
@@ -123,30 +123,6 @@ public class GameController extends Controller{
                     node.setStyle("-fx-text-fill: black;");
                 }
             }
-        });
-        turnOrder.addListener((ListChangeListener<String>) change -> {
-            while(change.next()){
-                if (change.wasAdded()) {
-                    int rows = 7, cols = 7;
-                    for(String s : change.getAddedSubList()){
-                        this.names.add(s);
-                        Label label = new Label(s + ": ");
-                        label.setFont(new Font(25));
-                        label.setTextAlignment(TextAlignment.RIGHT);
-                        label.setOnMouseClicked(e -> switchBoard(turnOrder.indexOf(s)));
-                        this.leaderboard.getChildren().add(label);
-
-                        BoardLogic b = new BoardLogic(rows, cols, this.boards.size(), this.dragLogic.getBoxes(), this);
-
-                        this.field.getChildren().add(b.getGridPane());
-                        this.stack.getChildren().add(b.getInventory());
-                        this.boards.add(b);
-                    }
-                }
-            }
-            this.chat = new ChatLogic(this, chats, turnOrder);
-            this.chat.createChat(this.stack);
-            this.name.requestFocus();
         });
         points.addListener((MapChangeListener<String, Integer>) change -> Platform.runLater(()->{
             if (change.wasAdded()) {
@@ -257,6 +233,13 @@ public class GameController extends Controller{
         this.gui.sendChatMsg(msg, receiver);
     }
 
+    public void gameStart(StringProperty currPlayer,String name){
+        this.dragStart = true;
+        this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name));
+        this.currIdx.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == (int)newVal) && this.currPlayer.equals(name)));
+        currPlayer.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name)));
+    }
+
     public void switchBoard(int idx){
         this.boards.get(this.currIdx.get()).setVisible(false);
         this.currIdx.set(idx);
@@ -269,19 +252,38 @@ public class GameController extends Controller{
         });
     }
 
-    public void setName(String name, StringProperty currPlayer, List<String> turnOrder){
-        this.name.setText(name);
-        this.chat.setName(name);
-        this.myIdx = turnOrder.indexOf(name);
-        this.boards.get(this.myIdx).setMainBoard(true);
-        this.dragStart = true;
-        this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name));
-        this.currIdx.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == (int)newVal) && this.currPlayer.equals(name)));
-        currPlayer.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name)));
-    }
-
     public void setSecretObj(ObjectiveView obj){
         this.scrtObj.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + obj.getId() + ".png"))));
+    }
+
+    public void setName(String name, ObservableList<String> turnOrder,ObservableList<Message> chats){
+        ChatLogic chat = new ChatLogic(this, chats, turnOrder);
+        chat.createChat(this.stack);
+        System.out.println(turnOrder);
+        this.name.setText(name);
+        this.addBoards(turnOrder);
+        chat.setName(name);
+        this.myIdx = turnOrder.indexOf(name);
+        this.boards.get(this.myIdx).setMainBoard(true);
+        this.name.requestFocus();
+    }
+
+    private void addBoards(List<String> turnOrder){
+        int rows = 7, cols = 7;
+        for(String s : turnOrder){
+            this.names.add(s);
+            Label label = new Label(s + ": ");
+            label.setFont(new Font(25));
+            label.setTextAlignment(TextAlignment.RIGHT);
+            label.setOnMouseClicked(e -> switchBoard(turnOrder.indexOf(s)));
+            this.leaderboard.getChildren().add(label);
+
+            BoardLogic b = new BoardLogic(rows, cols, this.boards.size(), this.dragLogic.getBoxes(), this);
+
+            this.field.getChildren().add(b.getGridPane());
+            this.stack.getChildren().add(b.getInventory());
+            this.boards.add(b);
+        }
     }
 
     public void scrollBack(ScrollPane scroll, GridPane pane, int numRows, int numCols) {

@@ -14,7 +14,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class BoardLogic {
     private final GameController gc;
@@ -136,9 +139,9 @@ public class BoardLogic {
         if(this.mainBoard) {
             //gc.scrollBack(this.scroll, this.gridPane, 1, 0);
             for (int i = (startVbox ? 1 : 0); i < this.gridPane.getColumnCount(); i += 2) {
-                addVbox( i, 0);
-                this.gridPane.setUserData(!startVbox);
+                addVbox(0,i);
             }
+            this.gridPane.setUserData(!startVbox);
         }
         this.xStart++;
     }
@@ -159,7 +162,7 @@ public class BoardLogic {
 
         if(this.mainBoard) {
             for (int i = (startVbox ? start : end); i < this.gridPane.getColumnCount(); i += 2) {
-                addVbox(i, this.gridPane.getRowCount() - 1);
+                addVbox(gridPane.getRowCount()-1,i);
             }
         }
     }
@@ -178,9 +181,9 @@ public class BoardLogic {
         if(this.mainBoard) {
             //gc.scrollBack(this.scroll, this.gridPane, 0, 1);
             for (int i = (startVbox ? 1 : 0); i < this.gridPane.getRowCount(); i += 2) {
-                addVbox(0, 1);
-                this.gridPane.setUserData(!startVbox);
+                addVbox(i,0);
             }
+            this.gridPane.setUserData(!startVbox);
         }
         this.yStart++;
     }
@@ -202,7 +205,7 @@ public class BoardLogic {
 
         if(this.mainBoard){
             for(int i=(startVbox? start : end);i<this.gridPane.getRowCount();i+=2){
-                addVbox(this.gridPane.getColumnCount()-1,i);
+                addVbox(i,gridPane.getColumnCount()-1);
             }
         }
     }
