@@ -30,6 +30,10 @@ public class IdController extends Controller{
 
     public void exit() {
         this.gui.scanInput("exit");
+        clear();
+    }
+
+    public void clear(){
         this.getId.clear();
         this.submit.setDisable(true);
     }

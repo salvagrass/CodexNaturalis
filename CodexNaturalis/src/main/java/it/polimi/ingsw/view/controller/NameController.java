@@ -25,6 +25,12 @@ public class NameController extends Controller {
             }
         });
     }
+
+    public void clear(){
+        this.getName.clear();
+        this.submit.setDisable(true);
+    }
+
     public void submit() {
         this.gui.scanInput(this.getName.getText());
     }

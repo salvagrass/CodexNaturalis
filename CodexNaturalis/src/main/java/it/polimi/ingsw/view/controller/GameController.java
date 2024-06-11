@@ -206,7 +206,7 @@ public class GameController extends Controller{
             this.placingIdx = 2;
         }
         this.gui.placeCard(this.placingIdx, i - Objects.requireNonNull(bl).getXStart(), j - bl.getYStart());
-        bl.addImage(i, j, card.getImage());
+        bl.placeCard(i, j, card.getImage());
     }
 
     private void scrollToCenter(ScrollPane scrollPane, GridPane gridPane, int x, int y) {
@@ -259,7 +259,6 @@ public class GameController extends Controller{
     public void setName(String name, ObservableList<String> turnOrder,ObservableList<Message> chats){
         ChatLogic chat = new ChatLogic(this, chats, turnOrder);
         chat.createChat(this.stack);
-        System.out.println(turnOrder);
         this.name.setText(name);
         this.addBoards(turnOrder);
         chat.setName(name);
@@ -272,7 +271,7 @@ public class GameController extends Controller{
         int rows = 7, cols = 7;
         for(String s : turnOrder){
             this.names.add(s);
-            Label label = new Label(s + ": ");
+            Label label = new Label(s + ": 0");
             label.setId("label" + s);
             label.setFont(new Font(25));
             label.setTextAlignment(TextAlignment.RIGHT);
@@ -287,25 +286,27 @@ public class GameController extends Controller{
         }
     }
 
-    public void scrollBack(ScrollPane scroll, GridPane pane, int numRows, int numCols) {
-        Bounds b = pane.getLayoutBounds();
-        double cellWidth = b.getWidth() / pane.getColumnCount();
-        double cellHeight = b.getHeight() / pane.getRowCount();
+    public void scroll(GridPane pane, int numRows, int numCols) {
+        //Vertical
+        double cellHeight = pane.getHeight() / pane.getRowCount();
 
-        double contentHeight = scroll.getContent().getBoundsInLocal().getHeight();
-        double viewportHeight = scroll.getViewportBounds().getHeight();
-        double newVerticalPixelScrollUnit = (contentHeight - viewportHeight) * scroll.getVvalue() + (cellHeight * numRows);
+        double contentHeight = this.scroll.getContent().getBoundsInLocal().getHeight();
+        double viewportHeight = this.scroll.getViewportBounds().getHeight();
+        double newVerticalPixelScrollUnit = (contentHeight - viewportHeight) * this.scroll.getVvalue() + (cellHeight * numRows);
         double newVvalue = newVerticalPixelScrollUnit / (contentHeight - viewportHeight);
 
         newVvalue = Math.max(0, Math.min(newVvalue, 1));
-        scroll.setVvalue(newVvalue);
+        this.scroll.setVvalue(newVvalue);
 
-        double contentWidth = scroll.getContent().getBoundsInLocal().getWidth();
-        double viewportWidth = scroll.getViewportBounds().getWidth();
-        double newHorizontalPixelScrollUnit = (contentWidth - viewportWidth) * scroll.getHvalue() + (cellWidth * numCols);
+        //Horizontal
+        double cellWidth = pane.getWidth() / pane.getColumnCount();
+
+        double contentWidth = this.scroll.getContent().getBoundsInLocal().getWidth();
+        double viewportWidth = this.scroll.getViewportBounds().getWidth();
+        double newHorizontalPixelScrollUnit = (contentWidth - viewportWidth) * this.scroll.getHvalue() + (cellWidth * numCols);
         double newHvalue = newHorizontalPixelScrollUnit / (contentWidth - viewportWidth);
 
         newHvalue = Math.max(0, Math.min(newHvalue, 1));
-        scroll.setHvalue(newHvalue);
+        this.scroll.setHvalue(newHvalue);
     }
 }

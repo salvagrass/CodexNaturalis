@@ -32,7 +32,7 @@ public class BoardLogic {
         this.gridPane = createGrid(rows, cols);
         this.gridPane.setUserData(true);
         this.gridPane.setVisible(false);
-        gridPane.setGridLinesVisible(true);
+        //gridPane.setGridLinesVisible(true);
 
         this.inventory = createInventory(num);
         this.inventory.setVisible(false);
@@ -88,7 +88,11 @@ public class BoardLogic {
         addImage(i, j, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + card.getId() + ".png"))));
     }
 
-    public void addImage(int i, int j, Image card){
+    public void placeCard(int i, int j, Image card){
+        this.lastPlaced = addImage(i, j, card);
+    }
+
+    private VBox addImage(int i, int j, Image card){
         VBox v = new VBox();
         v.setAlignment(Pos.CENTER);
         GridPane.setValignment(v, VPos.CENTER);
@@ -109,7 +113,7 @@ public class BoardLogic {
         });
         this.gridPane.add(v, j, i);
         expand(i,j);
-        this.lastPlaced = v;
+        return v;
     }
 
     private void expand(int i, int j){
@@ -137,7 +141,7 @@ public class BoardLogic {
         });
 
         if(this.mainBoard) {
-            //gc.scrollBack(this.scroll, this.gridPane, 1, 0);
+            gc.scroll(this.gridPane, 1, 0);
             for (int i = (startVbox ? 1 : 0); i < this.gridPane.getColumnCount(); i += 2) {
                 addVbox(0,i);
             }
@@ -179,7 +183,7 @@ public class BoardLogic {
         });
 
         if(this.mainBoard) {
-            //gc.scrollBack(this.scroll, this.gridPane, 0, 1);
+            gc.scroll(this.gridPane, 0, 1);
             for (int i = (startVbox ? 1 : 0); i < this.gridPane.getRowCount(); i += 2) {
                 addVbox(i,0);
             }

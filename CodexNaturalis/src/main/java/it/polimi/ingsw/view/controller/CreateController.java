@@ -30,10 +30,15 @@ public class CreateController extends Controller {
     }
     public void exit(){
         this.gui.scanInput("exit");
+        clear();
+    }
+
+    public void clear(){
         this.getId.clear();
         this.getCapacity.setValue(0);
         this.submit.setDisable(true);
     }
+
     public void getIdCapacity() {
         this.gui.scanInput(this.getId.getText() + " " + (int)this.getCapacity.getValue());
     }
