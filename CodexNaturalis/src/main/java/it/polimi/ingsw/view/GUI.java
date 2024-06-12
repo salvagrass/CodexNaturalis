@@ -37,6 +37,7 @@ public class GUI extends UserView{
     private Controller currController;
     private final StringProperty currPlayer;
     private final IntegerProperty capacity;
+    private Phase futurePhase;
     public GUI(boolean type, Stage stage, Map<GameScene, FXMLLoader> roots) throws RemoteException {
         super(type);
         this.colors = FXCollections.observableSet();
@@ -92,6 +93,18 @@ public class GUI extends UserView{
 
     @Override
     public void changePhase(Phase phase) {
+        if(this.currPhase == Phase.ENDGAME){
+            this.futurePhase = phase;
+            return;
+        }
+        change(phase);
+    }
+
+    public void changePhase() {
+        change(this.futurePhase);
+    }
+
+    private void change(Phase phase){
         Scene scene;
         switch(phase){
             case Phase.MENU -> {
@@ -181,7 +194,15 @@ public class GUI extends UserView{
                 });
 
             }
-            case Phase.ENDGAME -> {}
+            case Phase.ENDGAME -> {
+                scene = this.scenes.get(GameScene.ENDGAME);
+                this.currController = this.sceneToController.get(scene);
+                Platform.runLater(()-> {
+                    ((EndGameController)this.currController).show(this.name, this.colorsChosen, this.positions, this.leaderboard);
+                    this.stage.setScene(scene);
+                    this.stage.setFullScreen(false);
+                });
+            }
             case Phase.EXIT -> System.exit(0);
         }
         if(this.currPhase == Phase.WAITFORPLAYERS){

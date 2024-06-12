@@ -211,7 +211,7 @@ public class GameLogic {
      *
      */
     private void fullTurn() {
-        final int winPoints = 20;
+        final int winPoints = 2;
         for (int i = this.turnOrder.indexOf(this.currPlayer); i < players.size(); i++) {
             this.currPlayer = this.turnOrder.get(i);
             this.cardPlaced = false;
@@ -391,7 +391,6 @@ public class GameLogic {
      * Closes connections and shuts down the client.
      */
     private void shutdown() {
-        Comm.sendBroadcast(MsgCreator.changePhaseMsg(Phase.ENDGAME), this.turnOrder);
         for (Comm comm : this.turnOrder) {
             this.server.submitClient(comm);
         }

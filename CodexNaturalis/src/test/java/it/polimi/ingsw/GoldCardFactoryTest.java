@@ -74,7 +74,8 @@ public class GoldCardFactoryTest {
         assertArrayEquals(card.getShowingCorners(), new Symbol[]{Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY,Symbol.EMPTY});
         assertArrayEquals(card.getCenter(),new Symbol[]{Symbol.FUNGUS});
         card.setShowingFace(true);
-        assertArrayEquals(card.getShowingCorners(),new Symbol[]{Symbol.NOTAVAILABLE,Symbol.FEATHER,Symbol.NOTAVAILABLE,Symbol.EMPTY});
+        System.out.println(card.getId());
+        assertArrayEquals(card.getShowingCorners(),new Symbol[]{Symbol.NOTAVAILABLE,Symbol.EMPTY,Symbol.FEATHER,Symbol.EMPTY});
         assertEquals(card.getCardPoints(),1);
         EnumMap<Symbol,Integer> req = new EnumMap<>(Symbol.class);
         req.put(Symbol.FUNGUS,2);

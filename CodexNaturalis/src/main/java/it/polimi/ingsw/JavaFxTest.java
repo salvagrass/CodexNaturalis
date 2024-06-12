@@ -36,5 +36,4 @@ public class JavaFxTest extends Application {
         stage.setTitle("CODEX NATURALIS");
         stage.show();
     }
-
 }

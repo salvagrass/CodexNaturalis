@@ -39,8 +39,7 @@ public class ObjFactoryTest {
     @Test
     public void createItemList_noInput_DiagonalTypeObj(){
         Objective obj = objectiveList.getFirst();
-        assertEquals(obj.getId(),"ObjDisp01");
-        assertEquals(obj.toString(),"Disposition: DiagonalType:\nColor: FUNGUS\nDirection: -1\nLength: 3\nPoints: 2");
+        assertEquals(obj.toString(),"ID: Obj1\nDisposition: DiagonalType\nColor: FUNGUS\nDirection: -1\nLength: 3\nPoints: 2");
     }
 
     /**
@@ -52,8 +51,7 @@ public class ObjFactoryTest {
     @Test
     public void createItemList_noInput_LTypeObj(){
         Objective obj = objectiveList.get(4);
-        assertEquals(obj.getId(),"ObjDisp05");
-        assertEquals(obj.toString(),"Disposition: LType\nMain Color: FUNGUS\nSecondary Color: GRASS\nFirst Card Position: DL\nPoints: 3");
+        assertEquals(obj.toString(),"ID: Obj5\nDisposition: LType\nMain Color: FUNGUS\nSecondary Color: GRASS\nFirst Card Position: DL\nPoints: 3");
     }
 
     /**
@@ -66,8 +64,7 @@ public class ObjFactoryTest {
         Objective obj = objectiveList.get(8);
         Map<Symbol,Integer> actual = new EnumMap<>(Symbol.class);
         actual.put(Symbol.FUNGUS,3);
-        assertEquals(obj.getId(),"ObjRes01");
-        assertEquals(obj.toString(),"Resources: " + actual + "\nPoints: 2");
+        assertEquals(obj.toString(),"ID: Obj9\nResources: " + actual + "\nPoints: 2");
     }
 
 }

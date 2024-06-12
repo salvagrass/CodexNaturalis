@@ -29,6 +29,7 @@ public class GoldCardTest {
                 new Symbol[] {Symbol.BUTTERFLY},
                 req,
                 3, null);
+        c.setShowingFace(true);
     }
 
     /**

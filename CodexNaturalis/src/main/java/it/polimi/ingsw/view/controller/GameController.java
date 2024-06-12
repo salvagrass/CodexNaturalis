@@ -17,7 +17,6 @@ import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -172,6 +171,9 @@ public class GameController extends Controller{
     }
 
     public void draw(MouseEvent mouseEvent) {
+        if(!this.currPlayer.equals(this.names.get(this.myIdx))){
+            return;
+        }
         int idx = switch(((ImageView)mouseEvent.getSource()).getId()){
             case "resDeck" -> 0;
             case "res1" -> 1;
@@ -293,10 +295,10 @@ public class GameController extends Controller{
         double contentHeight = this.scroll.getContent().getBoundsInLocal().getHeight();
         double viewportHeight = this.scroll.getViewportBounds().getHeight();
         double newVerticalPixelScrollUnit = (contentHeight - viewportHeight) * this.scroll.getVvalue() + (cellHeight * numRows);
-        double newVvalue = newVerticalPixelScrollUnit / (contentHeight - viewportHeight);
+        double newVValue = newVerticalPixelScrollUnit / (contentHeight - viewportHeight);
 
-        newVvalue = Math.max(0, Math.min(newVvalue, 1));
-        this.scroll.setVvalue(newVvalue);
+        newVValue = Math.max(0, Math.min(newVValue, 1));
+        this.scroll.setVvalue(newVValue);
 
         //Horizontal
         double cellWidth = pane.getWidth() / pane.getColumnCount();
@@ -304,9 +306,9 @@ public class GameController extends Controller{
         double contentWidth = this.scroll.getContent().getBoundsInLocal().getWidth();
         double viewportWidth = this.scroll.getViewportBounds().getWidth();
         double newHorizontalPixelScrollUnit = (contentWidth - viewportWidth) * this.scroll.getHvalue() + (cellWidth * numCols);
-        double newHvalue = newHorizontalPixelScrollUnit / (contentWidth - viewportWidth);
+        double newHValue = newHorizontalPixelScrollUnit / (contentWidth - viewportWidth);
 
-        newHvalue = Math.max(0, Math.min(newHvalue, 1));
-        this.scroll.setHvalue(newHvalue);
+        newHValue = Math.max(0, Math.min(newHValue, 1));
+        this.scroll.setHvalue(newHValue);
     }
 }
