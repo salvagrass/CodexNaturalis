@@ -13,6 +13,7 @@ public class App
 {
     public static void main( String[] args ) throws Exception
     {
+        System.out.println("Server bound and ready");
         CentralServer server = new CentralServer(5432);
         Registry registry = LocateRegistry.createRegistry(1099);
         registry.bind("RMIServer", server);

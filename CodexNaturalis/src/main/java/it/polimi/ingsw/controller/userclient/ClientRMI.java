@@ -38,7 +38,6 @@ public class ClientRMI extends Client implements ClientRemote {
       }
     } catch (Exception e) {
       // TODO log file
-      e.printStackTrace();
       throw new RuntimeException();
     }
   }

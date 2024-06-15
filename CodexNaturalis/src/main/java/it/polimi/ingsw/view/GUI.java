@@ -38,8 +38,8 @@ public class GUI extends UserView{
     private final StringProperty currPlayer;
     private final IntegerProperty capacity;
     private Phase futurePhase;
-    public GUI(boolean type, Stage stage, Map<GameScene, FXMLLoader> roots) throws RemoteException {
-        super(type);
+    public GUI(Stage stage, Map<GameScene, FXMLLoader> roots) throws RemoteException {
+        super();
         this.colors = FXCollections.observableSet();
         this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
         this.scenes = new HashMap<>();

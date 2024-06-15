@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.util.GameScene;
 import it.polimi.ingsw.view.GUI;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
@@ -20,6 +21,10 @@ public class JavaFxTest extends Application {
 
     public void start(Stage stage) {
         Map<GameScene, FXMLLoader> roots = new HashMap<>();
+        stage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
         stage.setResizable(false);
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -28,7 +33,7 @@ public class JavaFxTest extends Application {
             roots.put(g, fxml);
         }
         try {
-            gui = new GUI(true, stage, roots);
+            gui = new GUI(stage, roots);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

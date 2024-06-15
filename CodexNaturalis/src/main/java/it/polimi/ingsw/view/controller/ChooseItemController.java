@@ -40,7 +40,6 @@ public class ChooseItemController extends Controller {
             }
         });
         Platform.runLater(()->this.title.requestFocus());
-
     }
 
     public void showImgs(String source1, String source2){

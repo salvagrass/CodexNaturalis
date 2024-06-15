@@ -56,6 +56,7 @@ public class GameController extends Controller{
     private String currPlayer;
     private IntegerProperty currIdx;
     private DragLogic dragLogic;
+    private ChatLogic chat;
     private boolean dragStart;
 
     private double scaleValue = 1.0;
@@ -259,8 +260,7 @@ public class GameController extends Controller{
     }
 
     public void setName(String name, ObservableList<String> turnOrder,ObservableList<Message> chats){
-        ChatLogic chat = new ChatLogic(this, chats, turnOrder);
-        chat.createChat(this.stack);
+        this.chat = new ChatLogic(this, chats, turnOrder);
         this.name.setText(name);
         this.addBoards(turnOrder);
         chat.setName(name);
@@ -286,6 +286,7 @@ public class GameController extends Controller{
             this.stack.getChildren().add(b.getInventory());
             this.boards.add(b);
         }
+        this.chat.createChat(this.stack);
     }
 
     public void scroll(GridPane pane, int numRows, int numCols) {

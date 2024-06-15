@@ -211,7 +211,7 @@ public class GameLogic {
      *
      */
     private void fullTurn() {
-        final int winPoints = 2;
+        final int winPoints = 20;
         for (int i = this.turnOrder.indexOf(this.currPlayer); i < players.size(); i++) {
             this.currPlayer = this.turnOrder.get(i);
             this.cardPlaced = false;

@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class UserView {
-    final Client client;
+    Client client;
     ModelView modelView;
     Set<PawnColor> colors;
     Map<String,Integer> leaderboard;
@@ -39,8 +39,7 @@ public abstract class UserView {
     final Object currPlayerLock;
     
 
-    public UserView(boolean type) throws RemoteException{
-        this.client = type ? new ClientSocket(this) : new ClientRMI(this);
+    public UserView() {
         this.modelView = new ModelView();
         this.confirmValue = new AtomicBoolean(false);
         this.positions = new HashMap<>();
@@ -50,6 +49,10 @@ public abstract class UserView {
         this.waitPhaseLock = new Object();
         this.currPlayerLock = new Object();
         this.colorsChosen = new HashMap<>();
+    }
+
+    public void connect(boolean type) throws RemoteException {
+        this.client = type ? new ClientSocket(this) : new ClientRMI(this);
     }
 
     public String getInput(){
@@ -171,7 +174,7 @@ public abstract class UserView {
         }
     }
 
-    public void tryConnection(String addr){
+    public void tryConnection(String addr) throws RuntimeException{
         this.client.connect(addr);
     }
 

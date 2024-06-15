@@ -11,7 +11,6 @@ import it.polimi.ingsw.view.coreview.ObjectiveView;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,8 +31,8 @@ public class CLI extends UserView{
 
 
     
-    public CLI(boolean type) throws RemoteException{
-        super(type);
+    public CLI() {
+        super();
         this.phaseQueue = new PriorityQueue<>((firstPhase, secondPhase) -> {
             if(firstPhase == Phase.CRASHED)
                 return -1;
@@ -51,7 +50,7 @@ public class CLI extends UserView{
         this.chats = new LinkedList<>();
     }
 
-    public void tryConnection(String addr){
+    public void tryConnection(String addr) throws RuntimeException {
         super.tryConnection(addr);
         waitChangePhase();
     }
