@@ -11,6 +11,7 @@ import it.polimi.ingsw.view.coreview.ObjectiveView;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,9 +35,15 @@ public class CLI extends UserView{
     public CLI() {
         super();
         this.phaseQueue = new PriorityQueue<>((firstPhase, secondPhase) -> {
-            if(firstPhase == Phase.CRASHED)
+            if(firstPhase == Phase.SERVERCRASHED){
                 return -1;
-            else if (secondPhase == Phase.CRASHED) {
+            }
+            else if(secondPhase == Phase.SERVERCRASHED){
+                return 1;
+            }
+            else if(firstPhase == Phase.CLIENTCRASHED)
+                return -1;
+            else if (secondPhase == Phase.CLIENTCRASHED) {
                 return 1;
             }
             return 0;
@@ -48,6 +55,29 @@ public class CLI extends UserView{
         this.turnOrder = new ArrayList<>(4);
         this.leaderboard = new HashMap<>();
         this.chats = new LinkedList<>();
+    }
+
+    public void startGame() throws RemoteException{
+        connectMenu();
+    }
+
+    private void connectMenu() throws RemoteException {
+        boolean stay;
+        String connection;
+        do{
+            stay = false;
+            do{
+                System.out.print("1 Socket\n2 RMI\nSelect connection type: ");
+                connection = this.in.nextLine();
+            }while(!connection.equals("1") && !connection.equals("2"));
+            super.connect(connection.equals("1"));
+            try{
+                tryConnection("localhost");
+            }catch(RuntimeException e){
+                System.out.println("can't connect\ntry again...");
+                stay = true;
+            }
+        }while(stay);
     }
 
     public void tryConnection(String addr) throws RuntimeException {
@@ -134,7 +164,10 @@ public class CLI extends UserView{
                 }
             }
             this.currPhase = this.phaseQueue.remove();
-            if(this.currPhase==Phase.CRASHED){
+            if(this.currPhase==Phase.SERVERCRASHED){
+                this.phaseQueue.clear();
+            }
+            else if(this.currPhase==Phase.CLIENTCRASHED){
                 this.phaseQueue.removeIf(p->!(p==Phase.MENU));
             }
         }
@@ -143,7 +176,7 @@ public class CLI extends UserView{
 
     public void waitConfirm(){
         synchronized(this.phaseQueue){
-            if(this.phaseQueue.peek()==Phase.CRASHED){
+            if(this.phaseQueue.peek()==Phase.CLIENTCRASHED){
                 synchronized(this.confirmValue) {
                     this.confirmValue.set(true);
                 }
@@ -318,7 +351,9 @@ public class CLI extends UserView{
                 inserted = false;
             }
             synchronized(this.phaseQueue){
-                if(this.phaseQueue.contains(Phase.ENDGAME) || this.phaseQueue.contains(Phase.CRASHED)){
+                if(this.phaseQueue.contains(Phase.ENDGAME) ||
+                        this.phaseQueue.contains(Phase.CLIENTCRASHED) ||
+                        this.phaseQueue.contains(Phase.SERVERCRASHED)){
                     stay.set(false);
                     executorService.shutdownNow();
                     inserted = true;
@@ -383,7 +418,7 @@ public class CLI extends UserView{
                                     int idx = Integer.parseInt(cmd[2]) - 1;
                                     System.out.println(this.modelView.getBoard(idx).asciiBoard());
                                 }else{
-                                    System.out.println("Command incorrect");
+                                    System.out.println("Command not supported");
                                 }
                             }catch(Exception e) {
                                 System.out.println("Not an index");
@@ -405,7 +440,7 @@ public class CLI extends UserView{
             }
             case "flip" -> {
                 if(cmd.length != 2){
-                    System.out.println("Command incorrect");
+                    System.out.println("Command not supported");
                     return;
                 }
                 try{
@@ -424,7 +459,7 @@ public class CLI extends UserView{
             case "draw" -> drawCard();
             case "chat" -> {
                 if(cmd.length != 2){
-                    System.out.println("Command incorrect");
+                    System.out.println("Command not supported");
                     return;
                 }
                 synchronized (this.chats) {
@@ -442,7 +477,7 @@ public class CLI extends UserView{
             }
             case "message" -> {
                 if(cmd.length != 2){
-                    System.out.println("Command incorrect");
+                    System.out.println("Command not supported");
                     return;
                 }
                 if(!this.name.equals(cmd[1]) && (cmd[1].equals("All") || this.turnOrder.contains(cmd[1]))){
@@ -526,6 +561,7 @@ public class CLI extends UserView{
     
         System.out.println("Press enter to continue");
         in.nextLine();
+        cleanView();
         waitChangePhase();
     }
 
@@ -616,26 +652,39 @@ public class CLI extends UserView{
             case Phase.COLOR -> chooseColor();
             case Phase.OBJECTIVE -> chooseObjective();
             case Phase.GAME -> gameFlow();
+            case Phase.EXIT -> System.out.println("Ending Session\nGame Terminated");
             case Phase.ENDGAME -> showWinner();
-            case Phase.CRASHED -> {
-                System.out.print("A player has crashed\nPress enter and return to menu");
-                if(executorService == null) {
-                    in.nextLine();
-                }else{
-                    getCommand();
-                    executorService.shutdownNow();
-                }
-                super.cleanView();
-                waitChangePhase();
+            case Phase.CLIENTCRASHED, Phase.SERVERCRASHED ->
+                notifyCrashed(phase);
+        }
+    }
+
+    private void notifyCrashed(Phase phase){
+        String msg = phase == Phase.CLIENTCRASHED ? "A player has crashed\nPress enter and return to menu" :
+                "The server has crashed\nPress enter and return to connection screen";
+        System.out.print(msg);
+        if(executorService == null) {
+            in.nextLine();
+        }else{
+            getCommand();
+            executorService.shutdownNow();
+        }
+        cleanView();
+        if(phase==Phase.CLIENTCRASHED){
+            waitChangePhase();
+        }else{
+            try{
+                connectMenu();
+            }catch (RemoteException e){
+                throw new RuntimeException();
             }
-            case Phase.EXIT -> System.out.println("Uscito gioco\nGame Terminato");
         }
     }
 
     @Override
     public void scanInput(String toScan){
         synchronized(this.phaseQueue){
-            if(this.phaseQueue.peek() == Phase.CRASHED) {
+            if(this.phaseQueue.peek() == Phase.CLIENTCRASHED) {
                 return;
             }
         }

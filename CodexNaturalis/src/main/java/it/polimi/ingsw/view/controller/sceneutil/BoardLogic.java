@@ -66,6 +66,7 @@ public class BoardLogic {
         for(int i = 0; i < hBoxes.length; i++){
             hBoxes[i] = new HBox();
             hBoxes[i].setSpacing(10);
+            hBoxes[i].setAlignment(Pos.CENTER_LEFT);
             ImageView img = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + s.get(i).name() + ".png"))));
             img.setPreserveRatio(true);
             img.setFitWidth(20);
@@ -77,8 +78,8 @@ public class BoardLogic {
         }
         VBox v = new VBox(hBoxes);
         v.setMouseTransparent(true);
-        v.setPadding(new Insets(30,50,0,0));
-        v.setSpacing(10);
+        v.setPadding(new Insets(30,50,0,10));
+        v.setSpacing(5);
         return v;
     }
 

@@ -99,7 +99,7 @@ public abstract class Client{
           switch (phase) {
             case Phase.STARTCARD -> this.userView.setCurrPhase(phase, this.gson.fromJson(dictate[2], CardView[].class));
             case Phase.OBJECTIVE -> this.userView.setCurrPhase(phase, this.gson.fromJson(dictate[2], ObjectiveView[].class));
-            case Phase.EXIT -> {
+            case Phase.SERVERCRASHED,EXIT -> {
               closeConnection();
               this.userView.setCurrPhase(phase);
             }

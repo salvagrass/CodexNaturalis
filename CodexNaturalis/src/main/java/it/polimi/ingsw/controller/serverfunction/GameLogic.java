@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * Class that manages the flow of the game.
  */
-public class GameLogic {
+public class GameLogic implements CrashHandler {
     private final String id;
     private boolean cardPlaced, cardDrawn;
     private CommonGround ground;
@@ -72,9 +72,10 @@ public class GameLogic {
         this.players = players;
         this.turnOrder = turnOrder;
         this.currPlayer = currPlayer;
+        this.cardPlaced = false;
+        this.cardDrawn = false;
         this.executor = Executors.newFixedThreadPool(turnOrder.size());
         for(Comm comm: turnOrder){
-            comm.startPing();
             comm.setGame(this);
         }
     }
@@ -101,6 +102,8 @@ public class GameLogic {
             if (this.currPlayer == null) {
                 this.currPlayer = comm;
                 this.setUp.waitReady();
+                saveGame();
+                server.addGameToMemorized(this.id);
                 gameStart();
             } else {
                 this.setUp.notifyAll();
@@ -109,7 +112,11 @@ public class GameLogic {
     }
 
 
-    public void loadGame(){
+    public void submitLoad(){
+        executor.submit(this::loadGame);
+    }
+
+    private void loadGame(){
         int points,i;
         CardView[] loadedHand;
         Player player;
@@ -216,7 +223,6 @@ public class GameLogic {
             this.currPlayer = this.turnOrder.get(i);
             this.cardPlaced = false;
             this.cardDrawn = false;
-            this.saveGame();
             playTurn(this.turnOrder.get(i));
             try {
                 this.endGame = this.endGame || players.get(this.turnOrder.get(i)).getPoints() >= winPoints ||
@@ -226,6 +232,7 @@ public class GameLogic {
             }
         }
         this.currPlayer = this.turnOrder.getFirst();
+        saveGame();
     }
 
     /**
@@ -400,14 +407,14 @@ public class GameLogic {
 
     public synchronized void handleCrash(Comm comm){
         executor.shutdownNow();
-        List<Comm> comms = this.setUp.getComms();
+        Set<Comm> comms = (this.setUp==null) ? this.players.keySet() : this.setUp.getComms();
         for(Comm iter: comms){
-            iter.stopPing();
+            iter.setCrashHandler(this.server);
         }
         comms.remove(comm);
-        String msg = MsgCreator.changePhaseMsg(Phase.CRASHED);
-        Comm.sendBroadcast(msg,comms);
-        this.server.closeGame(this.id);
+        String msg = MsgCreator.changePhaseMsg(Phase.CLIENTCRASHED);
+        Comm.sendBroadcast(msg,new ArrayList<>(comms));
+        this.server.removeGame(this.id);
         for(Comm iter: comms){
             //CLEAN THE PENDING MESSAGES
             iter.clean();

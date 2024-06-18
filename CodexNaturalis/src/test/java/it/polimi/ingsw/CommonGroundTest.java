@@ -21,7 +21,6 @@ public class CommonGroundTest {
      * Sets up the test environment by creating a new instance of the `CommonGround` class.
      * This method is executed before each test method.
      *
-     * @throws IOException if an I/O error occurs during the creation of `CommonGround`.
      */
     @Before
     public void SetUp(){

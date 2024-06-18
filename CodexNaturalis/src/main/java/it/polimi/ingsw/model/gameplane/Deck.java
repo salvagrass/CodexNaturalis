@@ -10,7 +10,7 @@ import java.util.List;
  * A deck is described as a collection of DrawableCard objects.
  */
 public class Deck <T extends DrawableCard>{
-    List<T> deck;
+    final List<T> deck;
 
     /**
      * Construct a deck using the provided list of cards

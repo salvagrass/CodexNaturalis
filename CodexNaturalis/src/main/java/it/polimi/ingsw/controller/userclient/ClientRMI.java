@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.userclient;
 
 import it.polimi.ingsw.controller.serverfunction.MsgCreator;
+import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.view.UserView;
 import it.polimi.ingsw.controller.connection.RemoteComm;
 import it.polimi.ingsw.controller.serverfunction.RemoteServer;
@@ -12,17 +13,24 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientRMI extends Client implements ClientRemote {
   private RemoteComm comm;
   private final ExecutorService clientExecutor;
   private final ExecutorService serverExecutor;
+  private final ScheduledExecutorService scheduledExecutor;
+  private final AtomicBoolean pingFlag;
 
   public ClientRMI(UserView userView) throws RemoteException{
     super(userView);
     UnicastRemoteObject.exportObject(this,0);
     this.clientExecutor = Executors.newSingleThreadExecutor();
     this.serverExecutor = Executors.newSingleThreadExecutor();
+    this.scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+    this.pingFlag = new AtomicBoolean(true);
     this.port = 1099;
   }
 
@@ -36,6 +44,7 @@ public class ClientRMI extends Client implements ClientRemote {
         this.comm = tmp;
         this.notifyAll();
       }
+      scheduledExecutor.scheduleAtFixedRate(this::waitForPing,0,15, TimeUnit.SECONDS);
     } catch (Exception e) {
       // TODO log file
       throw new RuntimeException();
@@ -57,8 +66,8 @@ public class ClientRMI extends Client implements ClientRemote {
       }
       this.comm.setMsg(msg);
     } catch (RemoteException e) {
-      System.out.println("Server crashed");
-      throw new RuntimeException();
+        this.pingFlag.set(false);
+        waitForPing();
     }
   }
 
@@ -69,8 +78,8 @@ public class ClientRMI extends Client implements ClientRemote {
       try{
         comm.placeCard(MsgCreator.placeCardMsg(idx, x, y, face));
       }catch(RemoteException e){
-        System.out.println("Server crashed");
-        throw new RuntimeException();
+        this.pingFlag.set(false);
+        waitForPing();
       }
     });
   }
@@ -81,8 +90,8 @@ public class ClientRMI extends Client implements ClientRemote {
       try{
         comm.drawCard(MsgCreator.drawCardMsg(idx));
       }catch(RemoteException e){
-        System.out.println("Server crashed");
-        throw new RuntimeException();
+        this.pingFlag.set(false);
+        waitForPing();
       }
     });
   }
@@ -93,15 +102,29 @@ public class ClientRMI extends Client implements ClientRemote {
         try {
           this.comm.chat(msg);
         } catch (RemoteException e) {
-          System.out.println("Server crashed");
-          throw new RuntimeException(e);
+          this.pingFlag.set(false);
+          waitForPing();
         }
       });
   }
 
   @Override
   public void handleMsgRemote(String message) throws RemoteException {
-    serverExecutor.submit(()->super.handleMsg(message));
+    serverExecutor.submit(()->{
+      if(message.equals("PING")){
+        pingFlag.set(true);
+      }
+      super.handleMsg(message);
+    });
+  }
+
+  private void waitForPing(){
+    synchronized(this.pingFlag){
+      if(!this.pingFlag.get()){
+        super.handleMsg(MsgCreator.changePhaseMsg(Phase.SERVERCRASHED));
+      }
+      this.pingFlag.set(false);
+    }
   }
 
   @Override
@@ -109,6 +132,7 @@ public class ClientRMI extends Client implements ClientRemote {
     this.comm = null;
     serverExecutor.shutdownNow();
     clientExecutor.shutdownNow();
+    scheduledExecutor.shutdownNow();
     try {
       UnicastRemoteObject.unexportObject(this, true);
     } catch (NoSuchObjectException e) {

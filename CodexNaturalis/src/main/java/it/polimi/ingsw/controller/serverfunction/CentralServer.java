@@ -12,10 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,9 +20,9 @@ import java.util.concurrent.Executors;
 /**
  * A class that waits for players to connect, creates a Comm object for each one, and sends them to a game lobby.
  */
-public class CentralServer extends UnicastRemoteObject implements RemoteServer {
+public class CentralServer extends UnicastRemoteObject implements RemoteServer,CrashHandler{
     private final int port;
-    private final ExecutorService executor;
+    private final Map<ExecutorService,Comm> executors;
     private final Map<String,GameLogic> games;
     private final Map<String, LoadLogic> loadingGames;
     private final Set<String> memorized;
@@ -40,7 +37,10 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
      */
     public CentralServer(int port) throws RemoteException {
         this.port = port;
-        this.executor = Executors.newFixedThreadPool(30);
+        this.executors = new HashMap<>();
+        for(int i=0;i<10;i++){
+            executors.put(Executors.newSingleThreadExecutor(),null);
+        }
         this.games = new ConcurrentHashMap<>();
         this.loadingGames = new ConcurrentHashMap<>();
         this.memorized = new HashSet<>();
@@ -60,30 +60,55 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
      * Starts listening for clients on a socket.
      */
     public void startServer() {
-        ServerSocket serverSocket;
-        try{
-            serverSocket = new ServerSocket(port);
-        } catch(IOException e){
+        try(ServerSocket serverSocket = new ServerSocket(port)){
+            while(true){
+                try {
+                    Socket socket = serverSocket.accept();
+                    SocketComm socketComm = new SocketComm(socket);
+                    socketComm.setCrashHandler(this);
+                    socketComm.startPing();
+                    ExecutorService executor = findAvailableExecutor();
+                    this.executors.put(executor,socketComm);
+                    executor.submit(()->handleClient(socketComm));
+                } catch (IOException e) {
+                    String s = "Can't open the client socket: " + e.getMessage();
+                    System.out.println(s);
+                }
+            }
+        }catch(IOException e){
             String s = "Can't open the server socket: " + e.getMessage();
             System.out.println(s);
-            return;
-        }
-        while(true){
-            try {
-                Socket socket = serverSocket.accept();
-                SocketComm socketComm = new SocketComm(socket);
-                executor.submit(()->handleClient(socketComm));
-            } catch (IOException e) {
-                String s = "Can't open the client socket: " + e.getMessage();
-                System.out.println(s);
-            }
         }
     }
 
     public RemoteComm join(ClientRemote client) throws RemoteException {
         RMIComm comm = new RMIComm(client);
+        comm.setCrashHandler(this);
+        comm.startPing();
+        ExecutorService executor = findAvailableExecutor();
+        this.executors.put(executor,comm);
         executor.submit(()->handleClient(comm));
         return comm;
+    }
+
+    private ExecutorService findAvailableExecutor(){
+        Map<ExecutorService,Comm> tmp;
+        synchronized(this.executors) {
+            tmp = new HashMap<>(executors);
+        }
+        Optional<ExecutorService> optExecutor =
+                tmp.keySet().stream().filter(x->tmp.get(x)==null).findFirst();
+        return optExecutor.orElseGet(Executors::newSingleThreadExecutor);
+    }
+
+    private ExecutorService findAssignedExecutor(Comm comm){
+        Map<ExecutorService,Comm> tmp;
+        synchronized(this.executors) {
+            tmp = new HashMap<>(executors);
+        }
+        Optional<ExecutorService> optExecutor =
+                tmp.keySet().stream().filter(x->tmp.get(x).equals(comm)).findFirst();
+        return optExecutor.orElse(null);
     }
 
     /**
@@ -104,6 +129,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                 case "3" -> loadGame(comm);
                 case "exit" -> {
                     comm.sendMsg(MsgCreator.changePhaseMsg(Phase.EXIT));
+                    comm.stopPing();
                     comm.close();
                     yield true;
                 }
@@ -140,6 +166,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                     isContained = false;
                     GameLogic game = new GameLogic(this, id, numPlayers);
                     comm.setGame(game);
+                    comm.setCrashHandler(game);
                     game.addRecord(comm);
                     games.put(id, game);
                     synchronized(this.games.get(id)){
@@ -148,6 +175,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                 }
             }
         } while (isContained);
+        ExecutorService executor = findAssignedExecutor(comm);
+        executors.put(executor,null);
         return true;
     }
 
@@ -183,6 +212,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                             comm.sendMsg(MsgCreator.confirmMsg(true, "Joining Game"));
                             isAvailable = true;
                             comm.setGame(game);
+                            comm.setCrashHandler(game);
                             game.addRecord(comm);
                         }
                     }
@@ -213,7 +243,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                 return false;
             }
             synchronized (this.games) {
-                if (!this.memorized.contains(id)) {
+                if (!this.memorized.contains(id) || this.games.containsKey(id)) {
+                    System.out.println(memorized);
                     comm.sendMsg(MsgCreator.confirmMsg(false, "id not memorized"));
                 }else{
                     available = true;
@@ -234,7 +265,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
                     }
                 } else {
                     try {
-                        LoadLogic logic = new LoadLogic(id);
+                        LoadLogic logic = new LoadLogic(this,id);
                         this.loadingGames.put(id, logic);
                         logic.addRecord(comm);
                         available = true;
@@ -245,10 +276,20 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
 
             }
         }
-        String tmp = id;
+        LoadLogic logic = this.loadingGames.get(id);
+        comm.setCrashHandler(logic);
         comm.sendMsg(MsgCreator.confirmMsg(true,"Linking name"));
-        executor.submit(()->this.loadingGames.get(tmp).linkName(this,comm));
+        logic.submitLinkName(comm);
         return true;
+    }
+
+    void addGame(String id,GameLogic gc){
+        synchronized(this.games){
+            this.games.put(id,gc);
+        }
+        synchronized(this.loadingGames){
+            this.loadingGames.remove(id);
+        }
     }
 
 
@@ -258,35 +299,72 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer {
             fw.write(jsonGame);
             fw.flush();
             fw.close();
-            try {
-                File myObj = new File("memorized_games.txt");
-                Scanner myReader = new Scanner(myObj);
-                while (myReader.hasNextLine()) {
-                    if(myReader.nextLine().contains(id)){
-                        return;
-                    }
-                }
-                myReader.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
-            }
-            fw = new FileWriter("memorized_games.txt",true);
-            fw.write(id+'\n');
-            fw.flush();
-            fw.close();
-        } catch (IOException e) {
+        }catch(IOException e) {
             //TODO LOG FILE
             System.out.println("Can't save game");
         }
     }
 
-    void submitClient(Comm comm) {
-        this.executor.submit(() -> handleClient(comm));
+    synchronized void addGameToMemorized(String id){
+        synchronized(this.games){
+            this.memorized.add(id);
+        }
+        try(FileWriter fw = new FileWriter("memorized_games.txt",true)){
+            fw.write(id+"\n");
+            fw.flush();
+        }catch(IOException e){
+            //TODO LOG FILE
+        }
     }
 
-    void closeGame(String id) {
-        synchronized(this.games.get(id)) {
+    void submitClient(Comm comm) {
+        ExecutorService executor = findAssignedExecutor(comm);
+        executor.submit(() -> handleClient(comm));
+    }
+
+    void removeGame(String id){
+        synchronized(this.games){
             this.games.remove(id);
+            this.loadingGames.remove(id);
+            this.loadLocks.remove(id);
+        }
+    }
+
+    void closeGame(String id){
+        synchronized(this.games){
+            this.games.remove(id);
+            this.memorized.remove(id);
+        }
+        synchronized(this){
+            try(BufferedReader fr = new BufferedReader(new FileReader("memorized_games.txt"))){
+                List<String> tmpMemorized = new ArrayList<>();
+                String line;
+                while((line = fr.readLine())!=null){
+                    if(!line.equals(id)){
+                        tmpMemorized.add(line);
+                    }
+                }
+                fr.close();
+                BufferedWriter bw = new BufferedWriter(new FileWriter("memorized_games.txt"));
+                for(String str : tmpMemorized){
+                    bw.write(str);
+                    bw.newLine();
+                }
+                bw.flush();
+                bw.close();
+            }catch(IOException e){
+                //TODO LOG
+            }
+        }
+    }
+
+    @Override
+    public void handleCrash(Comm comm) {
+        ExecutorService executor = findAssignedExecutor(comm);
+        executor.shutdownNow();
+        synchronized(this.executors) {
+            this.executors.remove(executor);
+            System.out.println(this.executors.size());
         }
     }
 }

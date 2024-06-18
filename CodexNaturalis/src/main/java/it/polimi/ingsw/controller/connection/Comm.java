@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller.connection;
 
+import it.polimi.ingsw.controller.serverfunction.CrashHandler;
 import it.polimi.ingsw.controller.serverfunction.GameLogic;
 
 import java.util.List;
@@ -15,13 +16,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class Comm{
     private GameLogic game;
     private String chosen;
-    final AtomicBoolean clientCrashed;
     private ScheduledExecutorService pingExec;
+    final AtomicBoolean clientCrashed;
+    CrashHandler handler;
 
     public Comm() {
         this.clientCrashed = new AtomicBoolean(false);
     }
 
+    public void setCrashHandler(CrashHandler handler){
+        this.handler = handler;
+    }
 
     /**
      * Sends a message to the client.

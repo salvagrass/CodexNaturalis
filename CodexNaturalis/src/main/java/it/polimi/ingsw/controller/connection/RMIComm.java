@@ -43,10 +43,10 @@ public class RMIComm extends Comm implements RemoteComm {
     @Override
     public void pingMethod() {
         try {
-            this.client.handleMsgRemote("");
+            this.client.handleMsgRemote("PING");
         } catch (RemoteException e) {
             close();
-            this.getGame().handleCrash(this);
+            this.handler.handleCrash(this);
             this.clientCrashed.set(true);
         }
     }

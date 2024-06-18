@@ -14,15 +14,22 @@ import it.polimi.ingsw.util.json.SaveData;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-public class LoadLogic {
+public class LoadLogic implements CrashHandler {
+    private final CentralServer server;
+    private final ExecutorService executor;
     private final SaveData data;
     private final Set<String> names;
     private final Map<String,Comm> nameToComm;
     private final Set<Comm> record;
 
-    public LoadLogic(String id) throws IOException{
+
+
+    public LoadLogic(CentralServer server,String id) throws IOException{
+        this.server = server;
         Gson gson = new GsonBuilder()
                 .registerTypeHierarchyAdapter(Card.class, new CardSerializeLogic())
                 .registerTypeHierarchyAdapter(Objective.class, new ObjectiveSerializeLogic())
@@ -30,12 +37,16 @@ public class LoadLogic {
         FileReader reader = new FileReader(id+"_saved.json");
         this.data = gson.fromJson(reader,SaveData.class);
         reader.close();
-        names = data.getTurnOrder().stream().map(Player::getNickname).collect(Collectors.toSet());
-        nameToComm = new HashMap<>();
-        record = new HashSet<>();
+        this.names = data.getTurnOrder().stream().map(Player::getNickname).collect(Collectors.toSet());
+        this.nameToComm = new HashMap<>();
+        this.record = new HashSet<>();
+        this.executor = Executors.newFixedThreadPool(names.size());
     }
 
-    void linkName(CentralServer server,Comm comm){
+    void submitLinkName(Comm comm){
+        this.executor.submit(()->linkName(comm));
+    }
+    private void linkName(Comm comm){
         String msg;
         String name = null;
         boolean available = false;
@@ -75,11 +86,11 @@ public class LoadLogic {
         comm.sendMsg(MsgCreator.nameMsg(name));
 
         if(name.equals(data.getCurrPlayer())){
-            createGameLogic(server);
+            createGameLogic();
         }
     }
 
-    private void createGameLogic(CentralServer server){
+    private void createGameLogic(){
         Map<Comm,Player> players = new HashMap<>();
         List<Comm> turnOrder = new ArrayList<>(this.nameToComm.size());
         for(Player player: data.getTurnOrder()){
@@ -88,16 +99,36 @@ public class LoadLogic {
             turnOrder.add(comm);
             players.put(comm,player);
         }
-        new GameLogic(server,this.data.getId(),this.data.getGround(),players,turnOrder,this.nameToComm.get(data.getCurrPlayer()))
-                .loadGame();
+        GameLogic gc = new GameLogic(this.server,this.data.getId(),this.data.getGround(),players,turnOrder,this.nameToComm.get(data.getCurrPlayer()));
+        for(Comm comm : this.record){
+            comm.setCrashHandler(gc);
+        }
+        this.server.addGame(data.getId(),gc);
+        gc.submitLoad();
     }
 
 
-    public void addRecord(Comm comm){
+    public synchronized void addRecord(Comm comm){
         this.record.add(comm);
     }
 
-    public boolean isFull(){
+    public synchronized boolean isFull(){
         return this.record.size() == this.data.getTurnOrder().size();
+    }
+
+    public synchronized void handleCrash(Comm comm){
+        executor.shutdownNow();
+        for(Comm iter: this.record){
+            iter.setCrashHandler(this.server);
+        }
+        this.record.remove(comm);
+        String msg = MsgCreator.changePhaseMsg(Phase.CLIENTCRASHED);
+        Comm.sendBroadcast(msg,new ArrayList<>(this.record));
+        this.server.removeGame(this.data.getId());
+        for(Comm iter: this.record){
+            //CLEAN THE PENDING MESSAGES
+            iter.clean();
+            this.server.submitClient(iter);
+        }
     }
 }

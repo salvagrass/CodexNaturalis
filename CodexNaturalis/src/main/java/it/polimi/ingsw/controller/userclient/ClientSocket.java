@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.userclient;
 
 import it.polimi.ingsw.controller.serverfunction.MsgCreator;
+import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.view.UserView;
 
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientSocket extends Client{
@@ -17,14 +20,18 @@ public class ClientSocket extends Client{
   private Scanner in;
   private PrintWriter out;
   private final AtomicBoolean stopConnection;
+  private final AtomicBoolean pingFlag;
 
   ExecutorService executor;
+  ScheduledExecutorService scheduled;
 
   public ClientSocket(UserView userView){
     super(userView);
     this.stopConnection = new AtomicBoolean(false);
+    this.pingFlag = new AtomicBoolean(true);
     this.port = 5432;
     this.executor = Executors.newSingleThreadExecutor();
+    this.scheduled = Executors.newSingleThreadScheduledExecutor();
   }
 
   @Override
@@ -38,14 +45,24 @@ public class ClientSocket extends Client{
       //TODO log file
       throw new RuntimeException();
     }
+    scheduled.scheduleAtFixedRate(this::waitForPing,0,15, TimeUnit.SECONDS);
     new Thread(this::listener).start();
   }
 
+  private void waitForPing(){
+      synchronized(this.pingFlag){
+        if(!this.pingFlag.get()){
+          handleMsg(MsgCreator.changePhaseMsg(Phase.SERVERCRASHED));
+        }
+        this.pingFlag.set(false);
+    }
+  }
 
   @Override
   public void handleMsg(String msg){
     if(msg.equals("PING")) {
       sendMsg("ACK");
+      this.pingFlag.set(true);
     }
     else {
       executor.submit(() -> super.handleMsg(msg));
@@ -89,7 +106,10 @@ public class ClientSocket extends Client{
   public void closeConnection(){
     this.stopConnection.set(true);
     try{
+      scheduled.shutdownNow();
       executor.shutdownNow();
+      scheduled = Executors.newSingleThreadScheduledExecutor();
+      executor = Executors.newSingleThreadExecutor();
       in.close();
       out.close();
       socket.close();

@@ -48,10 +48,6 @@ public class GoldCardSymbol extends GoldCard {
         return resources.get(sym) * getCardPoints();
     }
 
-    public String toString() {
-        return super.toString();
-    }
-    
     public Symbol getSym() {
         return this.sym;
     }

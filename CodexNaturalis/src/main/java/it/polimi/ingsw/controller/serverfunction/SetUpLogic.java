@@ -249,7 +249,7 @@ class SetUpLogic {
         waitStart(State.READY);
     }
 
-    List<Comm> getComms(){
-        return new ArrayList<>(this.record.keySet());
+    Set<Comm> getComms(){
+        return this.record.keySet();
     }
 }

@@ -85,12 +85,12 @@ public class SocketComm extends Comm {
       if(!this.ackFlag.get()){
         this.clientCrashed.set(true);
         close();
-        this.getGame().handleCrash(this);
+        this.handler.handleCrash(this);
         return;
       }
+      this.ackFlag.set(false);
+      sendMsg("PING");
     }
-    this.ackFlag.set(false);
-    sendMsg("PING");
   }
 
   @Override
