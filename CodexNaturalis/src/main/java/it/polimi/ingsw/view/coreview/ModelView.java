@@ -51,6 +51,9 @@ public class ModelView {
    * @param idx  The index of the hand where the card is updated.
    */
   public void updHand(CardView card,int idx){
+    if(handView.size()>idx) {
+      this.handView.remove(idx);
+    }
     handView.add(idx,card);
   }
 
@@ -133,14 +136,5 @@ public class ModelView {
    */
   public CardView getHandCard(int idx){
     return this.handView.get(idx);
-  }
-
-  /**
-   * Removes a card from the hand at a specific index.
-   *
-   * @param idx The index of the card to remove from the hand.
-   */
-  public void removeHandCard(int idx){
-    this.handView.remove(idx);
   }
 }

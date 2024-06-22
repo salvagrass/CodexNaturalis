@@ -102,8 +102,6 @@ public class GameLogic implements CrashHandler {
             if (this.currPlayer == null) {
                 this.currPlayer = comm;
                 this.setUp.waitReady();
-                saveGame();
-                server.addGameToMemorized(this.id);
                 gameStart();
             } else {
                 this.setUp.notifyAll();
@@ -162,6 +160,8 @@ public class GameLogic implements CrashHandler {
 
         createGroundView();
         this.currPlayer = turnOrder.getFirst();
+        saveGame();
+        server.addGameToMemorized(this.id);
         gameFlow();
     }
 
@@ -399,6 +399,7 @@ public class GameLogic implements CrashHandler {
      */
     private void shutdown() {
         for (Comm comm : this.turnOrder) {
+            comm.setCrashHandler(this.server);
             this.server.submitClient(comm);
         }
         this.server.closeGame(this.id);

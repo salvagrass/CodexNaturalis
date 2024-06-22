@@ -596,7 +596,6 @@ public class CLI extends UserView{
                 System.out.println(this.confirmMsg);
                 if(this.confirmValue.get()){
                     this.idx = this.tmpIdx;
-                    this.modelView.removeHandCard(idx);
                 }
             }
         } catch (NumberFormatException e) {

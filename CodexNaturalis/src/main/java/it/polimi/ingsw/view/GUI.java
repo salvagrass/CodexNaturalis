@@ -177,7 +177,7 @@ public class GUI extends UserView{
                     this.stage.setFullScreen(true);
                 });
             }
-            case Phase.CRASHED -> {
+            case Phase.CLIENTCRASHED -> {
                 System.out.println("User crashed");
                 Platform.runLater(()->{
                     Stage s = new Stage();

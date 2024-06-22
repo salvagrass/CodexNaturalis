@@ -10,6 +10,8 @@ import it.polimi.ingsw.util.Phase;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
@@ -352,6 +354,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
                 }
                 bw.flush();
                 bw.close();
+                Files.delete(Paths.get(id+"_saved.json"));
             }catch(IOException e){
                 //TODO LOG
             }
