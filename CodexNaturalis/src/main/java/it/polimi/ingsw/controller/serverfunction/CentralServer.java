@@ -133,6 +133,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
                     comm.sendMsg(MsgCreator.changePhaseMsg(Phase.EXIT));
                     comm.stopPing();
                     comm.close();
+                    ExecutorService executor = findAssignedExecutor(comm);
+                    executors.put(executor,null);
                     yield true;
                 }
                 default -> false;
@@ -177,8 +179,6 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
                 }
             }
         } while (isContained);
-        ExecutorService executor = findAssignedExecutor(comm);
-        executors.put(executor,null);
         return true;
     }
 
@@ -367,7 +367,6 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         executor.shutdownNow();
         synchronized(this.executors) {
             this.executors.remove(executor);
-            System.out.println(this.executors.size());
         }
     }
 }
