@@ -6,6 +6,7 @@ import it.polimi.ingsw.view.UserView;
 import it.polimi.ingsw.controller.connection.RemoteComm;
 import it.polimi.ingsw.controller.serverfunction.RemoteServer;
 
+import java.net.InetAddress;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -37,6 +38,7 @@ public class ClientRMI extends Client implements ClientRemote {
   @Override
   public void connect(String addr) {
     try {
+      System.setProperty("java.rmi.server.hostname", InetAddress.getLocalHost().getHostAddress());
       Registry registry = LocateRegistry.getRegistry(addr, this.port);
       RemoteServer server = (RemoteServer) registry.lookup("RMIServer");
       RemoteComm tmp = server.join(this);

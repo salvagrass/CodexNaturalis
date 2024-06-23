@@ -1,4 +1,4 @@
-package it.polimi.ingsw.util;
+package it.polimi.ingsw.util.json;
 
 import com.google.gson.*;
 import it.polimi.ingsw.model.item.objective.*;

@@ -13,9 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -64,6 +62,7 @@ public class CLI extends UserView{
     private void connectMenu() throws RemoteException {
         boolean stay;
         String connection;
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         do{
             stay = false;
             do{
@@ -72,8 +71,14 @@ public class CLI extends UserView{
             }while(!connection.equals("1") && !connection.equals("2"));
             super.connect(connection.equals("1"));
             try{
-                tryConnection("localhost");
-            }catch(RuntimeException e){
+                System.out.print("Address: ");
+                String addr = this.in.nextLine();
+                Future<Void> exec = executor.submit(() -> {
+                    tryConnection(addr);
+                    return null;
+                });
+                exec.get(5, TimeUnit.SECONDS);
+            }catch(RuntimeException|TimeoutException|ExecutionException|InterruptedException e){
                 System.out.println("can't connect\ntry again...");
                 stay = true;
             }

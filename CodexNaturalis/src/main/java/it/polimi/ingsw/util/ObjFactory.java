@@ -1,4 +1,4 @@
-package it.polimi.ingsw.util.json;
+package it.polimi.ingsw.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.item.objective.DispObjective;
 import it.polimi.ingsw.model.item.objective.Disposition;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.model.item.objective.ResourceObjective;
-import it.polimi.ingsw.util.ItemFactory;
+import it.polimi.ingsw.util.json.DispositionSerializeLogic;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

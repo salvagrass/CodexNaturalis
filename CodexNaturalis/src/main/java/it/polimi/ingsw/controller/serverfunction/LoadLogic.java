@@ -6,7 +6,7 @@ import it.polimi.ingsw.controller.connection.Comm;
 import it.polimi.ingsw.model.gameplane.Player;
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.util.ObjectiveSerializeLogic;
+import it.polimi.ingsw.util.json.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
 import it.polimi.ingsw.util.json.SaveData;

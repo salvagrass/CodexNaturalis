@@ -5,6 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 
 public class StartController extends Controller {
     @FXML
@@ -17,6 +22,7 @@ public class StartController extends Controller {
     private ToggleGroup connection;
     @FXML
     private AnchorPane back;
+    ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public void initialize(){
         this.address.textProperty().addListener((obs, oldVal, newVal)-> {
@@ -30,7 +36,11 @@ public class StartController extends Controller {
     public void connect(){
         try {
             this.gui.connect(((RadioButton)this.connection.getSelectedToggle()).getText().equals("Socket"));
-            this.gui.tryConnection(this.address.getText());
+            Future<Void> exec = executor.submit(() -> {
+                this.gui.tryConnection(this.address.getText());
+                return null;
+            });
+            exec.get(5, TimeUnit.SECONDS);
         } catch (Exception e) {
             this.error.setVisible(true);
         }

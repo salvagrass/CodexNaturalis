@@ -10,7 +10,7 @@ import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.card.GoldCard;
 import it.polimi.ingsw.model.item.card.ResourceCard;
 import it.polimi.ingsw.model.item.objective.Objective;
-import it.polimi.ingsw.util.ObjectiveSerializeLogic;
+import it.polimi.ingsw.util.json.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.util.Symbol;
 import it.polimi.ingsw.util.exception.InvalidDrawException;

@@ -121,14 +121,14 @@ public class ChatLogic {
         text.setWrappingWidth(textArea.getWidth());
         double textHeight = text.getLayoutBounds().getHeight();
         double newHeight = textHeight + textArea.getPadding().getTop() + textArea.getPadding().getBottom();
-        textArea.setPrefHeight(Math.max(newHeight, 24)); // Ensure minimum height matches TextField
+        textArea.setPrefHeight(Math.max(newHeight, 24));
     }
 
     private void updMsgs(ListChangeListener.Change<? extends Message> change, VBox messages) {
         while(change.next()){
             if (change.wasAdded()) {
                 for(Message m : change.getAddedSubList()){
-                    if(m.sender.equals(this.users.getValue()) || m.receiver.equals(this.users.getValue())){
+                    if(m.sender.equals(this.users.getValue()) && !m.receiver.equals("All") || m.receiver.equals(this.users.getValue())){
                         addMsg(messages, m);
                     }
                 }
