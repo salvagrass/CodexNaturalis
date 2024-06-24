@@ -3,10 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.Pane?>
 
-
-<Pane fx:id="back" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="it.polimi.ingsw.view.controller.RulebookController">
-   <Button layoutX="547.0" layoutY="188.0" mnemonicParsing="false" text="next" onAction="#next"/>
-   <Button layoutX="14.0" layoutY="188.0" mnemonicParsing="false" text="prev" onAction="#prev"/>
+<Pane fx:id="back" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" stylesheets="@../css/rulebook.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.RulebookController">
+   <Button fx:id="next" layoutX="1164.0" layoutY="288.0" mnemonicParsing="false" onAction="#next" text="next" />
+   <Button fx:id="prev" layoutY="288.0" mnemonicParsing="false" onAction="#prev" text="prev" />
 </Pane>

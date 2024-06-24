@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@StylesheetwaitPlayers.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.WaitController">
-   <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="29.0" layoutY="89.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <image>
-         <Image url="@backgroundCodex.png" />
-      </image>
-   </ImageView>
-   <Label fx:id="waitPlayers" alignment="CENTER" layoutX="116.0" layoutY="39.0" prefHeight="57.0" prefWidth="348.0" text="Waiting For Players" AnchorPane.leftAnchor="116.0" AnchorPane.rightAnchor="116.0">
+<AnchorPane id="background" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/StylesheetwaitPlayers.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.WaitController">
+   <Label fx:id="waitPlayers" alignment="CENTER" layoutX="116.0" layoutY="78.0" prefHeight="57.0" prefWidth="348.0" text="Waiting For Players" AnchorPane.leftAnchor="116.0" AnchorPane.rightAnchor="116.0">
       <font>
          <Font size="45.0" />
       </font>
    </Label>
-   <VBox fx:id="list" layoutX="203.0" layoutY="112.0" prefHeight="165.0" prefWidth="200.0" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" />
-   <Label fx:id="ready" layoutX="200.0" layoutY="307.0" prefHeight="45.0" prefWidth="200.0">
+   <VBox fx:id="list" layoutX="200.0" layoutY="157.0" prefHeight="165.0" prefWidth="200.0" AnchorPane.bottomAnchor="178.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" />
+   <Label fx:id="ready" alignment="CENTER" layoutX="300.0" layoutY="328.0" prefHeight="45.0" prefWidth="200.0">
       <font>
          <Font size="26.0" />
       </font>

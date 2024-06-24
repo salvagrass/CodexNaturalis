@@ -1,5 +1,10 @@
 @font-face {
-    src: url(Canterbury.ttf);
+    src: url(../fonts/Canterbury.ttf);
+}
+
+#pane{
+    -fx-background-image: url(../graphics/bg1.png);
+    -fx-background-size: stretch;
 }
 #red {
     -fx-background-radius: 5em;

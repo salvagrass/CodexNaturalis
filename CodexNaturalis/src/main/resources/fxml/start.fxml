@@ -5,24 +5,17 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="back" prefHeight="400.0" prefWidth="600.0" stylesheets="@StylesheetStart.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.StartController">
-   <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="47.0" layoutY="98.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <image>
-         <Image url="@backgroundCodex.png" />
-      </image>
-   </ImageView>
-   <Label fx:id="start" alignment="CENTER" layoutX="197.0" layoutY="50.0" prefHeight="51.0" prefWidth="201.0" text="Start" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" />
-   <Button fx:id="connect" disable="true" layoutX="240.0" layoutY="273.0" mnemonicParsing="false" onAction="#connect" text="connect" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="240.0" />
-   <TextField fx:id="address" alignment="CENTER" layoutX="223.0" layoutY="156.0" text="localhost" />
-   <Label fx:id="error" layoutX="252.0" layoutY="264.0" text="CAN'T CONNECT" textFill="RED" visible="false" />
-   <RadioButton layoutX="343.0" layoutY="213.0" mnemonicParsing="false" text="RMI" AnchorPane.rightAnchor="214.33333333333331">
+<AnchorPane fx:id="back" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/StylesheetStart.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.StartController">
+   <Label fx:id="start" alignment="CENTER" layoutX="200.0" layoutY="64.0" prefHeight="57.0" prefWidth="565.0" text="Start" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+   <Button fx:id="connect" disable="true" layoutX="346.0" layoutY="325.0" mnemonicParsing="false" onAction="#connect" text="connect" />
+   <TextField fx:id="address" alignment="CENTER" layoutX="320.0" layoutY="169.0" text="localhost" />
+   <Label fx:id="error" layoutX="350.0" layoutY="205.0" text="CAN'T CONNECT" textFill="RED" visible="false" />
+   <RadioButton layoutX="435.0" layoutY="231.0" mnemonicParsing="false" text="RMI" AnchorPane.rightAnchor="320.0">
       <toggleGroup>
          <ToggleGroup fx:id="connection" />
       </toggleGroup>
    </RadioButton>
-   <RadioButton layoutX="214.0" layoutY="213.0" mnemonicParsing="false" text="Socket" toggleGroup="$connection" AnchorPane.leftAnchor="214.0" AnchorPane.rightAnchor="329.3333333333333" />
+   <RadioButton layoutX="322.0" layoutY="231.0" mnemonicParsing="false" text="Socket" toggleGroup="$connection" />
 </AnchorPane>

@@ -1,3 +1,12 @@
+@font-face {
+    src: url(../fonts/Canterbury.ttf);
+}
+
+#background {
+    -fx-background-image: url(../graphics/bg1.png);
+    -fx-background-size: stretch;
+}
+
 #submit {
     -fx-import: "Canterbury.ttf";
     -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
@@ -13,12 +22,13 @@
     -fx-background-color: #ebd980;
 }
 
-#insertName {
+#insertId {
     -fx-import: "Canterbury.ttf";
     -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
 }
-
-#error {
-    -fx-import: "Seagram tfb.ttf";
-    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
+#backButton{
+    -fx-background-color: #e8cb82;
+}
+#backButton:hover {
+    -fx-background-color: #ebd980;
 }

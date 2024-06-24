@@ -1,0 +1,31 @@
+@font-face {
+    src: url(../fonts/Canterbury.ttf);
+}
+
+#next{
+    -fx-font-family: 'Canterbury', serif;
+    -fx-background-color: #ebe1b0;
+    -fx-background-radius: 10px;
+    -fx-border-color: black;
+    -fx-border-radius: 10px;
+    -fx-font-size: 12px;
+}
+
+#next:hover {
+    -fx-background-color: #ebd980;
+    -fx-background-radius: 10px;
+}
+
+#prev{
+    -fx-font-family: 'Canterbury', serif;
+    -fx-background-color: #ebe1b0;
+    -fx-background-radius: 10px;
+    -fx-border-color: black;
+    -fx-border-radius: 10px;
+    -fx-font-size: 12px;
+}
+
+#prev:hover {
+    -fx-background-color: #ebd980;
+    -fx-background-radius: 10px;
+}

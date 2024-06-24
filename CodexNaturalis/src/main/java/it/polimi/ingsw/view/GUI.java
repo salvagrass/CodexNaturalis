@@ -179,17 +179,12 @@ public class GUI extends UserView{
             }
             case Phase.CLIENTCRASHED -> {
                 System.out.println("User crashed");
+                scene = this.scenes.get(GameScene.CLIENTCRASHED);
+                this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()->{
                     Stage s = new Stage();
                     s.initModality(Modality.APPLICATION_MODAL);
-                    Label l = new Label("A client crashed");
-                    l.setStyle("-fx-font: 24 arial;");
-                    Button b = new Button("OK");
-                    b.setOnAction(e -> s.close());
-                    VBox v = new VBox(l, b);
-                    v.setAlignment(Pos.CENTER);
-                    v.setSpacing(20);
-                    s.setScene(new Scene(v, 400, 200));
+                    s.setScene(scene);
                     s.showAndWait();
                 });
 

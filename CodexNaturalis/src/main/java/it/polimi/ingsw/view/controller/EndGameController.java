@@ -17,16 +17,16 @@ public class EndGameController extends Controller{
 
     public void show(String name, Map<String, PawnColor> colors, Map<String, Integer> positions, Map<String, Integer> points){
         if(positions.get(name) == 1){
-            this.message.setText("WINNER");
+            this.message.setText("Winner");
         }else{
-            this.message.setText("LOSER");
+            this.message.setText("Loser");
         }
 
         List<String> names = positions.keySet().stream().sorted(Comparator.comparingInt(
                 positions::get)).toList();
         for (String n : names) {
             Label player = new Label(positions.get(n) + " " + n + ": " + points.get(n));
-            player.setStyle("-fx-text-fill: " + colors.get(n) + ";-fx-font: 30 arial");
+            player.setStyle("-fx-text-fill: " + colors.get(n) + "; -fx-font-size: 30px; -fx-font-family: 'BlackChauncery'; -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0);");
             this.leaderboard.getChildren().add(player);
         }
     }

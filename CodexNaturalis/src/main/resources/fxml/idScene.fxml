@@ -8,36 +8,29 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@StylesheetIdScene.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.IdController">
-   <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="199.0" layoutY="126.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <image>
-         <Image url="@backgroundCodex.png" />
-      </image>
-   </ImageView>
-   <TextField fx:id="getId" alignment="CENTER" layoutX="225.0" layoutY="158.0" promptText="ID..." AnchorPane.leftAnchor="225.0" AnchorPane.rightAnchor="225.0">
+<AnchorPane id="background" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/StylesheetIdScene.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.IdController">
+   <TextField fx:id="getId" alignment="CENTER" layoutX="276.0" layoutY="205.0" promptText="ID..." AnchorPane.leftAnchor="276.0" AnchorPane.rightAnchor="274.0">
       <font>
          <Font size="14.0" />
       </font></TextField>
-   <Label fx:id="insertId" alignment="CENTER" layoutX="201.0" layoutY="43.0" text="Insert Id" AnchorPane.leftAnchor="190.0" AnchorPane.rightAnchor="190.0">
+   <Label fx:id="insertId" alignment="CENTER" layoutX="32.0" layoutY="58.0" prefHeight="67.0" prefWidth="728.0" text="Insert Id" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="40.0">
       <font>
          <Font size="60.0" />
       </font>
    </Label>
-   <Label fx:id="error" layoutX="225.0" layoutY="202.0" prefHeight="32.0" prefWidth="300.0" text="Game with ID doesn't exist" textAlignment="CENTER" textFill="RED" visible="false" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0">
+   <Label fx:id="error" alignment="CENTER" layoutX="225.0" layoutY="240.0" prefHeight="32.0" prefWidth="300.0" text="Game with ID doesn't exist" textAlignment="CENTER" textFill="RED" visible="false" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0">
       <font>
          <Font size="16.0" />
       </font></Label>
-   <Button fx:id="submit" disable="true" layoutX="237.0" layoutY="262.0" mnemonicParsing="false" onAction="#submit" prefHeight="47.0" prefWidth="129.0" text="submit" AnchorPane.leftAnchor="235.0" AnchorPane.rightAnchor="235.0">
+   <Button fx:id="submit" disable="true" layoutX="337.0" layoutY="315.0" mnemonicParsing="false" onAction="#submit" prefHeight="47.0" prefWidth="129.0" text="submit">
       <font>
          <Font size="20.0" />
       </font>
    </Button>
-   <Button fx:id="backButton" layoutX="508.0" layoutY="29.0" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" prefWidth="46.0">
-      <graphic>
-         <ImageView fitHeight="45.0" fitWidth="46.0">
-            <image>
-               <Image url="@backbutton1.png" />
-            </image>
-         </ImageView>
-      </graphic></Button>
+   <Button fx:id="backButton" layoutX="679.0" layoutY="41.0" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" prefWidth="46.0" />
+   <ImageView fitHeight="45.0" fitWidth="46.0" layoutX="695.0" layoutY="46.0">
+      <image>
+         <Image url="@../graphics/backbutton1.png" />
+      </image>
+   </ImageView>
 </AnchorPane>

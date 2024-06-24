@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -11,67 +12,53 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.GameController">
+<BorderPane id="wallpaper" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" stylesheets="@../css/game.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.GameController">
     <top>
         <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0"/>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
             </padding>
-            <Label fx:id="name" text="KEVIN"/>
+            <Label fx:id="name" text="Kevin" />
             <HBox>
                 <VBox alignment="CENTER">
-                    <ImageView fx:id="scrtObj" fitHeight="100.0" fitWidth="200.0" pickOnBounds="true"
-                               preserveRatio="true"/>
-                    <Pane prefHeight="200.0" prefWidth="200.0"/>
-                    <Label fx:id="boardView" alignment="CENTER" contentDisplay="CENTER" text="Label"
-                           textAlignment="CENTER">
+                    <ImageView fx:id="scrtObj" fitHeight="100.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                    <Pane prefHeight="200.0" prefWidth="200.0" />
+                    <Label fx:id="boardView" alignment="CENTER" contentDisplay="CENTER" text="Label" textAlignment="CENTER">
                         <font>
-                            <Font size="30.0"/>
+                            <Font size="30.0" />
                         </font>
                     </Label>
                 </VBox>
-                <Pane prefHeight="200.0" prefWidth="200.0"/>
+                <Pane prefHeight="200.0" prefWidth="200.0" />
                 <VBox spacing="10.0">
                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
-                        <ImageView fx:id="obj0" fitHeight="100.0" fitWidth="200.0" layoutX="152.0"
-                                   layoutY="10.0" pickOnBounds="true" preserveRatio="true"/>
-                        <Pane prefHeight="200.0" prefWidth="200.0"/>
-                        <ImageView fx:id="resDeck" fitHeight="100.0" fitWidth="200.0" onMouseClicked="#draw"
-                                   pickOnBounds="true" preserveRatio="true"/>
-                        <ImageView fx:id="res1" fitHeight="100.0" fitWidth="200.0" layoutX="10.0"
-                                   layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true"
-                                   preserveRatio="true"/>
-                        <ImageView fx:id="res2" fitHeight="100.0" fitWidth="200.0" layoutX="210.0"
-                                   layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true"
-                                   preserveRatio="true"/>
+                        <ImageView fx:id="obj0" fitHeight="100.0" fitWidth="200.0" layoutX="152.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+                        <Pane prefHeight="200.0" prefWidth="200.0" />
+                        <ImageView fx:id="resDeck" fitHeight="100.0" fitWidth="200.0" onMouseClicked="#draw" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="res1" fitHeight="100.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="res2" fitHeight="100.0" fitWidth="200.0" layoutX="210.0" layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true" preserveRatio="true" />
                     </HBox>
                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
-                        <ImageView fx:id="obj1" fitHeight="100.0" fitWidth="200.0" layoutX="152.0"
-                                   layoutY="10.0" pickOnBounds="true" preserveRatio="true"/>
-                        <Pane prefHeight="200.0" prefWidth="200.0"/>
-                        <ImageView fx:id="goldDeck" fitHeight="100.0" fitWidth="200.0"
-                                   onMouseClicked="#draw" pickOnBounds="true" preserveRatio="true"/>
-                        <ImageView fx:id="gold1" fitHeight="100.0" fitWidth="200.0" layoutX="10.0"
-                                   layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true"
-                                   preserveRatio="true"/>
-                        <ImageView fx:id="gold2" fitHeight="100.0" fitWidth="200.0" layoutX="210.0"
-                                   layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true"
-                                   preserveRatio="true"/>
+                        <ImageView fx:id="obj1" fitHeight="100.0" fitWidth="200.0" layoutX="152.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+                        <Pane prefHeight="200.0" prefWidth="200.0" />
+                        <ImageView fx:id="goldDeck" fitHeight="100.0" fitWidth="200.0" onMouseClicked="#draw" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="gold1" fitHeight="100.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="gold2" fitHeight="100.0" fitWidth="200.0" layoutX="210.0" layoutY="10.0" onMouseClicked="#draw" pickOnBounds="true" preserveRatio="true" />
                     </HBox>
                 </VBox>
-                <VBox fx:id="leaderboard" alignment="CENTER_RIGHT" prefHeight="210.0" prefWidth="259.0"/>
+                <VBox fx:id="leaderboard" alignment="CENTER_RIGHT" prefHeight="210.0" prefWidth="259.0" />
             </HBox>
         </VBox>
     </top>
     <center>
         <StackPane BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" left="10.0"/>
+                <Insets bottom="10.0" left="10.0" />
             </padding>
             <StackPane fx:id="stack" prefHeight="370.0" prefWidth="980.0">
-                <ScrollPane fx:id="scroll" hbarPolicy="NEVER" pannable="true" prefHeight="511.0" prefWidth="1060.0"
-                            vbarPolicy="NEVER">
-                    <StackPane fx:id="field"/>
+                <ScrollPane fx:id="scroll" hbarPolicy="NEVER" pannable="true" prefHeight="511.0" prefWidth="1060.0" vbarPolicy="NEVER">
+                    <StackPane fx:id="field">
+                    </StackPane>
                 </ScrollPane>
             </StackPane>
         </StackPane>
@@ -79,14 +66,11 @@
     <right>
         <VBox spacing="20.0" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
-            <ImageView fx:id="hand0" fitHeight="100.0" fitWidth="200.0" onMouseClicked="#flip" pickOnBounds="true"
-                       preserveRatio="true"/>
-            <ImageView fx:id="hand1" fitHeight="100.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0"
-                       onMouseClicked="#flip" pickOnBounds="true" preserveRatio="true"/>
-            <ImageView fx:id="hand2" fitHeight="100.0" fitWidth="200.0" layoutX="10.0" layoutY="160.0"
-                       onMouseClicked="#flip" pickOnBounds="true" preserveRatio="true"/>
+            <ImageView fx:id="hand0" fitHeight="100.0" fitWidth="200.0" onMouseClicked="#flip" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="hand1" fitHeight="100.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#flip" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="hand2" fitHeight="100.0" fitWidth="200.0" layoutX="10.0" layoutY="160.0" onMouseClicked="#flip" pickOnBounds="true" preserveRatio="true" />
         </VBox>
     </right>
    <bottom>

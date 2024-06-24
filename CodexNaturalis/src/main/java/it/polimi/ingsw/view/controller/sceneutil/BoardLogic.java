@@ -73,6 +73,7 @@ public class BoardLogic {
             hBoxes[i].getChildren().add(img);
             Label label = new Label("0");
             label.setFont(new Font(20));
+            label.setStyle("-fx-text-fill: white;");
             hBoxes[i].getChildren().add(label);
             hBoxes[i].setId(idx + s.get(i).name());
         }

@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.EndGameController">
+<AnchorPane id="background" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/endGame.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.EndGameController">
    <children>
-      <Label fx:id="message" layoutX="179.0" layoutY="29.0" text="MESSAGE" textAlignment="CENTER">
+      <Label fx:id="message" alignment="CENTER" layoutY="35.0" prefHeight="62.0" prefWidth="600.0" text="Message" textAlignment="CENTER">
          <font>
             <Font size="56.0" />
          </font>
@@ -18,6 +18,6 @@
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding></VBox>
-      <Button fx:id="submit" layoutX="283.0" layoutY="349.0" mnemonicParsing="false" onAction="#changePhase" text="OK" />
+      <Button fx:id="submit" layoutX="272.0" layoutY="312.0" mnemonicParsing="false" onAction="#changePhase" text="Ok" />
    </children>
 </AnchorPane>

@@ -237,10 +237,10 @@ public class GameController extends Controller{
         this.currIdx.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == (int)newVal) && this.currPlayer.equals(name)));
         currPlayer.addListener((observable, oldVal, newVal) -> {
             this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && newVal.equals(name));
-            this.leaderboard.lookup("#label"+newVal).setStyle("-fx-text-fill: " + this.colors.get(newVal) + ";");
-            this.leaderboard.lookup("#label"+oldVal).setStyle("-fx-text-fill: black;");
+            this.leaderboard.lookup("#label"+newVal).setStyle("-fx-text-fill: " + this.colors.get(newVal) + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0)");
+            this.leaderboard.lookup("#label"+oldVal).setStyle("-fx-text-fill: black; -fx-font-family: 'BlackChancery';");
         });
-        this.leaderboard.lookup("#label"+currPlayer.get()).setStyle("-fx-text-fill: " + this.colors.get(currPlayer.get()) + ";");
+        this.leaderboard.lookup("#label"+currPlayer.get()).setStyle("-fx-text-fill: " + this.colors.get(currPlayer.get()) + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0)");
     }
 
     public void switchBoard(int idx){

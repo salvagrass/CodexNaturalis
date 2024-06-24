@@ -6,40 +6,35 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@Stylesheetmenu.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.MenuController">
-   <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="19.0" layoutY="58.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <image>
-         <Image url="@Sfondo_Codex.jpeg" />
-      </image>
-   </ImageView>
-   <Button fx:id="createButtonMenu" layoutX="245.0" layoutY="107.0" mnemonicParsing="false" onAction="#create" prefHeight="30.0" prefWidth="109.0" text="CREATE" AnchorPane.topAnchor="110.0">
+<AnchorPane id="background" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/Stylesheetmenu.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.MenuController">
+   <Button fx:id="createButtonMenu" layoutX="346.0" layoutY="157.0" mnemonicParsing="false" onAction="#create" prefHeight="30.0" prefWidth="109.0" text="Create" AnchorPane.topAnchor="157.0">
       <font>
          <Font size="24.0" />
       </font>
    </Button>
-   <Button fx:id="joinButton" layoutX="245.0" layoutY="153.0" mnemonicParsing="false" onAction="#join" prefHeight="30.0" prefWidth="109.0" text="JOIN" AnchorPane.topAnchor="155.0">
+   <Button fx:id="joinButton" layoutX="346.0" layoutY="203.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#join" prefHeight="30.0" prefWidth="109.0" text="Join">
       <font>
          <Font size="24.0" />
       </font>
    </Button>
-   <Button fx:id="loadButton" layoutX="245.0" layoutY="200.0" mnemonicParsing="false" onAction="#load" prefHeight="30.0" prefWidth="109.0" text="LOAD" AnchorPane.topAnchor="202.0">
+   <Button fx:id="loadButton" layoutX="346.0" layoutY="250.0" mnemonicParsing="false" onAction="#load" prefHeight="30.0" prefWidth="109.0" text="Load" AnchorPane.topAnchor="250.0">
       <font>
          <Font size="24.0" />
       </font>
    </Button>
-   <Button fx:id="quitButton" layoutX="245.0" layoutY="248.0" mnemonicParsing="false" onAction="#exit" prefHeight="30.0" prefWidth="109.0" text="QUIT" AnchorPane.bottomAnchor="122.0">
+   <Button fx:id="quitButton" layoutX="346.0" layoutY="330.0" mnemonicParsing="false" onAction="#exit" prefHeight="30.0" prefWidth="109.0" text="Quit" AnchorPane.bottomAnchor="140.0">
       <font>
          <Font size="24.0" />
       </font>
    </Button>
-   <Button fx:id="rulesButton" layoutX="367.0" layoutY="170.0" mnemonicParsing="false" onAction="#rules" prefHeight="33.0" prefWidth="33.0" AnchorPane.topAnchor="170.0">
+   <Button fx:id="rulesButton" layoutX="491.0" layoutY="216.0" mnemonicParsing="false" onAction="#rules" prefHeight="33.0" prefWidth="33.0" AnchorPane.topAnchor="216.0">
       <font>
          <Font size="40.0" />
       </font>
       <graphic>
          <ImageView fitHeight="33.0" fitWidth="33.0">
             <image>
-               <Image url="@rules.png" />
+               <Image url="@../graphics/rules.png" />
             </image>
          </ImageView>
       </graphic></Button>

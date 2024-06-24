@@ -1,0 +1,21 @@
+@font-face {
+    src: url(../fonts/BLKCHCRY.ttf);
+}
+
+#name {
+    -fx-font-family: 'BlackChancery';
+}
+
+#boardView {
+    -fx-font-family: 'BlackChancery';
+}
+
+#wallpaper {
+    -fx-background-image: url(../graphics/bg3.jpg);
+    -fx-background-size: stretch;
+}
+
+#field {
+    -fx-background-image: url(../graphics/bg2.jpg);
+    -fx-background-size: stretch;
+}

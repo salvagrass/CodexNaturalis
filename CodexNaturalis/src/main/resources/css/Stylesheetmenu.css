@@ -1,66 +1,80 @@
 @font-face {
-    src: url(Canterbury.ttf);
+    src: url(../fonts/Canterbury.ttf);
 }
+
+@font-face {
+    src: url(../fonts/Seagramtfb.ttf);
+}
+
+#background {
+    -fx-background-image: url(../graphics/Sfondo_Codex.jpeg);
+    -fx-background-size: stretch;
+}
+
 #joinButton {
-    -fx-import: "Seagram tfb.ttf";
-    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
-    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury'; /* Specifica il font desiderato */
+    -fx-font-size: 18px; /* Specifica la dimensione del font */
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
     -fx-border-color: black;
-    -fx-border-radius: 12px;
+    -fx-border-radius: 18px;
     -fx-background-insets: 1px;
+    -fx-background-radius: 18px;
 }
 
 #joinButton:hover {
     -fx-background-color: #ebd980;
+    -fx-background-radius: 18px;
 }
 
 #createButtonMenu{
-    -fx-import: "Seagram tfb.ttf";
-    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
-    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-size: 18px; /* Specifica la dimensione del font */
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
     -fx-border-color: black;
-    -fx-border-radius: 12px;
+    -fx-border-radius: 18px;
     -fx-background-insets: 1px;
+    -fx-background-radius: 18px;
 }
 
 #createButtonMenu:hover {
     -fx-background-color: #ebd980;
+    -fx-background-radius: 18px;
 }
 
 #loadButton {
-    -fx-import: "Seagram tfb.ttf";
-    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
-    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-size: 18px; /* Specifica la dimensione del font */
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
     -fx-border-color: black;
-    -fx-border-radius: 12px;
+    -fx-border-radius: 18px;
     -fx-background-insets: 1px;
+    -fx-background-radius: 18px;
 }
 #loadButton:hover {
     -fx-background-color: #ebd980;
+    -fx-background-radius: 18px;
 }
 
 #quitButton {
-    -fx-import: "Seagram tfb.ttf";
-    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
-    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-size: 18px; /* Specifica la dimensione del font */
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
     -fx-border-color: black;
-    -fx-border-radius: 12px;
+    -fx-border-radius: 18px;
     -fx-background-insets: 1px;
+    -fx-background-radius: 18px;
 }
 #quitButton:hover {
     -fx-background-color: #ebd980;
+    -fx-background-radius: 18px;
 }
 
 #rulesButton {

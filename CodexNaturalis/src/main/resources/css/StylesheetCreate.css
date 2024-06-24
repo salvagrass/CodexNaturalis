@@ -1,8 +1,13 @@
 @font-face {
-    src: url(Canterbury.ttf);
+    src: url(../fonts/Canterbury.ttf);
 }
 
-#connect {
+#background {
+    -fx-background-image: url(../graphics/bg1.png);
+    -fx-background-size: stretch;
+}
+
+#submit {
     -fx-import: "Canterbury.ttf";
     -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
     -fx-font-size: 28px; /* Specifica la dimensione del font */
@@ -13,12 +18,22 @@
     -fx-background-insets: 1px;
 }
 
-#connect:hover {
+#submit:hover {
     -fx-background-color: #ebd980;
 }
 
-#start {
+#createButton:hover {
+    -fx-background-color: #ebd980;
+}
+
+#createLobby {
     -fx-import: "Canterbury.ttf";
     -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
-    -fx-font-size: 50px;
+}
+
+#backButton{
+    -fx-background-color: #e8cb82;
+}
+#backButton:hover {
+    -fx-background-color: #ebd980;
 }

@@ -15,7 +15,7 @@ public class RulebookController extends Controller{
 
     public void initialize(){
         this.idx = new SimpleIntegerProperty();
-        this.idx.addListener((obs, oldVal, newVal) -> changeBackGround("/graphics/CG" + newVal + ".png"));
+        this.idx.addListener((obs, oldVal, newVal) -> changeBackGround("/graphics/RB" + newVal + ".png"));
         this.idx.set(1);
     }
 
@@ -33,7 +33,7 @@ public class RulebookController extends Controller{
 
     @FXML
     private void next(){
-        int maxIdx = 10;
+        int maxIdx = 6;
         if(this.idx.get() < maxIdx){
             this.idx.set(this.idx.get() + 1);
         }

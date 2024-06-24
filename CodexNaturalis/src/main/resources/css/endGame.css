@@ -1,0 +1,26 @@
+@font-face {
+    src: url(../fonts/Canterbury.ttf);
+}
+
+#background {
+    -fx-background-image: url(../graphics/bg1.png);
+    -fx-background-size: stretch;
+}
+
+#message {
+    -fx-font-family: 'Canterbury';
+}
+
+#submit{
+    -fx-font-family: 'Canterbury', serif;
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-font-size: 22px;
+}
+
+#submit:hover {
+    -fx-background-color: #ebd980;
+    -fx-background-radius: 12px;
+}
