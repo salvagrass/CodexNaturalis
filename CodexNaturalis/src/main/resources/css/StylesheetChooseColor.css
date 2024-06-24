@@ -11,58 +11,58 @@
     -fx-border-radius: 5em;
     -fx-border-color: black;
     -fx-background-insets: 1px;
-    -fx-background-color: #ff0000;
+    -fx-background-color: #d4362a;
 }
 #red:hover {
-    -fx-background-color: #bf0000;
+    -fx-background-color: #7f1c14;
 }
 #red:selected {
-    -fx-background-color: #bf0000;
+    -fx-background-color: #7f1c14;
 }
 #blue {
     -fx-background-radius: 5em;
     -fx-border-radius: 5em;
     -fx-border-color: black;
     -fx-background-insets: 1px;
-    -fx-background-color: #000fff;
+    -fx-background-color: #106582;
 }
 #blue:hover {
-    -fx-background-color: #000faa;
+    -fx-background-color: #134456;
 }
 #blue:selected {
-    -fx-background-color: #000faa;
+    -fx-background-color: #134456;
 }
 #yellow {
     -fx-background-radius: 5em;
     -fx-border-radius: 5em;
     -fx-border-color: black;
     -fx-background-insets: 1px;
-    -fx-background-color: #ffff00;
+    -fx-background-color: #d8aa3e;
 }
 #yellow:hover {
-    -fx-background-color: #ffd700;
+    -fx-background-color: #745a1e;
 }
 #yellow:selected {
-    -fx-background-color: #ffd700;
+    -fx-background-color: #745a1e;
 }
 #green {
     -fx-background-radius: 5em;
     -fx-border-radius: 5em;
     -fx-border-color: black;
     -fx-background-insets: 1px;
-    -fx-background-color: #228b22;
+    -fx-background-color: #376d43;
 }
 #green:hover {
-    -fx-background-color: #006400;
+    -fx-background-color: #164b22;
 }
 #green:selected {
-    -fx-background-color: #006400;
+    -fx-background-color: #164b22;
 }
 
 #submit {
     -fx-import: "Canterbury.ttf";
-    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
-    -fx-font-size: 28px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif;
+    -fx-font-size: 28px;
     -fx-background-color: #ebe1b0;
     -fx-border-color: black;
     -fx-background-radius: 12px;
@@ -76,5 +76,5 @@
 
 #chooseColor {
     -fx-import: "Canterbury.ttf";
-    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-family: 'Canterbury', serif;
 }

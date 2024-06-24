@@ -9,8 +9,8 @@
 
 #submit {
     -fx-import: "Canterbury.ttf";
-    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
-    -fx-font-size: 28px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif;
+    -fx-font-size: 28px;
     -fx-background-color: #ebe1b0;
     -fx-border-color: black;
     -fx-background-radius: 12px;
@@ -24,10 +24,10 @@
 
 #insertName {
     -fx-import: "Canterbury.ttf";
-    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-family: 'Canterbury', serif;
 }
 
 #error {
     -fx-import: "Seagram tfb.ttf";
-    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
+    -fx-font-family: 'Seagram tfb', serif;
 }

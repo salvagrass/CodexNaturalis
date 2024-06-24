@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -8,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="background" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/StylesheetIdScene.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.IdController">
+<AnchorPane id="background" fx:id="background" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/StylesheetIdScene.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.IdController">
    <TextField fx:id="getId" alignment="CENTER" layoutX="276.0" layoutY="205.0" promptText="ID..." AnchorPane.leftAnchor="276.0" AnchorPane.rightAnchor="274.0">
       <font>
          <Font size="14.0" />
@@ -26,11 +27,16 @@
       <font>
          <Font size="20.0" />
       </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
    </Button>
-   <Button fx:id="backButton" layoutX="679.0" layoutY="41.0" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" prefWidth="46.0" />
-   <ImageView fitHeight="45.0" fitWidth="46.0" layoutX="695.0" layoutY="46.0">
-      <image>
-         <Image url="@../graphics/backbutton1.png" />
-      </image>
-   </ImageView>
+   <Button fx:id="backButton" layoutX="698.0" layoutY="38.0" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" prefWidth="46.0">
+      <graphic>
+         <ImageView fitHeight="45.0" fitWidth="46.0">
+            <image>
+               <Image url="@../graphics/backbutton1.png" />
+            </image>
+         </ImageView>
+      </graphic></Button>
 </AnchorPane>

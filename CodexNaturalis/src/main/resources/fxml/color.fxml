@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -17,13 +20,16 @@
         <font>
           <Font size="25.0" />
         </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
     </Button>
-    <Label fx:id="error" layoutX="250.0" layoutY="239.0" prefHeight="33.0" prefWidth="99.0" text="Color not available" textFill="RED" visible="false" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0">
+    <Label fx:id="error" layoutX="147.0" layoutY="294.0" prefHeight="33.0" prefWidth="99.0" text="Color not available" textFill="RED" visible="false" AnchorPane.leftAnchor="147.0" AnchorPane.rightAnchor="153.0">
       <font>
          <Font size="16.0" />
       </font>
    </Label>
-    <ToggleButton fx:id="red" layoutX="211.0" layoutY="183.0" maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" AnchorPane.leftAnchor="211.0" AnchorPane.topAnchor="183.0">
+    <ToggleButton fx:id="red" layoutX="238.0" layoutY="263.0" maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" AnchorPane.leftAnchor="238.0" AnchorPane.topAnchor="263.0">
         <!--<graphic>
             <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                 <Image url="/graphics/pawns/red.png"/>
@@ -32,26 +38,49 @@
         <toggleGroup>
           <ToggleGroup fx:id="color" />
         </toggleGroup>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
     </ToggleButton>
-    <ToggleButton fx:id="blue" layoutX="315.0" layoutY="183.0" maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" toggleGroup="$color" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="183.0">
-        <!--<graphic>
-            <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="/graphics/pawns/blue.png"/>
-            </ImageView>
-        </graphic>-->
-    </ToggleButton>
-    <ToggleButton fx:id="yellow" layoutX="410.0" layoutY="183.0" maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" toggleGroup="$color" AnchorPane.leftAnchor="410.0" AnchorPane.topAnchor="183.0">
-        <!-- <graphic>
-            <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="/graphics/pawns/yellow.png"/>
-            </ImageView>
-        </graphic>-->
-    </ToggleButton>
-    <ToggleButton fx:id="green" layoutX="524.0" layoutY="183.0" maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" toggleGroup="$color" AnchorPane.rightAnchor="211.0" AnchorPane.topAnchor="183.0">
-        <!-- <graphic>
-            <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
-                <Image url="/graphics/pawns/green.png"/>
-            </ImageView>
-        </graphic> -->
-    </ToggleButton>
+    <ToggleButton fx:id="blue" layoutX="339.0" layoutY="263.0" maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" toggleGroup="$color" AnchorPane.leftAnchor="339.0" AnchorPane.topAnchor="263.0">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></ToggleButton>
+    <ToggleButton fx:id="yellow" layoutX="437.0" layoutY="263.0" maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" toggleGroup="$color" AnchorPane.leftAnchor="437.0" AnchorPane.rightAnchor="339.6666666666667" AnchorPane.topAnchor="263.0">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></ToggleButton>
+    <ToggleButton fx:id="green" layoutX="538.0" layoutY="263.0" maxHeight="80.0" maxWidth="80.0" minHeight="24.0" minWidth="23.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" toggleGroup="$color" AnchorPane.rightAnchor="238.0" AnchorPane.topAnchor="263.0">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></ToggleButton>
+   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="503.0" layoutY="160.0" AnchorPane.rightAnchor="210.0">
+      <image>
+         <Image url="@../graphics/pawns/green.png" />
+      </image>
+      <cursor>
+         <Cursor fx:constant="DEFAULT" />
+      </cursor>
+   </ImageView>
+   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="410.0" layoutY="160.0" AnchorPane.rightAnchor="311.0">
+      <image>
+         <Image url="@../graphics/pawns/yellow.png" />
+      </image>
+      <cursor>
+         <Cursor fx:constant="DEFAULT" />
+      </cursor>
+   </ImageView>
+   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="315.0" layoutY="160.0" AnchorPane.leftAnchor="311.0">
+      <image>
+         <Image url="@../graphics/pawns/blue.png" />
+      </image>
+      <cursor>
+         <Cursor fx:constant="DEFAULT" />
+      </cursor>
+   </ImageView>
+   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="183.0" layoutY="160.0" AnchorPane.leftAnchor="210.0">
+      <image>
+         <Image url="@../graphics/pawns/red.png" />
+      </image>
+   </ImageView>
 </AnchorPane>

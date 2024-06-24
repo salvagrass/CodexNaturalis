@@ -12,8 +12,8 @@
 }
 
 #joinButton {
-    -fx-font-family: 'Canterbury'; /* Specifica il font desiderato */
-    -fx-font-size: 18px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury';
+    -fx-font-size: 18px;
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
@@ -29,8 +29,8 @@
 }
 
 #createButtonMenu{
-    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
-    -fx-font-size: 18px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif;
+    -fx-font-size: 18px;
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
@@ -46,8 +46,8 @@
 }
 
 #loadButton {
-    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
-    -fx-font-size: 18px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif;
+    -fx-font-size: 18px;
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
@@ -62,8 +62,8 @@
 }
 
 #quitButton {
-    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
-    -fx-font-size: 18px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Canterbury', serif;
+    -fx-font-size: 18px;
     -fx-width: 109px;
     -fx-height: 30px;
     -fx-background-color: #ebe1b0;
@@ -79,8 +79,8 @@
 
 #rulesButton {
     -fx-import: "Seagram tfb.ttf";
-    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
-    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-font-family: 'Seagram tfb', serif;
+    -fx-font-size: 12px;
     -fx-background-color: #ebe1b0;
     -fx-border-color: black;
     -fx-border-radius: 12px;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -11,21 +12,33 @@
       <font>
          <Font size="24.0" />
       </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
    </Button>
    <Button fx:id="joinButton" layoutX="346.0" layoutY="203.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#join" prefHeight="30.0" prefWidth="109.0" text="Join">
       <font>
          <Font size="24.0" />
       </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
    </Button>
    <Button fx:id="loadButton" layoutX="346.0" layoutY="250.0" mnemonicParsing="false" onAction="#load" prefHeight="30.0" prefWidth="109.0" text="Load" AnchorPane.topAnchor="250.0">
       <font>
          <Font size="24.0" />
       </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
    </Button>
    <Button fx:id="quitButton" layoutX="346.0" layoutY="330.0" mnemonicParsing="false" onAction="#exit" prefHeight="30.0" prefWidth="109.0" text="Quit" AnchorPane.bottomAnchor="140.0">
       <font>
          <Font size="24.0" />
       </font>
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor>
    </Button>
    <Button fx:id="rulesButton" layoutX="491.0" layoutY="216.0" mnemonicParsing="false" onAction="#rules" prefHeight="33.0" prefWidth="33.0" AnchorPane.topAnchor="216.0">
       <font>
@@ -36,6 +49,9 @@
             <image>
                <Image url="@../graphics/rules.png" />
             </image>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
          </ImageView>
       </graphic></Button>
 </AnchorPane>
