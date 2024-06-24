@@ -4,26 +4,43 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.CreateController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@StylesheetCreate.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.CreateController">
    <children>
-      <TextField fx:id="getId" layoutX="323.0" layoutY="139.0" prefHeight="25.0" prefWidth="195.0" promptText="ID (6 alphanumeric characters)..." />
-      <Button fx:id="submit" disable="true" layoutX="374.0" layoutY="284.0" mnemonicParsing="false" onAction="#getIdCapacity" text="SUBMIT">
+      <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="60.0" layoutY="77.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@backgroundCodex.png" />
+         </image>
+      </ImageView>
+      <TextField fx:id="getId" layoutX="202.0" layoutY="147.0" prefHeight="25.0" prefWidth="195.0" promptText="ID (6 alphanumeric characters)..." />
+      <Button fx:id="submit" disable="true" layoutX="249.0" layoutY="287.0" mnemonicParsing="false" onAction="#getIdCapacity" text="submit" AnchorPane.leftAnchor="245.0" AnchorPane.rightAnchor="245.0">
          <font>
             <Font size="20.0" />
          </font></Button>
-      <Label layoutX="306.0" layoutY="44.0" text="Create Lobby">
+      <Label fx:id="createLobby" layoutX="154.0" layoutY="43.0" text="Create Lobby">
          <font>
-            <Font size="40.0" />
+            <Font size="60.0" />
          </font>
       </Label>
-      <Label fx:id="error" layoutX="371.0" layoutY="180.0" prefHeight="17.0" prefWidth="108.0" text="ID already exists" textFill="RED" visible="false" />
-      <Slider fx:id="getCapacity" layoutX="324.0" layoutY="202.0" majorTickUnit="1.0" max="4.0" min="2.0" minorTickCount="0" prefHeight="35.0" prefWidth="195.0" snapToTicks="true" />
-      <Label layoutX="334.0" layoutY="240.0" text="2" />
-      <Label layoutX="418.0" layoutY="240.0" text="3" />
-      <Label layoutX="515.0" layoutY="239.0" prefHeight="17.0" prefWidth="5.0" text="4" />
-      <Button layoutX="630.0" layoutY="60.0" mnemonicParsing="false" onAction="#exit" text="back" />
+      <Label fx:id="error" layoutX="243.0" layoutY="183.0" prefHeight="25.0" prefWidth="108.0" text="ID already exists" textFill="RED" visible="false" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+      <Slider fx:id="getCapacity" layoutX="202.0" layoutY="212.0" majorTickUnit="1.0" max="4.0" min="2.0" minorTickCount="0" prefHeight="35.0" prefWidth="195.0" snapToTicks="true" />
+      <Label layoutX="208.0" layoutY="247.0" text="2" />
+      <Label layoutX="297.0" layoutY="247.0" text="3" />
+      <Label layoutX="384.0" layoutY="247.0" prefHeight="17.0" prefWidth="5.0" text="4" />
+      <Button fx:id="backButton" layoutX="512.0" layoutY="29.0" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" prefWidth="46.0">
+         <graphic>
+            <ImageView fitHeight="45.0" fitWidth="46.0">
+               <image>
+                  <Image url="@backbutton1.png" />
+               </image>
+            </ImageView>
+         </graphic></Button>
    </children>
 </AnchorPane>

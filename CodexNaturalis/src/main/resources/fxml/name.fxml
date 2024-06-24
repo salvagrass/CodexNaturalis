@@ -3,23 +3,30 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.ingsw.view.controller.NameController">
-   <Label layoutX="286.0" layoutY="22.0" prefHeight="141.0" prefWidth="253.0" text="INSERT NAME">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@StylesheetName.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.NameController">
+   <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="69.0" layoutY="74.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <image>
+         <Image url="@backgroundCodex.png" />
+      </image>
+   </ImageView>
+   <Label fx:id="insertName" alignment="CENTER" layoutX="168.0" layoutY="43.0" prefHeight="80.0" prefWidth="263.0" text="Insert Name">
       <font>
-         <Font size="40.0"/>
+         <Font size="54.0" />
       </font>
    </Label>
-   <TextField fx:id="getName" layoutX="291.0" layoutY="183.0" prefHeight="25.0" prefWidth="236.0"
-              promptText="NAME (1 to 8 alphabetical characters)..."/>
-   <Button fx:id="submit" disable="true" layoutX="371.0" layoutY="273.0" mnemonicParsing="false" onAction="#submit"
-           text="submit">
+   <TextField fx:id="getName" layoutX="182.0" layoutY="154.0" prefHeight="25.0" prefWidth="236.0" promptText="NAME (1 to 8 alphabetical characters)..." />
+   <Button fx:id="submit" disable="true" layoutX="256.0" layoutY="273.0" mnemonicParsing="false" onAction="#submit" text="submit" AnchorPane.leftAnchor="245.0" AnchorPane.rightAnchor="245.0">
       <font>
-         <Font size="20.0"/>
+         <Font size="20.0" />
       </font>
    </Button>
-   <Label fx:id="error" layoutX="359.0" layoutY="234.0" text="Name already taken" textFill="RED" visible="false"/>
+   <Label fx:id="error" layoutX="247.0" layoutY="200.0" prefHeight="33.0" prefWidth="106.0" text="Name already taken" textFill="RED" visible="false" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0">
+      <font>
+         <Font size="16.0" />
+      </font></Label>
 </AnchorPane>

@@ -1,0 +1,34 @@
+@font-face {
+    src: url(Canterbury.ttf);
+}
+
+#submit {
+    -fx-import: "Canterbury.ttf";
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-size: 28px; /* Specifica la dimensione del font */
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 1px;
+}
+
+#submit:hover {
+    -fx-background-color: #ebd980;
+}
+
+#createButton:hover {
+    -fx-background-color: #ebd980;
+}
+
+#createLobby {
+    -fx-import: "Canterbury.ttf";
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+}
+
+#backButton{
+    -fx-background-color: #e8cb82;
+}
+#backButton:hover {
+    -fx-background-color: #ebd980;
+}

@@ -1,0 +1,77 @@
+@font-face {
+    src: url(Canterbury.ttf);
+}
+#joinButton {
+    -fx-import: "Seagram tfb.ttf";
+    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
+    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-width: 109px;
+    -fx-height: 30px;
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 1px;
+}
+
+#joinButton:hover {
+    -fx-background-color: #ebd980;
+}
+
+#createButtonMenu{
+    -fx-import: "Seagram tfb.ttf";
+    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
+    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-width: 109px;
+    -fx-height: 30px;
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 1px;
+}
+
+#createButtonMenu:hover {
+    -fx-background-color: #ebd980;
+}
+
+#loadButton {
+    -fx-import: "Seagram tfb.ttf";
+    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
+    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-width: 109px;
+    -fx-height: 30px;
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 1px;
+}
+#loadButton:hover {
+    -fx-background-color: #ebd980;
+}
+
+#quitButton {
+    -fx-import: "Seagram tfb.ttf";
+    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
+    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-width: 109px;
+    -fx-height: 30px;
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 1px;
+}
+#quitButton:hover {
+    -fx-background-color: #ebd980;
+}
+
+#rulesButton {
+    -fx-import: "Seagram tfb.ttf";
+    -fx-font-family: 'Seagram tfb', serif; /* Specifica il font desiderato */
+    -fx-font-size: 12px; /* Specifica la dimensione del font */
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 3px;
+}
+#rulesButton:hover {
+    -fx-background-color: #ebd980;
+}

@@ -1,0 +1,24 @@
+@font-face {
+    src: url(Canterbury.ttf);
+}
+
+#connect {
+    -fx-import: "Canterbury.ttf";
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-size: 28px; /* Specifica la dimensione del font */
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 1px;
+}
+
+#connect:hover {
+    -fx-background-color: #ebd980;
+}
+
+#start {
+    -fx-import: "Canterbury.ttf";
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-size: 50px;
+}

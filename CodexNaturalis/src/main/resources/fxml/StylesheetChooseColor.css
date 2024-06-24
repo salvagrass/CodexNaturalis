@@ -1,0 +1,75 @@
+@font-face {
+    src: url(Canterbury.ttf);
+}
+#red {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #ff0000;
+}
+#red:hover {
+    -fx-background-color: #bf0000;
+}
+#red:selected {
+    -fx-background-color: #bf0000;
+}
+#blue {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #000fff;
+}
+#blue:hover {
+    -fx-background-color: #000faa;
+}
+#blue:selected {
+    -fx-background-color: #000faa;
+}
+#yellow {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #ffff00;
+}
+#yellow:hover {
+    -fx-background-color: #ffd700;
+}
+#yellow:selected {
+    -fx-background-color: #ffd700;
+}
+#green {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #228b22;
+}
+#green:hover {
+    -fx-background-color: #006400;
+}
+#green:selected {
+    -fx-background-color: #006400;
+}
+
+#submit {
+    -fx-import: "Canterbury.ttf";
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+    -fx-font-size: 28px; /* Specifica la dimensione del font */
+    -fx-background-color: #ebe1b0;
+    -fx-border-color: black;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-background-insets: 1px;
+}
+
+#submit:hover {
+    -fx-background-color: #ebd980;
+}
+
+#chooseColor {
+    -fx-import: "Canterbury.ttf";
+    -fx-font-family: 'Canterbury', serif; /* Specifica il font desiderato */
+}
