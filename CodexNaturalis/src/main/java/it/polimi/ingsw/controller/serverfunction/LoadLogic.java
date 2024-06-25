@@ -99,7 +99,7 @@ public class LoadLogic implements CrashHandler {
             turnOrder.add(comm);
             players.put(comm,player);
         }
-        GameLogic gc = new GameLogic(this.server,this.data.getId(),this.data.getGround(),players,turnOrder,this.nameToComm.get(data.getCurrPlayer()));
+        GameLogic gc = new GameLogic(this.server,this.data.getId(),this.data.getGround(),players,turnOrder,this.nameToComm.get(data.getCurrPlayer()),this.data.isEndGame());
         for(Comm comm : this.record){
             comm.setCrashHandler(gc);
         }
@@ -118,10 +118,11 @@ public class LoadLogic implements CrashHandler {
 
     public synchronized void handleCrash(Comm comm){
         executor.shutdownNow();
+        this.record.remove(comm);
+        this.server.handleCrash(comm);
         for(Comm iter: this.record){
             iter.setCrashHandler(this.server);
         }
-        this.record.remove(comm);
         String msg = MsgCreator.changePhaseMsg(Phase.CLIENTCRASHED);
         Comm.sendBroadcast(msg,new ArrayList<>(this.record));
         this.server.removeGame(this.data.getId());

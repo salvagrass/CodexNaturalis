@@ -85,13 +85,12 @@ public class CommonGroundTest {
     @Test (expected = InvalidDrawException.class)
     public void draw_drawFromEmptyGround_invalidDraw() throws InvalidSelectionException, InvalidDrawException {
         draw_drawFromEmpty_invalidDraw();
-        DrawableCard card = null;
         try {
-           card = ground.draw(1);
+            ground.draw(1);
         } catch (InvalidDrawException | InvalidSelectionException e) {
             fail();
         }
-        card = ground.draw(1);
+        ground.draw(1);
     }
 
     /**

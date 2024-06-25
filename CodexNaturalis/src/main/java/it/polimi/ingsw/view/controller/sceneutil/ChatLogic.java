@@ -128,7 +128,7 @@ public class ChatLogic {
         while(change.next()){
             if (change.wasAdded()) {
                 for(Message m : change.getAddedSubList()){
-                    if(m.sender.equals(this.users.getValue()) && !m.receiver.equals("All") || m.receiver.equals(this.users.getValue())){
+                    if(m.sender().equals(this.users.getValue()) && !m.receiver().equals("All") || m.receiver().equals(this.users.getValue())){
                         addMsg(messages, m);
                     }
                 }
@@ -137,7 +137,7 @@ public class ChatLogic {
     }
 
     private void addMsg(VBox messages, Message m){
-        String msg = m.sender + ": " + m.msg;
+        String msg = m.sender() + ": " + m.msg();
         Label label = new Label(msg);
         label.setWrapText(true);
         messages.getChildren().add(label);
@@ -156,11 +156,11 @@ public class ChatLogic {
     private void changeChat(VBox messages, String user){
         List<Message> msgs;
         if(user.equals("All")){
-            msgs = this.chats.stream().filter(x -> x.receiver.equals(user)).toList();
+            msgs = this.chats.stream().filter(x -> x.receiver().equals(user)).toList();
         }else{
             msgs = this.chats.stream().filter(x ->
-                    (x.sender.equals(user) && x.receiver.equals(this.name)) ||
-                            (x.sender.equals(this.name) && x.receiver.equals(user))).toList();
+                    (x.sender().equals(user) && x.receiver().equals(this.name)) ||
+                            (x.sender().equals(this.name) && x.receiver().equals(user))).toList();
         }
         messages.getChildren().clear();
         for(Message m : msgs){

@@ -22,7 +22,8 @@ public class StartController extends Controller {
     private ToggleGroup connection;
     @FXML
     private AnchorPane back;
-    ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public void initialize(){
         this.address.textProperty().addListener((obs, oldVal, newVal)-> {

@@ -2,10 +2,8 @@ package it.polimi.ingsw;
 
 import it.polimi.ingsw.model.gameplane.GameBoard;
 import it.polimi.ingsw.model.item.card.DrawableCard;
-import it.polimi.ingsw.model.item.card.GoldCard;
 import it.polimi.ingsw.model.item.card.ResourceCard;
 import it.polimi.ingsw.model.item.card.StartingCard;
-import it.polimi.ingsw.util.GoldCardsFactory;
 import it.polimi.ingsw.util.ResCardFactory;
 import it.polimi.ingsw.util.StartingCardsFactory;
 import it.polimi.ingsw.util.Symbol;
@@ -24,7 +22,6 @@ public class GameBoardTest {
     GameBoard board;
     List<ResourceCard> resourceCards;
     List<StartingCard> startingCards;
-    List<GoldCard> goldCards;
 
     /**
      * Sets up the test environment by initializing objects for testing.
@@ -34,7 +31,6 @@ public class GameBoardTest {
         board = new GameBoard();
         try {
             resourceCards = new ResCardFactory().createItemsList();
-            goldCards = new GoldCardsFactory().createItemsList();
             startingCards = new StartingCardsFactory().createItemsList();
             addStartingCard_startingCard_updatedBehaviour();
         } catch (Exception e) {

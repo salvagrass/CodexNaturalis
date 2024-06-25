@@ -70,7 +70,7 @@ class SetUpLogic {
                 List<String> names = new ArrayList<>(turnOrder.size());
                 //TODO REVISE
                 for(Comm iterComm:turnOrder){
-                    String name = nameToComm.keySet().stream().filter(x-> nameToComm.get(x) == iterComm).findAny().get();
+                    String name = nameToComm.keySet().stream().filter(x-> nameToComm.get(x) == iterComm).findAny().orElse(null);
                     names.add(name);
                 }
                 Comm.sendBroadcast(MsgCreator.turnOrderMsg(names), turnOrder);

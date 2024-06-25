@@ -12,6 +12,8 @@ public class RulebookController extends Controller{
     @FXML
     private Pane back;
     private IntegerProperty idx;
+    private final int maxIdx = 6;
+    private final int minIdx = 1;
 
     public void initialize(){
         this.idx = new SimpleIntegerProperty();
@@ -33,16 +35,19 @@ public class RulebookController extends Controller{
 
     @FXML
     private void next(){
-        int maxIdx = 6;
         if(this.idx.get() < maxIdx){
             this.idx.set(this.idx.get() + 1);
+        }else{
+            this.idx.set(this.minIdx);
         }
     }
 
     @FXML
     private void prev(){
-        if(this.idx.get() > 0){
-            this.idx.set(this.idx.get() - 1);
+        if(this.idx.get() > minIdx){
+            this.idx.set(this.maxIdx);
+        }else{
+            this.idx.set(maxIdx);
         }
     }
 }

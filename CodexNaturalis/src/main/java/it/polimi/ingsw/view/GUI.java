@@ -17,17 +17,12 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.collections.ObservableSet;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.*;
 
 public class GUI extends UserView{
@@ -38,7 +33,7 @@ public class GUI extends UserView{
     private final StringProperty currPlayer;
     private final IntegerProperty capacity;
     private Phase futurePhase;
-    public GUI(Stage stage, Map<GameScene, FXMLLoader> roots) throws RemoteException {
+    public GUI(Stage stage, Map<GameScene, FXMLLoader> roots){
         super();
         this.colors = FXCollections.observableSet();
         this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
@@ -178,7 +173,6 @@ public class GUI extends UserView{
                 });
             }
             case Phase.CLIENTCRASHED -> {
-                System.out.println("User crashed");
                 scene = this.scenes.get(GameScene.CLIENTCRASHED);
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()->{

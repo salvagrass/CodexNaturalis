@@ -65,7 +65,7 @@ public class GameLogic implements CrashHandler {
         }
     }
 
-    public GameLogic(CentralServer server, String id, CommonGround ground, Map<Comm,Player> players,List<Comm> turnOrder, Comm currPlayer){
+    public GameLogic(CentralServer server, String id, CommonGround ground, Map<Comm,Player> players,List<Comm> turnOrder, Comm currPlayer,boolean endGame){
         this.id = id;
         this.server = server;
         this.ground = ground;
@@ -78,6 +78,7 @@ public class GameLogic implements CrashHandler {
         for(Comm comm: turnOrder){
             comm.setGame(this);
         }
+        this.endGame = endGame;
     }
 
 
@@ -176,12 +177,7 @@ public class GameLogic implements CrashHandler {
         Comm.sendBroadcast(MsgCreator.changePhaseMsg(Phase.LASTTURN), this.turnOrder);
         fullTurn();
 
-        for (Comm comm : turnOrder) {
-            players.get(comm).addObjectivesScore(this.ground);
-            Comm.sendBroadcast(MsgCreator.updPointsMsg(turnOrder.indexOf(comm), players.get(comm).getPoints()),
-                    this.turnOrder);
-        }
-        Comm.sendBroadcast(MsgCreator.changePhaseMsg(Phase.ENDGAME), this.turnOrder);
+
         declareWinner();
         shutdown();
     }
@@ -196,6 +192,13 @@ public class GameLogic implements CrashHandler {
      * LEADERBOARD;{"player1":1,"player2":2,"player3":2}
      */
     private void declareWinner() {
+
+        for (Comm comm : turnOrder) {
+            players.get(comm).addObjectivesScore(this.ground);
+            Comm.sendBroadcast(MsgCreator.updPointsMsg(turnOrder.indexOf(comm), players.get(comm).getPoints()),
+                    this.turnOrder);
+        }
+
         Map<String, Integer> leaderboard = new HashMap<>();
         int pos = 1;
         List<Player> ls = this.players.values().stream()
@@ -211,6 +214,7 @@ public class GameLogic implements CrashHandler {
         }
         leaderboard.put(ls.getLast().getNickname(), pos);
         Comm.sendBroadcast(MsgCreator.leadeboardMsg(leaderboard), turnOrder);
+        Comm.sendBroadcast(MsgCreator.changePhaseMsg(Phase.ENDGAME), this.turnOrder);
     }
 
     /**
@@ -232,7 +236,9 @@ public class GameLogic implements CrashHandler {
             }
         }
         this.currPlayer = this.turnOrder.getFirst();
-        saveGame();
+        if(!endGame) {
+            saveGame();
+        }
     }
 
     /**
@@ -409,10 +415,12 @@ public class GameLogic implements CrashHandler {
     public synchronized void handleCrash(Comm comm){
         executor.shutdownNow();
         Set<Comm> comms = (this.setUp==null) ? this.players.keySet() : this.setUp.getComms();
+        comms.remove(comm);
+        this.server.handleCrash(comm);
         for(Comm iter: comms){
             iter.setCrashHandler(this.server);
         }
-        comms.remove(comm);
+
         String msg = MsgCreator.changePhaseMsg(Phase.CLIENTCRASHED);
         Comm.sendBroadcast(msg,new ArrayList<>(comms));
         this.server.removeGame(this.id);

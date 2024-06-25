@@ -5,12 +5,13 @@ import it.polimi.ingsw.view.GUI;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class JavaFxTest extends Application {
@@ -32,11 +33,10 @@ public class JavaFxTest extends Application {
             FXMLLoader fxml = new FXMLLoader(getClass().getResource(g.path));
             roots.put(g, fxml);
         }
-        try {
-            gui = new GUI(stage, roots);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gui = new GUI(stage, roots);
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook16.png"))));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook64.png"))));
         this.gui.start();
         stage.setTitle("CODEX NATURALIS");
         stage.show();

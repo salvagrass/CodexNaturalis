@@ -23,7 +23,7 @@ public abstract class UserView {
     final AtomicBoolean confirmValue;
     String confirmMsg;
     List<String> turnOrder;
-    Map<String, PawnColor> colorsChosen;
+    final Map<String, PawnColor> colorsChosen;
     String name;
     Phase currPhase;
     CardView[] starts;

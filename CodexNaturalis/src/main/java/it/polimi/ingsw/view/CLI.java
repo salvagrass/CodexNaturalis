@@ -62,7 +62,6 @@ public class CLI extends UserView{
     private void connectMenu() throws RemoteException {
         boolean stay;
         String connection;
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         do{
             stay = false;
             do{
@@ -70,24 +69,20 @@ public class CLI extends UserView{
                 connection = this.in.nextLine();
             }while(!connection.equals("1") && !connection.equals("2"));
             super.connect(connection.equals("1"));
-            try{
+            try(ExecutorService executor = Executors.newSingleThreadExecutor()){
                 System.out.print("Address: ");
                 String addr = this.in.nextLine();
                 Future<Void> exec = executor.submit(() -> {
-                    tryConnection(addr);
+                    this.client.connect(addr);
                     return null;
                 });
                 exec.get(5, TimeUnit.SECONDS);
+                waitChangePhase();
             }catch(RuntimeException|TimeoutException|ExecutionException|InterruptedException e){
                 System.out.println("can't connect\ntry again...");
                 stay = true;
             }
         }while(stay);
-    }
-
-    public void tryConnection(String addr) throws RuntimeException {
-        super.tryConnection(addr);
-        waitChangePhase();
     }
 
     @Override
@@ -433,7 +428,7 @@ public class CLI extends UserView{
                     case "leaderboard" -> {
                         synchronized (this.leaderboard) {
                             List<String> tmp = this.leaderboard.keySet().stream()
-                                .sorted(Comparator.comparingInt(leaderboard::get).reversed())
+                                .sorted(Comparator.comparingInt(x->leaderboard.get(x)).reversed())
                                 .toList();
                             for (String name : tmp) {
                                 System.out.println(
@@ -469,12 +464,12 @@ public class CLI extends UserView{
                 }
                 synchronized (this.chats) {
                     if(cmd[1].equals("All")){
-                        printChat(this.chats.stream().filter(x -> x.receiver.equals("All")).toList());
+                        printChat(this.chats.stream().filter(x -> x.receiver().equals("All")).toList());
                     }else if(!cmd[1].equals(this.name)){
                         String chat = cmd[1];
                         printChat(this.chats.stream().
-                                filter(x -> (x.sender.equals(chat) && x.receiver.equals(this.name)) ||
-                                        (x.sender.equals(this.name) && x.receiver.equals(chat))).toList());
+                                filter(x -> (x.sender().equals(chat) && x.receiver().equals(this.name)) ||
+                                        (x.sender().equals(this.name) && x.receiver().equals(chat))).toList());
                     }else{
                         System.out.println("This chat doesn't exist\n");
                     }
@@ -697,7 +692,7 @@ public class CLI extends UserView{
 
     private void printChat(List<Message> msgs) {
         for(Message msg : msgs){
-            System.out.println(msg.sender + ": " + msg.msg);
+            System.out.println(msg.sender() + ": " + msg.msg());
         }
     }
 

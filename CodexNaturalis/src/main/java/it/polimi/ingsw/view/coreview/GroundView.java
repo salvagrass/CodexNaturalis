@@ -42,16 +42,4 @@ public class GroundView {
             CardView.showAsciiArt(goldGroundView) + '\n' +
             ObjectiveView.showAsciiArt(objViews) + '\n';
   }
-
-  public ObjectiveView[] getObjViews(){
-    return this.objViews;
-  }
-
-  public CardView[] getResGroundView(){
-    return this.resGroundView;
-  }
-
-  public CardView[] getGoldGroundView(){
-    return this.goldGroundView;
-  }
 }

@@ -111,7 +111,7 @@ public class Player {
         updPoints(points = this.playingField.countObjPoints(secretObjective));
         count += points / this.secretObjective.getPoints();
         for(Objective obj : ground.getCommonObjectives()){
-            updPoints(points += this.playingField.countObjPoints(obj));
+            updPoints(points = this.playingField.countObjPoints(obj));
             count += points / obj.getPoints();
         }
         this.completedObjs = count;
@@ -125,8 +125,11 @@ public class Player {
      */
     public DrawableCard draw(CommonGround ground, int sel) throws InvalidSelectionException, InvalidDrawException {
         int i;
-        for(i = 0; hand[i] != null && i < hand.length; i++);
-        if (i < hand.length) {
+        i = 0;
+        while (i<hand.length && hand[i]!=null) {
+            i++;
+        }
+        if(i< hand.length) {
             hand[i] = ground.draw(sel);
             return hand[i];
         }

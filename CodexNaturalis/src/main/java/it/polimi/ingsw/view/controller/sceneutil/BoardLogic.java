@@ -67,7 +67,7 @@ public class BoardLogic {
             hBoxes[i] = new HBox();
             hBoxes[i].setSpacing(10);
             hBoxes[i].setAlignment(Pos.CENTER_LEFT);
-            ImageView img = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + s.get(i).name() + ".png"))));
+            ImageView img = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/" + s.get(i).name() + ".png"))));
             img.setPreserveRatio(true);
             img.setFitWidth(20);
             hBoxes[i].getChildren().add(img);

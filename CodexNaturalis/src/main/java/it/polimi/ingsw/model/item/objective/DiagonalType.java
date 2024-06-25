@@ -67,10 +67,6 @@ public class DiagonalType implements Disposition {
         return this.direction;
     }
 
-    public int getLen() {
-        return this.len;
-    }
-
     /**
      * Returns a string representation of the disposition.
      *
