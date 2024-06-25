@@ -6,6 +6,7 @@
     -fx-background-image: url(../graphics/bg1.png);
     -fx-background-size: stretch;
 }
+
 #red {
     -fx-background-radius: 5em;
     -fx-border-radius: 5em;
@@ -13,12 +14,15 @@
     -fx-background-insets: 1px;
     -fx-background-color: #d4362a;
 }
+
 #red:hover {
     -fx-background-color: #7f1c14;
 }
+
 #red:selected {
     -fx-background-color: #7f1c14;
 }
+
 #blue {
     -fx-background-radius: 5em;
     -fx-border-radius: 5em;
@@ -26,12 +30,15 @@
     -fx-background-insets: 1px;
     -fx-background-color: #106582;
 }
+
 #blue:hover {
     -fx-background-color: #134456;
 }
+
 #blue:selected {
     -fx-background-color: #134456;
 }
+
 #yellow {
     -fx-background-radius: 5em;
     -fx-border-radius: 5em;
@@ -39,12 +46,15 @@
     -fx-background-insets: 1px;
     -fx-background-color: #d8aa3e;
 }
+
 #yellow:hover {
     -fx-background-color: #745a1e;
 }
+
 #yellow:selected {
     -fx-background-color: #745a1e;
 }
+
 #green {
     -fx-background-radius: 5em;
     -fx-border-radius: 5em;
@@ -52,9 +62,11 @@
     -fx-background-insets: 1px;
     -fx-background-color: #376d43;
 }
+
 #green:hover {
     -fx-background-color: #164b22;
 }
+
 #green:selected {
     -fx-background-color: #164b22;
 }
@@ -77,4 +89,36 @@
 #chooseColor {
     -fx-import: "Canterbury.ttf";
     -fx-font-family: 'Canterbury', serif;
+}
+
+#redBackPawn {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #d4362a;
+}
+
+#blueBackPawn {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #106582;
+}
+
+#yellowBackPawn {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #d8aa3e;
+}
+
+#greenBackPawn {
+    -fx-background-radius: 5em;
+    -fx-border-radius: 5em;
+    -fx-border-color: black;
+    -fx-background-insets: 1px;
+    -fx-background-color: #376d43;
 }

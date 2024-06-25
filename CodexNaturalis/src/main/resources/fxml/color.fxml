@@ -54,33 +54,49 @@
       <cursor>
          <Cursor fx:constant="HAND" />
       </cursor></ToggleButton>
-   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="503.0" layoutY="160.0" AnchorPane.rightAnchor="210.0">
-      <image>
-         <Image url="@../graphics/pawns/green.png" />
-      </image>
-      <cursor>
-         <Cursor fx:constant="DEFAULT" />
-      </cursor>
-   </ImageView>
-   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="410.0" layoutY="160.0" AnchorPane.rightAnchor="311.0">
-      <image>
-         <Image url="@../graphics/pawns/yellow.png" />
-      </image>
-      <cursor>
-         <Cursor fx:constant="DEFAULT" />
-      </cursor>
-   </ImageView>
-   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="315.0" layoutY="160.0" AnchorPane.leftAnchor="311.0">
-      <image>
-         <Image url="@../graphics/pawns/blue.png" />
-      </image>
-      <cursor>
-         <Cursor fx:constant="DEFAULT" />
-      </cursor>
-   </ImageView>
-   <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="183.0" layoutY="160.0" AnchorPane.leftAnchor="210.0">
-      <image>
-         <Image url="@../graphics/pawns/red.png" />
-      </image>
-   </ImageView>
+   <ToggleButton fx:id="redBackPawn" layoutX="220.0" layoutY="170.0" maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
+      <graphic>
+         <ImageView fitHeight="80.0" fitWidth="80.0">
+            <image>
+               <Image url="@../graphics/pawns/red.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </ToggleButton>
+   <ToggleButton fx:id="blueBackPawn" layoutX="321.0" layoutY="170.0" maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
+      <graphic>
+         <ImageView fitHeight="80.0" fitWidth="80.0">
+            <image>
+               <Image url="@../graphics/pawns/blue.png" />
+            </image>
+            <cursor>
+               <Cursor fx:constant="DEFAULT" />
+            </cursor>
+         </ImageView>
+      </graphic>
+   </ToggleButton>
+   <ToggleButton fx:id="yellowBackPawn" layoutX="419.0" layoutY="170.0" maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
+      <graphic>
+         <ImageView fitHeight="80.0" fitWidth="80.0">
+            <image>
+               <Image url="@../graphics/pawns/yellow.png" />
+            </image>
+            <cursor>
+               <Cursor fx:constant="DEFAULT" />
+            </cursor>
+         </ImageView>
+      </graphic>
+   </ToggleButton>
+   <ToggleButton fx:id="greenBackPawn" layoutX="520.0" layoutY="170.0" maxHeight="60.0" maxWidth="60.0" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
+      <graphic>
+         <ImageView fitHeight="80.0" fitWidth="80.0">
+            <image>
+               <Image url="@../graphics/pawns/green.png" />
+            </image>
+            <cursor>
+               <Cursor fx:constant="DEFAULT" />
+            </cursor>
+         </ImageView>
+      </graphic>
+   </ToggleButton>
 </AnchorPane>
