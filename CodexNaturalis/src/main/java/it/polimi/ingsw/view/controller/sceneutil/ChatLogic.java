@@ -44,6 +44,7 @@ public class ChatLogic {
                 }
             }
         });
+        this.users.setStyle("-fx-background-color: #F0E9D8; -fx-font-family: 'BlackChancery'");
 
         this.chats = FXCollections.observableArrayList(chats);
         chats.addListener((ListChangeListener<Message>) change -> {
@@ -64,6 +65,7 @@ public class ChatLogic {
         scroll.setPrefHeight(300);
         scroll.setPannable(true);
         VBox.setVgrow(scroll, Priority.ALWAYS);
+        messages.setStyle("-fx-background-color: #F0E9D8");
 
         TextArea chat = new TextArea();
         chat.setPrefWidth(300);
@@ -71,6 +73,7 @@ public class ChatLogic {
         chat.setWrapText(true);
         chat.setMinHeight(5);
         chat.setPrefHeight(5);
+        chat.setStyle("-fx-font-family: 'BlackChancery'; -fx-background-color: #F0E9D8");
 
         chat.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {

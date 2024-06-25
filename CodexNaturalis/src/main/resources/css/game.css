@@ -4,6 +4,7 @@
 
 #name {
     -fx-font-family: 'BlackChancery';
+    -fx-font-size: 20px;
 }
 
 #boardView {
@@ -18,4 +19,5 @@
 #field {
     -fx-background-image: url(../graphics/bg2.jpg);
     -fx-background-size: stretch;
+    -fx-background-repeat: repeat;
 }

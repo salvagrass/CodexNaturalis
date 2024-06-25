@@ -2,6 +2,10 @@
     src: url(../fonts/Canterbury.ttf);
 }
 
+@font-face {
+    src: url(../fonts/BLKCHCRY.ttf);
+}
+
 #background {
     -fx-background-image: url(../graphics/bg1.png);
     -fx-background-size: stretch;
@@ -18,8 +22,11 @@
 }
 
 #list {
-    -fx-font-size: 14px;
+    -fx-font-size: 20px;
     -fx-border-color: black;
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-family: 'BlackChancery';
 }

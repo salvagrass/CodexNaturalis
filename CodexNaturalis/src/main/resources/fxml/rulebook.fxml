@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 
 <Pane fx:id="back" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" stylesheets="@../css/rulebook.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.RulebookController">
-   <Button fx:id="next" layoutX="1164.0" layoutY="288.0" mnemonicParsing="false" onAction="#next" text="next" />
-   <Button fx:id="prev" layoutY="288.0" mnemonicParsing="false" onAction="#prev" text="prev" />
+   <Button fx:id="next" layoutX="1170.0" layoutY="285.0" mnemonicParsing="false" onAction="#next" prefHeight="30.0" prefWidth="30.0" />
+   <Button fx:id="prev" layoutY="285.0" mnemonicParsing="false" onAction="#prev" prefHeight="30.0" prefWidth="30.0" />
+   <ImageView fitHeight="30.0" fitWidth="30.0" layoutY="285.0">
+      <image>
+         <Image url="@../graphics/backbutton1.png" />
+      </image>
+   </ImageView>
+   <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="1170.0" layoutY="285.0">
+      <image>
+         <Image url="@../graphics/backbutton2.png" />
+      </image>
+   </ImageView>
 </Pane>

@@ -240,7 +240,7 @@ public class GameController extends Controller{
             this.leaderboard.lookup("#label"+newVal).setStyle("-fx-text-fill: " + this.colors.get(newVal) + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0)");
             this.leaderboard.lookup("#label"+oldVal).setStyle("-fx-text-fill: black; -fx-font-family: 'BlackChancery';");
         });
-        this.leaderboard.lookup("#label"+currPlayer.get()).setStyle("-fx-text-fill: " + this.colors.get(currPlayer.get()) + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0)");
+        this.leaderboard.lookup("#label"+currPlayer.get()).setStyle("-fx-text-fill: " + this.colors.get(currPlayer.get()) + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, grey, 8, 0.4, 0, 0)");
     }
 
     public void switchBoard(int idx){

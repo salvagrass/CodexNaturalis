@@ -45,7 +45,7 @@ public class RulebookController extends Controller{
     @FXML
     private void prev(){
         if(this.idx.get() > minIdx){
-            this.idx.set(this.maxIdx);
+            this.idx.set(this.idx.get() - 1);
         }else{
             this.idx.set(maxIdx);
         }
