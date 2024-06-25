@@ -7,7 +7,7 @@
 }
 
 #background {
-    -fx-background-image: url(../graphics/Sfondo_Codex.jpeg);
+    -fx-background-image: url(../graphics/menuBackground.png);
     -fx-background-size: stretch;
 }
 
