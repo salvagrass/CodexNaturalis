@@ -48,6 +48,11 @@ public class Player {
         return this.points;
     }
 
+    /**
+     * Retrieves the player's hand of drawable cards.
+     *
+     * @return An array of DrawableCard objects representing the player's hand.
+     */
     public DrawableCard[] getHand() {
         return this.hand;
     }
@@ -60,14 +65,29 @@ public class Player {
         return this.playingField.getCountResources();
     }
 
+    /**
+     * Retrieves the player's nickname.
+     *
+     * @return The nickname of the player.
+     */
     public String getNickname(){
         return this.nickname;
     }
 
+    /**
+     * Retrieves the color of the player's pawn.
+     *
+     * @return The color of the pawn (e.g., RED, BLUE, GREEN).
+     */
     public PawnColor getPawnColor(){
         return this.pawnColor;
     }
 
+    /**
+     * Retrieves the secret objective.
+     *
+     * @return The secret objective.
+     */
     public Objective getSecretObjective(){
         return this.secretObjective;
     }
@@ -104,7 +124,11 @@ public class Player {
         }
     }
 
-    //TODO javadoc
+    /**
+     * Adds up the scores for objectives based on the common ground.
+     *
+     * @param ground The common ground containing objectives.
+     */
     public void addObjectivesScore(CommonGround ground) {
         int points;
         int count = 0;
@@ -163,6 +187,11 @@ public class Player {
         this.points += p;
     }
 
+    /**
+     * Retrieves the number of completed objectives.
+     *
+     * @return The count of completed objectives.
+     */
     public int getCompletedObjs(){
         return this.completedObjs;
     }

@@ -44,6 +44,11 @@ public class StartingCard extends Card {
         return Symbol.NOTAVAILABLE;
     }
 
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return A formatted string containing the superclass representation and the back corners.
+     */
     public String toString(){
         return super.toString() +
                 "\nBack_corners: [" +

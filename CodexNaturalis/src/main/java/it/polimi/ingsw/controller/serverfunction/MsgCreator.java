@@ -138,19 +138,44 @@ public class MsgCreator {
         return "UPDGROUNDVIEW;" + idx + ";" + gson.toJson(item);
     }
 
+    /**
+     * Creates a message string with the format "NAME;{name}".
+     *
+     * @param name The name to include in the message.
+     * @return The formatted message string.
+     */
     public static String nameMsg(String name) {
         return "NAME;" + name;
     }
-    
+
+    /**
+     * Creates a message string with the format "CAPACITY;{cap}".
+     *
+     * @param cap The capacity value to include in the message.
+     * @return The formatted message string.
+     */
     public static String capacityMsg(int cap) {
         return "CAPACITY;" + cap;
     }
 
+    /**
+     * Creates a message string with the format "JOINED;{names}".
+     *
+     * @param names A set of names to include in the message.
+     * @return The formatted message string.
+     */
     public static String joinedMsg(Set<String> names) {
         return "JOINED;" + gson.toJson(names, new TypeToken<Set<String>>() {
         }.getType());
     }
-    
+
+    /**
+     * Creates a message string for changing the game phase.
+     *
+     * @param phase The game phase (e.g., STARTCARD, OBJECTIVE).
+     * @param items Optional ItemView objects associated with the phase.
+     * @return The formatted message string.
+     */
     public static String changePhaseMsg(Phase phase,ItemView... items) {
         String msg = "CHANGEPHASE;" + phase.name();
         if(items.length>0){
@@ -164,10 +189,24 @@ public class MsgCreator {
         return msg;
     }
 
+    /**
+     * Loads a hidden object message.
+     *
+     * @param objective The objective to load.
+     * @return A formatted hidden object message.
+     */
     public static String loadHiddenObjMsg(Objective objective){
         return "LOADHIDDENOBJ;" + gson.toJson(new ObjectiveView(objective),ObjectiveView.class);
     }
 
+    /**
+     * Loads a game board message.
+     *
+     * @param id The identifier for the saved game.
+     * @param index The index of the player whose board is being loaded.
+     * @return A formatted game board message.
+     * @throws IOException If there's an error reading the saved game file.
+     */
     public static String loadBoardMsg(String id,int index) throws IOException{
         String msg = "LOADBOARD;" + index + ";";
         FileReader fr = new FileReader(id+"_saved.json");
@@ -185,23 +224,58 @@ public class MsgCreator {
         return msg;
     }
 
+    /**
+     * Creates a message indicating the current player.
+     *
+     * @param name The name of the current player.
+     * @return A formatted current player message.
+     */
     public static String currPlayerMsg(String name) {
         return "CURRPLAYER;" + name;
     }
 
-
+    /**
+     * Creates a message for placing a card on the game board.
+     *
+     * @param idx The index of the card.
+     * @param x The x-coordinate where the card is placed.
+     * @param y The y-coordinate where the card is placed.
+     * @param face Whether the card is face-up (true) or face-down (false).
+     * @return A formatted place card message.
+     */
     public static String placeCardMsg(int idx,int x,int y,boolean face){
         return "PLACECARD;" + idx + ";" + x + ";" + y + ";" + face;
     }
 
+    /**
+     * Creates a message for drawing a card.
+     *
+     * @param idx The index of the card to be drawn.
+     * @return A formatted draw card message.
+     */
     public static String drawCardMsg(int idx){
         return "DRAWCARD;" + idx;
     }
 
+    /**
+     * Represents a chat message.
+     *
+     * @param sender   The sender of the message.
+     * @param receiver The recipient of the message.
+     * @param text     The content of the message.
+     * @return A formatted chat message.
+     */
     public static String chatMsg(String sender, String receiver, String text){
         return "CHAT;" + receiver + ";" + sender + ";" + text;
     }
 
+    /**
+     * Creates a formatted message indicating the chosen color for a player.
+     *
+     * @param player The player's name.
+     * @param color  The chosen color (e.g., RED, BLUE, GREEN).
+     * @return A formatted message with the chosen color and player name.
+     */
     public static String colorChosenMsg(String player, PawnColor color){
         return "COLORCHOSEN;" + player + ";" + color.name();
     }
@@ -216,11 +290,23 @@ public class MsgCreator {
     public static String cat(String s1, String s2) {
         return s1 + "|" + s2;
     }
-    
+
+    /**
+     * Replaces spaces with underscores and newline characters with ampersands in the given message.
+     *
+     * @param msg The input message.
+     * @return The formatted message.
+     */
     private static String format(String msg) {
         return msg.replace(' ', '_').replace('\n', '&');
     }
 
+    /**
+     * Replaces underscores with spaces and ampersands with newline characters in the given message.
+     *
+     * @param msg The input message.
+     * @return The deformatted message.
+     */
     public static String deformat(String msg) {
         return msg.replace('_', ' ').replace('&', ' ');
     }

@@ -27,7 +27,13 @@ public class LoadLogic implements CrashHandler {
     private final Set<Comm> record;
 
 
-
+    /**
+     * Constructs a new LoadLogic instance.
+     *
+     * @param server The central server.
+     * @param id The identifier for loading data.
+     * @throws IOException If an I/O error occurs.
+     */
     public LoadLogic(CentralServer server,String id) throws IOException{
         this.server = server;
         Gson gson = new GsonBuilder()
@@ -43,6 +49,11 @@ public class LoadLogic implements CrashHandler {
         this.executor = Executors.newFixedThreadPool(names.size());
     }
 
+    /**
+     * Links a player name to the communication object.
+     *
+     * @param comm The communication object.
+     */
     void submitLinkName(Comm comm){
         this.executor.submit(()->linkName(comm));
     }
@@ -90,6 +101,9 @@ public class LoadLogic implements CrashHandler {
         }
     }
 
+    /**
+     * Creates a new game logic instance and initializes the game.
+     */
     private void createGameLogic(){
         Map<Comm,Player> players = new HashMap<>();
         List<Comm> turnOrder = new ArrayList<>(this.nameToComm.size());
@@ -107,15 +121,29 @@ public class LoadLogic implements CrashHandler {
         gc.submitLoad();
     }
 
-
+    /**
+     * Adds a communication object to the record.
+     *
+     * @param comm The communication object to add.
+     */
     public synchronized void addRecord(Comm comm){
         this.record.add(comm);
     }
 
+    /**
+     * Checks whether the record is full (contains all players).
+     *
+     * @return {@code true} if the record is full, {@code false} otherwise.
+     */
     public synchronized boolean isFull(){
         return this.record.size() == this.data.getTurnOrder().size();
     }
 
+    /**
+     * Handles a crash event for the given communication object.
+     *
+     * @param comm The communication object that crashed.
+     */
     public synchronized void handleCrash(Comm comm){
         executor.shutdownNow();
         this.record.remove(comm);

@@ -64,14 +64,30 @@ public class CommonGround {
         return this.groundGoldCards;
     }
 
+    /**
+     * Return symbol of the top element from the resource deck without removing it.
+     *
+     * @return The symbol of top element from the resource deck.
+     */
     public Symbol peekResDeck(){
         return peek(resDeck);
     }
 
+    /**
+     * Return symbol of the top element from the gold deck without removing it.
+     *
+     * @return The symbol of top element from the gold deck.
+     */
     public Symbol peekGoldDeck(){
         return peek(goldDeck);
     }
 
+    /**
+     * Retrieves the top card's symbol from the specified deck.
+     *
+     * @param deck The deck to peek into.
+     * @return The symbol of the top card.
+     */
     private <T extends DrawableCard> Symbol peek(Deck<T> deck){
         return deck.peek();  
     }
@@ -121,6 +137,12 @@ public class CommonGround {
         setGroundCards();
     }
 
+    /**
+     * Generates and initializes the resource and gold decks, as well as the starting card list.
+     *
+     * @throws IOException If an I/O error occurs during deck creation.
+     * @throws NullPointerException If any of the factories return a null list.
+     */
     private void deckGenerator() throws IOException,NullPointerException {
         resDeck = new Deck<>(new ResCardFactory().createItemsList());
         goldDeck = new Deck<>(new GoldCardsFactory().createItemsList());
@@ -129,6 +151,13 @@ public class CommonGround {
         goldDeck.shuffle();
     }
 
+    /**
+     * Initializes the ground resource and gold cards by drawing from the decks.
+     * Sets two resource cards and two gold cards for the ground.
+     *
+     * @throws InvalidSelectionException If an invalid selection occurs during drawing.
+     * @throws InvalidDrawException If an invalid draw occurs.
+     */
     private void setGroundCards(){
         this.groundResCards = new ResourceCard[2];
         this.groundGoldCards = new GoldCard[2];

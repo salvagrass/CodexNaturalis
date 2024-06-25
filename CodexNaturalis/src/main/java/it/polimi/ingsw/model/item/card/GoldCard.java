@@ -56,6 +56,11 @@ public class GoldCard extends DrawableCard {
         return true;
     }
 
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return A formatted string containing the superclass representation, requirements, and points.
+     */
     public String toString(){
         return super.toString() +
                 "\nRequirements: " + this.requirements.toString()+

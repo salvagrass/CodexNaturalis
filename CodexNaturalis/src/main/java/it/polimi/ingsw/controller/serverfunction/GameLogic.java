@@ -65,6 +65,17 @@ public class GameLogic implements CrashHandler {
         }
     }
 
+    /**
+     * Initializes the game logic.
+     *
+     * @param server     The central server managing the game.
+     * @param id         The unique identifier for the game.
+     * @param ground     The common ground shared by players.
+     * @param players    A map of communication channels to player objects.
+     * @param turnOrder  The list of communication channels representing the turn order.
+     * @param currPlayer The current player's communication channel.
+     * @param endGame    Indicates whether the game has ended.
+     */
     public GameLogic(CentralServer server, String id, CommonGround ground, Map<Comm,Player> players,List<Comm> turnOrder, Comm currPlayer,boolean endGame){
         this.id = id;
         this.server = server;
@@ -81,7 +92,11 @@ public class GameLogic implements CrashHandler {
         this.endGame = endGame;
     }
 
-
+    /**
+     * Submits a player to the game.
+     *
+     * @param comm The communication object representing the player.
+     */
     public void submitPlayer(Comm comm){
         executor.submit(()->addPlayer(comm));
     }
@@ -110,11 +125,16 @@ public class GameLogic implements CrashHandler {
         }
     }
 
-
+    /**
+     * Submits a load request for the game.
+     */
     public void submitLoad(){
         executor.submit(this::loadGame);
     }
 
+    /**
+     * Loads game data and initializes the game flow.
+     */
     private void loadGame(){
         int points,i;
         CardView[] loadedHand;
@@ -269,6 +289,9 @@ public class GameLogic implements CrashHandler {
         }
     }
 
+    /**
+     * Saves the game data to a JSON file.
+     */
     private void saveGame(){
         Gson gson = new GsonBuilder().
                 registerTypeHierarchyAdapter(Card.class,new CardSerializeLogic()).
@@ -354,6 +377,11 @@ public class GameLogic implements CrashHandler {
         }
     }
 
+    /**
+     * Sends a chat message to the specified receiver.
+     *
+     * @param msg The chat message to be sent (format: "receiver;sender;message").
+     */
     public void chat(String msg){
         String receiver = msg.split(";")[1];
         String sender = msg.split(";")[2];
@@ -411,7 +439,11 @@ public class GameLogic implements CrashHandler {
         this.server.closeGame(this.id);
     }
 
-
+    /**
+     * Handles a crash event for a communication channel.
+     *
+     * @param comm The communication channel that crashed.
+     */
     public synchronized void handleCrash(Comm comm){
         executor.shutdownNow();
         Set<Comm> comms = (this.setUp==null) ? this.players.keySet() : this.setUp.getComms();
@@ -460,6 +492,12 @@ public class GameLogic implements CrashHandler {
         Comm.sendBroadcast(msg, turnOrder);
     }
 
+    /**
+     * Creates a view for the back side of a card.
+     *
+     * @param flag Determines whether the card is a resource card or a gold card.
+     * @return A CardView representing the back side of the card.
+     */
     public CardView createBackView(boolean flag) {
         return flag ? new CardView(new ResourceCard(
                 new Symbol[] { Symbol.NOTAVAILABLE, Symbol.NOTAVAILABLE, Symbol.NOTAVAILABLE, Symbol.NOTAVAILABLE },

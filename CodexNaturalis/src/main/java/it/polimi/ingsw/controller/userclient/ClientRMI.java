@@ -25,6 +25,13 @@ public class ClientRMI extends Client implements ClientRemote {
   private final ScheduledExecutorService scheduledExecutor;
   private final AtomicBoolean pingFlag;
 
+  /**
+   * Represents a client for the RMI (Remote Method Invocation) system.
+   * It exports the object as an RMI remote object and initializes various executors.
+   *
+   * @param userView The `UserView` object associated with this client.
+   * @throws RemoteException If there's an issue with remote communication.
+   */
   public ClientRMI(UserView userView) throws RemoteException{
     super(userView);
     UnicastRemoteObject.exportObject(this,0);
@@ -35,6 +42,14 @@ public class ClientRMI extends Client implements ClientRemote {
     this.port = 1099;
   }
 
+  /**
+   * Connects to the RMI server at the specified address.
+   * This method sets the system property for the RMI server hostname,
+   * looks up the remote server, and initializes communication with it.
+   *
+   * @param addr The address of the RMI server.
+   * @throws RuntimeException If there's an issue during connection.
+   */
   @Override
   public void connect(String addr) {
     try {
@@ -53,6 +68,14 @@ public class ClientRMI extends Client implements ClientRemote {
     }
   }
 
+  /**
+   * Sends a message to the RMI server.
+   * This method waits for communication to be established with the server
+   * and then sets the message using the associated communication object.
+   *
+   * @param msg The message to be sent.
+   * @throws RemoteException If there's an issue with remote communication.
+   */
   @Override
   void sendMsg(String msg) {
     try {
@@ -73,6 +96,17 @@ public class ClientRMI extends Client implements ClientRemote {
     }
   }
 
+  /**
+   * Places a card on the game board.
+   * This method submits the task to the client executor, which communicates with the server
+   * by invoking the `placeCardMsg` method on the communication object.
+   *
+   * @param idx   The index of the card.
+   * @param x     The x-coordinate on the game board.
+   * @param y     The y-coordinate on the game board.
+   * @param face  Whether the card is face-up or face-down.
+   * @throws RemoteException If there's an issue with remote communication.
+   */
   @Override
   public void placeCard(int idx, int x, int y,boolean face) {
     //TODO handle exception
@@ -86,6 +120,14 @@ public class ClientRMI extends Client implements ClientRemote {
     });
   }
 
+  /**
+   * Draws a card from the game deck.
+   * This method submits the task to the client executor, which communicates with the server
+   * by invoking the `drawCardMsg` method on the communication object.
+   *
+   * @param idx The index of the card to be drawn.
+   * @throws RemoteException If there's an issue with remote communication.
+   */
   @Override
   public void drawCard(int idx) {
     this.clientExecutor.submit(()->{
@@ -98,6 +140,11 @@ public class ClientRMI extends Client implements ClientRemote {
     });
   }
 
+  /**
+   * Sends a chat message.
+   *
+   * @param msg The message to send.
+   */
   @Override
   public void sendChatMessage(String msg) {
       this.clientExecutor.submit(() -> {
@@ -110,6 +157,12 @@ public class ClientRMI extends Client implements ClientRemote {
       });
   }
 
+  /**
+   * Handles a remote chat message.
+   *
+   * @param message The incoming message.
+   * @throws RemoteException If a remote communication error occurs.
+   */
   @Override
   public void handleMsgRemote(String message) throws RemoteException {
     serverExecutor.submit(()->{
@@ -120,6 +173,10 @@ public class ClientRMI extends Client implements ClientRemote {
     });
   }
 
+  /**
+   * Waits for a ping response.
+   * If no ping is received, changes the server phase to SERVERCRASHED.
+   */
   private void waitForPing(){
     synchronized(this.pingFlag){
       if(!this.pingFlag.get()){
@@ -129,6 +186,10 @@ public class ClientRMI extends Client implements ClientRemote {
     }
   }
 
+  /**
+   * Closes the connection.
+   * Shuts down executors and unexports the object.
+   */
   @Override
   public void closeConnection() {
     this.comm = null;

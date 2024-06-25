@@ -25,7 +25,11 @@ public class GoldCardSymbol extends GoldCard {
         this.sym = sym;
     }
 
-
+    /**
+     * Returns the points associated with the card.
+     *
+     * @return The card points followed by the symbol.
+     */
     public String getPoints() {
         return getCardPoints() + " " + sym;
     }
@@ -48,6 +52,11 @@ public class GoldCardSymbol extends GoldCard {
         return resources.get(sym) * getCardPoints();
     }
 
+    /**
+     * Returns the symbol associated with the card.
+     *
+     * @return The card symbol.
+     */
     public Symbol getSym() {
         return this.sym;
     }

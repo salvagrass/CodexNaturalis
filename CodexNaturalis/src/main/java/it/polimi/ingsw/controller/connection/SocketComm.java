@@ -73,12 +73,20 @@ public class SocketComm extends Comm {
     }
   }
 
+  /**
+   * Stops the ping operation.
+   */
   @Override
   public void stopPing(){
     super.stopPing();
     this.ackFlag.set(true);
   }
 
+  /**
+   * Sends a ping message and handles client crashes.
+   * If the acknowledgment flag is not set, marks the client as crashed,
+   * closes the connection, and notifies the handler.
+   */
   @Override
   public void pingMethod(){
     synchronized(this.ackFlag){
@@ -93,6 +101,11 @@ public class SocketComm extends Comm {
     }
   }
 
+  /**
+   * Sends a PING message and handles the acknowledgment.
+   * If the acknowledgment flag is not set, the client is considered crashed.
+   * @throws IOException if there's an issue with sending the message.
+   */
   @Override
   public void close(){
     try {

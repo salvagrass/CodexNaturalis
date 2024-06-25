@@ -30,5 +30,12 @@ public interface RemoteComm extends Remote {
      * @throws RemoteException If there's a connection problem.
      */
     void setMsg(String msg) throws RemoteException;
+
+    /**
+     * Sends a chat message to the server.
+     *
+     * @param msg The message to send.
+     * @throws RemoteException If a communication error occurs.
+     */
     void chat(String msg) throws RemoteException;
 }

@@ -40,6 +40,11 @@ public class RMIComm extends Comm implements RemoteComm {
         }
     }
 
+    /**
+     * Sends a ping message to the server.
+     * If a communication error occurs, the method closes the connection,
+     * handles the crash, and sets the clientCrashed flag.
+     */
     @Override
     public void pingMethod() {
         try {
@@ -51,6 +56,12 @@ public class RMIComm extends Comm implements RemoteComm {
         }
     }
 
+    /**
+     * Sets the message.
+     *
+     * @param msg The message to set.
+     * @throws RemoteException If there's a remote exception.
+     */
     public void setMsg(String msg) throws RemoteException{
         setChosen(msg);
     }
@@ -75,10 +86,19 @@ public class RMIComm extends Comm implements RemoteComm {
          getGame().drawCard(this, msg);
     }
 
+    /**
+     * Sends a chat message.
+     *
+     * @param msg The message to send.
+     * @throws RemoteException If there's a remote exception.
+     */
     public void chat(String msg) throws RemoteException{
         this.getGame().chat(msg);
     }
 
+    /**
+     * Closes the connection.
+     */
     @Override
     public void close(){
         this.client = null;

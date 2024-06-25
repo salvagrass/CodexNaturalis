@@ -48,7 +48,11 @@ public class Deck <T extends DrawableCard>{
         return card;
     }
 
-    //TODO javadoc
+    /**
+     * Retrieves the color of the last card in the deck without removing it.
+     *
+     * @return The color of the last card in the deck.
+     */
     public Symbol peek() {
         return deck.getLast().getColor();
     }

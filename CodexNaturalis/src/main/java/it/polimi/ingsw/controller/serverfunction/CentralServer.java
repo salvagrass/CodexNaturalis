@@ -83,6 +83,15 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         }
     }
 
+    /**
+     * Joins a client to the communication system.
+     * Creates an RMIComm instance for the given client, starts pinging,
+     * and assigns an executor to handle communication.
+     *
+     * @param client The client to join.
+     * @return The communication instance for the joined client.
+     * @throws RemoteException if there's an issue with RMI communication.
+     */
     public RemoteComm join(ClientRemote client) throws RemoteException {
         RMIComm comm = new RMIComm(client);
         comm.setCrashHandler(this);
@@ -285,6 +294,12 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         return true;
     }
 
+    /**
+     * Adds a game.
+     *
+     * @param id The unique identifier for the game.
+     * @param gc The GameLogic instance representing the game.
+     */
     void addGame(String id,GameLogic gc){
         synchronized(this.games){
             this.games.put(id,gc);
@@ -294,7 +309,12 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         }
     }
 
-
+    /**
+     * Saves a game to a JSON file.
+     *
+     * @param id        The unique identifier for the game.
+     * @param jsonGame  The JSON representation of the game state.
+     */
     void saveGame(String id,String jsonGame){
         try {
             FileWriter fw = new FileWriter(id+"_saved.json");
@@ -307,6 +327,11 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         }
     }
 
+    /**
+     * Adds a game ID to the list of memorized games and saves it to a text file.
+     *
+     * @param id The unique identifier for the game.
+     */
     synchronized void addGameToMemorized(String id){
         synchronized(this.games){
             this.memorized.add(id);
@@ -319,11 +344,21 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         }
     }
 
+    /**
+     * Submits a client communication for processing.
+     *
+     * @param comm The communication object representing the client request.
+     */
     void submitClient(Comm comm) {
         ExecutorService executor = findAssignedExecutor(comm);
         executor.submit(() -> handleClient(comm));
     }
 
+    /**
+     * Removes a game from the collection based on its ID.
+     *
+     * @param id The unique identifier of the game to be removed.
+     */
     void removeGame(String id){
         synchronized(this.games){
             this.games.remove(id);
@@ -332,6 +367,11 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         }
     }
 
+    /**
+     * Closes a game based on its ID.
+     *
+     * @param id The unique identifier of the game to be closed.
+     */
     void closeGame(String id){
         synchronized(this.games){
             this.games.remove(id);
@@ -361,6 +401,11 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         }
     }
 
+    /**
+     * Handles a crash in the communication process.
+     *
+     * @param comm The communication object associated with the crashed process.
+     */
     @Override
     public void handleCrash(Comm comm) {
         ExecutorService executor = findAssignedExecutor(comm);

@@ -21,6 +21,11 @@ public abstract class Client{
   private final Gson gson;
   int port;
 
+  /**
+   * Creates a new Client instance.
+   *
+   * @param userView The user view associated with this client.
+   */
   public Client(UserView userView) {
     this.userView = userView;
     this.gson = new Gson();

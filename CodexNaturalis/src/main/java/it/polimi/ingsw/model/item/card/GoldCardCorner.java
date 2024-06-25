@@ -22,6 +22,11 @@ public class GoldCardCorner extends GoldCard {
         super(frontCorners, center, requirements, points, id);
     }
 
+    /**
+     * Retrieves the points associated for each corner.
+     *
+     * @return The points per corner.
+     */
     public String getPoints() {
         return getCardPoints() + " EACH CORNER";
     }

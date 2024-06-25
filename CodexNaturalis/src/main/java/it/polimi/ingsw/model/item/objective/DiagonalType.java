@@ -59,10 +59,20 @@ public class DiagonalType implements Disposition {
         return dispositionCount;
     }
 
+    /**
+     * Returns the color associated with the object.
+     *
+     * @return The object's color.
+     */
     public Symbol getColor() {
         return this.color;
     }
 
+    /**
+     * Returns the direction of the diagonal.
+     *
+     * @return The direction of the diagonal.
+     */
     public int getDirection() {
         return this.direction;
     }

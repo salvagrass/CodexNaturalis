@@ -237,6 +237,11 @@ class SetUpLogic {
     }
 
 
+    /**
+     * Sets the communication state to "READY" for the specified communication channel.
+     *
+     * @param comm The communication channel.
+     */
     void setReady(Comm comm){
         record.put(comm,State.READY);
     }

@@ -25,6 +25,11 @@ public class ClientSocket extends Client{
   ExecutorService executor;
   ScheduledExecutorService scheduled;
 
+  /**
+   * Constructs a ClientSocket.
+   *
+   * @param userView The user view associated with this client.
+   */
   public ClientSocket(UserView userView){
     super(userView);
     this.stopConnection = new AtomicBoolean(false);
@@ -34,6 +39,12 @@ public class ClientSocket extends Client{
     this.scheduled = Executors.newSingleThreadScheduledExecutor();
   }
 
+  /**
+   * Establishes a socket connection to the specified address.
+   *
+   * @param addr The address to connect to.
+   * @throws RuntimeException If an I/O error occurs during connection setup.
+   */
   @Override
   public void connect(String addr) {
     this.socket = null;
@@ -49,6 +60,10 @@ public class ClientSocket extends Client{
     new Thread(this::listener).start();
   }
 
+  /**
+   * Waits for a ping response.
+   * If no ping is received, changes the server phase to SERVERCRASHED.
+   */
   private void waitForPing(){
       synchronized(this.pingFlag){
         if(!this.pingFlag.get()){
@@ -58,6 +73,11 @@ public class ClientSocket extends Client{
     }
   }
 
+  /**
+   * Handles incoming messages.
+   *
+   * @param msg The message to process.
+   */
   @Override
   public void handleMsg(String msg){
     if(msg.equals("PING")) {
@@ -69,6 +89,10 @@ public class ClientSocket extends Client{
     }
   }
 
+  /**
+   * Listens for incoming messages and handles them.
+   * Stops when the connection is requested to be stopped.
+   */
   private void listener(){
     while (!stopConnection.get()){
       try{
@@ -79,6 +103,11 @@ public class ClientSocket extends Client{
     }
   }
 
+  /**
+   * Sends a message to the output stream.
+   *
+   * @param msg The message to send.
+   */
   @Override
   void sendMsg(String msg) {
     synchronized(this) {
@@ -87,21 +116,42 @@ public class ClientSocket extends Client{
     }
   }
 
+  /**
+   * Places a card at the specified position.
+   *
+   * @param idx The index of the card.
+   * @param x   The x-coordinate of the position.
+   * @param y   The y-coordinate of the position.
+   * @param face Whether the card is face-up or face-down.
+   */
   @Override
   public void placeCard(int idx, int x, int y,boolean face) {
     sendMsg(MsgCreator.placeCardMsg(idx,x,y,face));
   }
 
+  /**
+   * Draws a card with the specified deck index.
+   *
+   * @param idx The index of the deck.
+   */
   @Override
   public void drawCard(int idx) {
     sendMsg(MsgCreator.drawCardMsg(idx));
   }
 
+  /**
+   * Sends a chat message to the output stream.
+   *
+   * @param msg The chat message to send.
+   */
   @Override
   public void sendChatMessage(String msg) {
     this.out.println(msg);
   }
 
+  /**
+   * Closes the connection and performs necessary cleanup tasks.
+   */
   @Override
   public void closeConnection(){
     this.stopConnection.set(true);

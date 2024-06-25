@@ -20,10 +20,19 @@ public abstract class Comm{
     final AtomicBoolean clientCrashed;
     CrashHandler handler;
 
+    /**
+     * Creates a new instance of the `Comm` class.
+     * Initializes the `clientCrashed` field with `false`.
+     */
     public Comm() {
         this.clientCrashed = new AtomicBoolean(false);
     }
 
+    /**
+     * Sets the crash handler for this instance.
+     *
+     * @param handler The crash handler to set.
+     */
     public void setCrashHandler(CrashHandler handler){
         this.handler = handler;
     }
@@ -55,11 +64,18 @@ public abstract class Comm{
         }
         return s;
     }
-
+    /**
+     * Clears the `chosen` field by setting it to `null`.
+     */
     public void clean(){
         this.chosen = null;
     }
 
+    /**
+     * Sets the value of the `chosen` field and notifies all waiting threads.
+     *
+     * @param msg The value to set for `chosen`.
+     */
     void setChosen(String msg){
         synchronized(this) {
             this.chosen = msg;
@@ -67,10 +83,20 @@ public abstract class Comm{
         }
     }
 
+    /**
+     * Sets the game logic for this object.
+     *
+     * @param game The GameLogic instance to set.
+     */
     public void setGame(GameLogic game){
         this.game = game;
     }
 
+    /**
+     * Returns the `GameLogic` instance associated with this object.
+     *
+     * @return The `GameLogic` instance.
+     */
     public GameLogic getGame() {
         return this.game;
     }
@@ -87,20 +113,27 @@ public abstract class Comm{
         }
     }
 
-
-
+    /**
+     * Stops the ping execution by shutting down the associated executor.
+     */
     public void stopPing(){
         pingExec.shutdownNow();
     }
 
+    /**
+     * Starts the ping execution by initializing the necessary components.
+     */
     public void startPing(){
         this.clientCrashed.set(false);
         pingExec = Executors.newSingleThreadScheduledExecutor();
         pingExec.scheduleAtFixedRate(this::pingMethod, 0, 5, TimeUnit.SECONDS);
     }
 
-
+    /**
+     * This abstract class defines the contract for ping methods.
+     */
     public abstract void pingMethod();
+
     /**
      * Closes the connection.
      */
