@@ -33,6 +33,7 @@ public class MenuController extends Controller{
             Parent root = loader.load();
 
             Stage popupStage = new Stage();
+            popupStage.setResizable(false);
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setTitle("Quit");
 
@@ -49,6 +50,7 @@ public class MenuController extends Controller{
 
     public void rules() throws IOException {
         Stage stage = new Stage();
+        stage.setResizable(false);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/rulebook.fxml")));
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);

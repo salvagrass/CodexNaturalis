@@ -26,5 +26,4 @@ public class WaitController extends Controller{
         });
         capacity.addListener((observable, oldVal, newVal)->this.capacity = (int) newVal);
     }
-
 }

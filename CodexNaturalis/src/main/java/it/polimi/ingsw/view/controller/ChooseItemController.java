@@ -55,6 +55,12 @@ public class ChooseItemController extends Controller {
         }
         this.gui.scanInput(idx + "");
         this.submit.setDisable(true);
-        Platform.runLater(()->this.title.requestFocus());
+        Platform.runLater(this::clear);
+    }
+
+    public void clear(){
+        this.title.requestFocus();
+        this.submit.setDisable(true);
+        this.items.selectToggle(null);
     }
 }

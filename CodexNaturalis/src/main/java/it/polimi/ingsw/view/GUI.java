@@ -36,7 +36,7 @@ public class GUI extends UserView{
     public GUI(Stage stage, Map<GameScene, FXMLLoader> roots){
         super();
         this.colors = FXCollections.observableSet();
-        this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
+        fillColors();
         this.scenes = new HashMap<>();
         this.sceneToController = new HashMap<>();
         this.playersInLobby = FXCollections.observableSet();
@@ -50,6 +50,10 @@ public class GUI extends UserView{
         bind();
     }
 
+    public void fillColors(){
+        this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
+    }
+
     private void load(Map<GameScene, FXMLLoader> roots){
         Parent root;
         for(GameScene g : roots.keySet()){
@@ -60,7 +64,7 @@ public class GUI extends UserView{
             }
             Controller c = roots.get(g).getController();
             c.setGui(this);
-            this.addScene(g, new Scene(root, 800, 500), c);
+            this.addScene(g, new Scene(root), c);
         }
     }
 
@@ -96,7 +100,9 @@ public class GUI extends UserView{
     }
 
     public void changePhase() {
-        change(this.futurePhase);
+        if(this.futurePhase != null){
+            change(this.futurePhase);
+        }
     }
 
     private void change(Phase phase){
@@ -110,26 +116,17 @@ public class GUI extends UserView{
             case Phase.CREATE -> {
                 scene = this.scenes.get(GameScene.CREATE);
                 this.currController = this.sceneToController.get(scene);
-                Platform.runLater(()-> {
-                    ((CreateController) this.currController).clear();
-                    this.stage.setScene(scene);
-                });
+                Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.JOIN -> {
                 scene = this.scenes.get(GameScene.IDSCENE);
                 this.currController = this.sceneToController.get(scene);
-                Platform.runLater(()-> {
-                    ((IdController) this.currController).clear();
-                    this.stage.setScene(scene);
-                });
+                Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.NAME -> {
                 scene = this.scenes.get(GameScene.NAME);
                 this.currController = this.sceneToController.get(scene);
-                Platform.runLater(()-> {
-                    ((NameController) this.currController).clear();
-                    this.stage.setScene(scene);
-                });
+                Platform.runLater(()-> this.stage.setScene(scene));
             }
             case Phase.WAITFORPLAYERS -> {
                 scene = this.scenes.get(GameScene.WAITPLAYERS);
@@ -173,15 +170,30 @@ public class GUI extends UserView{
                 });
             }
             case Phase.CLIENTCRASHED -> {
-                scene = this.scenes.get(GameScene.CLIENTCRASHED);
+                scene = this.scenes.get(GameScene.CRASHED);
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()->{
                     Stage s = new Stage();
                     s.initModality(Modality.APPLICATION_MODAL);
+                    ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
+                    ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setTitle("A client crashed");
                     s.setScene(scene);
                     s.showAndWait();
                 });
-
+            }
+            case Phase.SERVERCRASHED -> {
+                Scene crash = this.scenes.get(GameScene.CRASHED);
+                scene = this.scenes.get(GameScene.START);
+                this.currController = this.sceneToController.get(crash);
+                Platform.runLater(()->{
+                    Stage s = new Stage();
+                    s.initModality(Modality.APPLICATION_MODAL);
+                    ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
+                    ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setTitle("Server crashed");
+                    s.setScene(crash);
+                    s.showAndWait();
+                    this.stage.setScene(scene);
+                });
             }
             case Phase.ENDGAME -> {
                 scene = this.scenes.get(GameScene.ENDGAME);

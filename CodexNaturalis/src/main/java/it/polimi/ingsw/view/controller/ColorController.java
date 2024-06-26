@@ -10,11 +10,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 public class ColorController extends Controller {
     @FXML
-    ToggleButton red, blue, green, yellow;
+    private ToggleButton red, blue, green, yellow;
+    @FXML
+    private ToggleButton redBackPawn, blueBackPawn, yellowBackPawn, greenBackPawn;
     @FXML
     private ToggleGroup color;
     @FXML
@@ -32,10 +35,15 @@ public class ColorController extends Controller {
             }
         });
         Platform.runLater(()->this.pane.requestFocus());
-        this.red.disableProperty().addListener((observable, oldValue, newValue) -> this.submit.setDisable(newValue));
-        this.blue.disableProperty().addListener((observable, oldValue, newValue) -> this.submit.setDisable(newValue));
-        this.green.disableProperty().addListener((observable, oldValue, newValue) -> this.submit.setDisable(newValue));
-        this.yellow.disableProperty().addListener((observable, oldValue, newValue) -> this.submit.setDisable(newValue));
+        this.red.disableProperty().addListener((observable, oldValue, newValue) -> bindColors(this.red, this.redBackPawn, newValue));
+        this.blue.disableProperty().addListener((observable, oldValue, newValue) -> bindColors(this.blue, this.blueBackPawn, newValue));
+        this.green.disableProperty().addListener((observable, oldValue, newValue) -> bindColors(this.green, this.greenBackPawn, newValue));
+        this.yellow.disableProperty().addListener((observable, oldValue, newValue) -> bindColors(this.yellow, this.yellowBackPawn, newValue));
+    }
+
+    private void bindColors(ToggleButton button, ToggleButton img, boolean newValue){
+        this.submit.setDisable(button.equals(this.color.getSelectedToggle()) && newValue);
+        img.setDisable(newValue);
     }
 
     public void bind(ObservableSet<PawnColor> colors){

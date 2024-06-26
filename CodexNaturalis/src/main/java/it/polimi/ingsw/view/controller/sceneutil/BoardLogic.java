@@ -32,7 +32,6 @@ public class BoardLogic {
         this.gridPane = createGrid(rows, cols);
         this.gridPane.setUserData(true);
         this.gridPane.setVisible(false);
-        //gridPane.setGridLinesVisible(true);
 
         this.inventory = createInventory(num);
         this.inventory.setVisible(false);
