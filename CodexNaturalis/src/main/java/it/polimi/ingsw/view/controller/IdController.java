@@ -43,8 +43,6 @@ public class IdController extends Controller{
         if(!confirmValue){
             this.error.setText(confirmMsg);
             this.error.setVisible(true);
-            return;
         }
-        clear();
     }
 }

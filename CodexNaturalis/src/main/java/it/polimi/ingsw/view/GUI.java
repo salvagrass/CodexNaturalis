@@ -115,18 +115,30 @@ public class GUI extends UserView{
             }
             case Phase.CREATE -> {
                 scene = this.scenes.get(GameScene.CREATE);
-                this.currController = this.sceneToController.get(scene);
-                Platform.runLater(()-> this.stage.setScene(scene));
+                Controller c = this.sceneToController.get(scene);
+                this.currController = c;
+                Platform.runLater(()-> {
+                    ((CreateController)c).clear();
+                    this.stage.setScene(scene);
+                });
             }
             case Phase.JOIN -> {
                 scene = this.scenes.get(GameScene.IDSCENE);
-                this.currController = this.sceneToController.get(scene);
-                Platform.runLater(()-> this.stage.setScene(scene));
+                Controller c = this.sceneToController.get(scene);
+                this.currController = c;
+                Platform.runLater(()-> {
+                    ((IdController)c).clear();
+                    this.stage.setScene(scene);
+                });
             }
             case Phase.NAME -> {
                 scene = this.scenes.get(GameScene.NAME);
-                this.currController = this.sceneToController.get(scene);
-                Platform.runLater(()-> this.stage.setScene(scene));
+                Controller c = this.sceneToController.get(scene);
+                this.currController = c;
+                Platform.runLater(()-> {
+                    ((NameController)c).clear();
+                    this.stage.setScene(scene);
+                });
             }
             case Phase.WAITFORPLAYERS -> {
                 scene = this.scenes.get(GameScene.WAITPLAYERS);
