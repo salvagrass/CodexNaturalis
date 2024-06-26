@@ -3,15 +3,13 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.userclient.Client;
 import it.polimi.ingsw.controller.userclient.ClientRMI;
 import it.polimi.ingsw.controller.userclient.ClientSocket;
-import it.polimi.ingsw.util.Message;
-import it.polimi.ingsw.util.PawnColor;
-import it.polimi.ingsw.util.Phase;
-import it.polimi.ingsw.util.Symbol;
+import it.polimi.ingsw.util.*;
 import it.polimi.ingsw.view.coreview.*;
 
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 public abstract class UserView {
     Client client;
@@ -61,6 +59,8 @@ public abstract class UserView {
                 try {
                     this.toSendlock.wait();
                 } catch (InterruptedException e) {
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/clientLog.txt", Level.SEVERE,"Thread interrupted while waiting",e);
                     throw new RuntimeException(e);
                 }
             }

@@ -24,14 +24,15 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 
 public class GUI extends UserView{
     private final Map<GameScene, Scene> scenes;
     private final Map<Scene, Controller> sceneToController;
     private final Stage stage;
     private Controller currController;
-    private final StringProperty currPlayer;
-    private final IntegerProperty capacity;
+    private StringProperty currPlayer;
+    private IntegerProperty capacity;
     private Phase futurePhase;
     public GUI(Stage stage, Map<GameScene, FXMLLoader> roots){
         super();
@@ -60,6 +61,8 @@ public class GUI extends UserView{
             try{
                 root = roots.get(g).load();
             }catch (IOException e) {
+                new ProjectLogger(getClass().getSimpleName()).
+                        log("logs/clientLog.txt",Level.SEVERE,"Can't load scenes",e);
                 throw new RuntimeException(e);
             }
             Controller c = roots.get(g).getController();
@@ -185,6 +188,7 @@ public class GUI extends UserView{
                 scene = this.scenes.get(GameScene.CRASHED);
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()->{
+                    setNewGame();
                     Stage s = new Stage();
                     s.initModality(Modality.APPLICATION_MODAL);
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
@@ -198,6 +202,7 @@ public class GUI extends UserView{
                 scene = this.scenes.get(GameScene.START);
                 this.currController = this.sceneToController.get(crash);
                 Platform.runLater(()->{
+                    setNewGame();
                     Stage s = new Stage();
                     s.initModality(Modality.APPLICATION_MODAL);
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
@@ -211,6 +216,7 @@ public class GUI extends UserView{
                 scene = this.scenes.get(GameScene.ENDGAME);
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()-> {
+                    setNewGame();
                     ((EndGameController)this.currController).show(this.name, this.colorsChosen, this.positions, this.leaderboard);
                     this.stage.setScene(scene);
                     this.stage.setFullScreen(false);
@@ -352,5 +358,30 @@ public class GUI extends UserView{
 
     public void sendChatMsg(String text, String receiver) {
         this.client.sendChatMessage(MsgCreator.chatMsg(this.name, receiver, text));
+    }
+
+    private void setNewGame(){
+        //RESETTING THE OBJECTS FOR ANOTHER GAME
+        super.cleanView();
+        this.currPlayer = new SimpleStringProperty("");
+        this.capacity = new SimpleIntegerProperty();
+        this.colors = FXCollections.observableSet();
+        this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
+
+        //RELOADING ANOTHER GAME SCENE
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(GameScene.GAME.path));
+        try {
+            Parent parent = loader.load();
+            GameController c = loader.getController();
+            c.setGui(this);
+            c.bind(this.currPlayer, (ObservableMap<String, Integer>) this.leaderboard);
+            ColorController cc = (ColorController) this.sceneToController.get(this.scenes.get(GameScene.COLOR));
+            cc.bind((ObservableSet<PawnColor>) this.colors);
+            addScene(GameScene.GAME,new Scene(parent,500,800),c);
+        } catch (IOException e) {
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/clientLogs.txt",Level.SEVERE,"Can't load scenes",e);
+            throw new RuntimeException(e);
+        }
     }
 }

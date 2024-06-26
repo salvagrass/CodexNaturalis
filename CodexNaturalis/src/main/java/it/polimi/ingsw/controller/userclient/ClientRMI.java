@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.userclient;
 
 import it.polimi.ingsw.controller.serverfunction.MsgCreator;
 import it.polimi.ingsw.util.Phase;
+import it.polimi.ingsw.util.ProjectLogger;
 import it.polimi.ingsw.view.UserView;
 import it.polimi.ingsw.controller.connection.RemoteComm;
 import it.polimi.ingsw.controller.serverfunction.RemoteServer;
@@ -17,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 public class ClientRMI extends Client implements ClientRemote {
   private RemoteComm comm;
@@ -63,7 +65,8 @@ public class ClientRMI extends Client implements ClientRemote {
       }
       scheduledExecutor.scheduleAtFixedRate(this::waitForPing,0,15, TimeUnit.SECONDS);
     } catch (Exception e) {
-      // TODO log file
+      new ProjectLogger(getClass().getSimpleName()).
+              log("logs/clientLog.txt",Level.SEVERE,"Problem with connection",e);
       throw new RuntimeException();
     }
   }
@@ -74,7 +77,6 @@ public class ClientRMI extends Client implements ClientRemote {
    * and then sets the message using the associated communication object.
    *
    * @param msg The message to be sent.
-   * @throws RemoteException If there's an issue with remote communication.
    */
   @Override
   void sendMsg(String msg) {
@@ -84,8 +86,9 @@ public class ClientRMI extends Client implements ClientRemote {
           try {
             this.wait();
           } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/clientLog.txt",Level.SEVERE,"Problem with connection",e);
+            throw new RuntimeException(e);
           }
         }  
       }
@@ -105,11 +108,9 @@ public class ClientRMI extends Client implements ClientRemote {
    * @param x     The x-coordinate on the game board.
    * @param y     The y-coordinate on the game board.
    * @param face  Whether the card is face-up or face-down.
-   * @throws RemoteException If there's an issue with remote communication.
    */
   @Override
   public void placeCard(int idx, int x, int y,boolean face) {
-    //TODO handle exception
     this.clientExecutor.submit(()->{
       try{
         comm.placeCard(MsgCreator.placeCardMsg(idx, x, y, face));
@@ -126,7 +127,6 @@ public class ClientRMI extends Client implements ClientRemote {
    * by invoking the `drawCardMsg` method on the communication object.
    *
    * @param idx The index of the card to be drawn.
-   * @throws RemoteException If there's an issue with remote communication.
    */
   @Override
   public void drawCard(int idx) {
@@ -199,8 +199,8 @@ public class ClientRMI extends Client implements ClientRemote {
     try {
       UnicastRemoteObject.unexportObject(this, true);
     } catch (NoSuchObjectException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      new ProjectLogger(getClass().getSimpleName()).
+              log("logs/clientLog.txt",Level.WARNING,"Can't find RMI object",e);
     }
   }
 }

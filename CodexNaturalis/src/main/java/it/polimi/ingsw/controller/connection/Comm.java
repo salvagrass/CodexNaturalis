@@ -2,12 +2,14 @@ package it.polimi.ingsw.controller.connection;
 
 import it.polimi.ingsw.controller.serverfunction.CrashHandler;
 import it.polimi.ingsw.controller.serverfunction.GameLogic;
+import it.polimi.ingsw.util.ProjectLogger;
 
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 /**
  * A class that handles communication with the server based on the connected client type.
@@ -56,6 +58,8 @@ public abstract class Comm{
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/commLog.txt",Level.INFO,"Thread interrupted while waiting",e);
                     throw new RuntimeException();
                 }
             }

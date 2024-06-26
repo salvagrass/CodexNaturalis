@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.serverfunction.MsgCreator;
 import it.polimi.ingsw.util.Message;
 import it.polimi.ingsw.util.PawnColor;
 import it.polimi.ingsw.util.Phase;
+import it.polimi.ingsw.util.ProjectLogger;
 import it.polimi.ingsw.view.coreview.CardView;
 import it.polimi.ingsw.view.coreview.ItemView;
 import it.polimi.ingsw.view.coreview.ObjectiveView;
@@ -16,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -112,7 +114,8 @@ public class CLI extends UserView{
                     throw new TimeoutException();
                 }
             } catch (InterruptedException e) {
-                //TODO MAYBE RUNTIME EXCEPTION IS OVERKILL
+                new ProjectLogger(getClass().getSimpleName()).
+                        log("logs/clientLog.txt",Level.SEVERE,"Thread interrupted while waiting",e);
                 throw new RuntimeException(e);
             }
         }
@@ -126,7 +129,8 @@ public class CLI extends UserView{
             try {
                 this.wait();
             } catch (InterruptedException e) {
-                //TODO MAYBE RUNTIME EXCEPTION IS OVERKILL
+                new ProjectLogger(getClass().getSimpleName()).
+                        log("logs/clientLog.txt",Level.SEVERE,"Thread interrupted while waiting",e);
                 throw new RuntimeException(e);
             }
         }
@@ -160,7 +164,9 @@ public class CLI extends UserView{
                 try {
                     this.phaseQueue.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/clientLog.txt",Level.SEVERE,"Thread interrupted while waiting",e);
+                    throw new RuntimeException(e);
                 }
             }
             this.currPhase = this.phaseQueue.remove();
@@ -187,6 +193,8 @@ public class CLI extends UserView{
             try {
                 this.confirmValue.wait();
             } catch (InterruptedException e) {
+                new ProjectLogger(getClass().getSimpleName()).
+                        log("logs/clientLog.txt",Level.SEVERE,"Thread interrupted while waiting",e);
                 throw new RuntimeException(e);
             }
         }
@@ -318,6 +326,8 @@ public class CLI extends UserView{
                 try {
                     this.currPlayerLock.wait();
                 } catch (InterruptedException e) {
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/clientLog.txt",Level.SEVERE,"Thread interrupted while waiting",e);
                     throw new RuntimeException(e);
                 }
             }
@@ -364,7 +374,7 @@ public class CLI extends UserView{
     }
 
     private synchronized void handleCommand(String[] cmd){
-        switch (cmd[0]) { //TODO complete switch cases
+        switch (cmd[0]) {
             case "show" -> {
                 if(cmd.length < 2){
                     System.out.println("Command incomplete");
@@ -508,8 +518,8 @@ public class CLI extends UserView{
             bufferedReader.close();
         } catch (Exception e) {
             System.out.println("An error occurred.");
-            //TODO log file
-            e.printStackTrace();
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/clientLog.txt",Level.WARNING,"Can't print the file",e);
         }
     }
 
@@ -533,8 +543,8 @@ public class CLI extends UserView{
             bufferedReader.close();
         } catch (Exception e) {
             System.out.println("An error occurred.");
-            //TODO log file
-            e.printStackTrace();
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/clientLog.txt",Level.WARNING,"Can't read the file",e);
         }
     }
 
@@ -544,7 +554,9 @@ public class CLI extends UserView{
                 try{
                     this.positions.wait();
                 }catch(InterruptedException e){
-                    throw new RuntimeException();
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/clientLog.txt",Level.SEVERE,"Thread interrupted while waiting",e);
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -675,7 +687,9 @@ public class CLI extends UserView{
             try{
                 connectMenu();
             }catch (RemoteException e){
-                throw new RuntimeException();
+                new ProjectLogger(getClass().getSimpleName()).
+                        log("logs/clientLog.txt",Level.SEVERE,"Can't connect to server",e);
+                throw new RuntimeException(e);
             }
         }
     }

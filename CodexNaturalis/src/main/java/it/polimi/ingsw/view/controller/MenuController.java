@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.controller;
 
+import it.polimi.ingsw.util.ProjectLogger;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class MenuController extends Controller{
     public void create() {
@@ -44,7 +46,9 @@ public class MenuController extends Controller{
             popupStage.setScene(new Scene(root));
             popupStage.showAndWait();
         } catch (Exception e) {
-            e.printStackTrace();
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/clientLog.txt",Level.SEVERE,"Can't open popup",e);
+            throw new RuntimeException(e);
         }
     }
 

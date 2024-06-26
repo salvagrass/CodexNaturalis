@@ -2,19 +2,20 @@
     src: url(../fonts/Canterbury.ttf);
 }
 
-#next{
+#nextBtn{
     -fx-background-color: #ebe1b0;
-}
-
-#next:hover {
-    -fx-background-color: #ebd980;
-}
-
-#prev{
-    -fx-background-color: #ebe1b0;
-}
-
-#prev:hover {
-    -fx-background-color: #ebd980;
     -fx-background-radius: 10px;
+}
+
+#nextBtn:hover {
+    -fx-background-color: #ebd980;
+}
+
+#prevBtn{
+    -fx-background-color: #ebe1b0;
+    -fx-background-radius: 10px;
+}
+
+#prevBtn:hover {
+    -fx-background-color: #ebd980;
 }

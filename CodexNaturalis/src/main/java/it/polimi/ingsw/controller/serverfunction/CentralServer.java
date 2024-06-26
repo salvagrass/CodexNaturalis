@@ -6,6 +6,7 @@ import it.polimi.ingsw.controller.connection.RemoteComm;
 import it.polimi.ingsw.controller.connection.SocketComm;
 import it.polimi.ingsw.controller.userclient.ClientRemote;
 import it.polimi.ingsw.util.Phase;
+import it.polimi.ingsw.util.ProjectLogger;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 
 /**
  * A class that waits for players to connect, creates a Comm object for each one, and sends them to a game lobby.
@@ -52,7 +54,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
                 memorized.add(line);
             }
         } catch (IOException e) {
-            //LOG CAN'T OPEN THE LOADED GAMES
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/serverLog.txt",Level.WARNING,"Can't open loaded games",e);
         }
         this.loadLocks = new ConcurrentHashMap<>();
         this.lock = new Object();
@@ -69,17 +72,17 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
                     SocketComm socketComm = new SocketComm(socket);
                     socketComm.setCrashHandler(this);
                     socketComm.startPing();
-                    ExecutorService executor = findAvailableExecutor();
-                    this.executors.put(executor,socketComm);
+                    ExecutorService executor = findAssignedExecutor(socketComm);
                     executor.submit(()->handleClient(socketComm));
                 } catch (IOException e) {
-                    String s = "Can't open the client socket: " + e.getMessage();
-                    System.out.println(s);
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/serverLog.txt",Level.INFO,"Can't open client socket",e);
                 }
             }
         }catch(IOException e){
-            String s = "Can't open the server socket: " + e.getMessage();
-            System.out.println(s);
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/serverLog.txt",Level.SEVERE,"Can't open client socket",e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -96,30 +99,29 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
         RMIComm comm = new RMIComm(client);
         comm.setCrashHandler(this);
         comm.startPing();
-        ExecutorService executor = findAvailableExecutor();
-        this.executors.put(executor,comm);
+        ExecutorService executor = findAssignedExecutor(comm);
         executor.submit(()->handleClient(comm));
         return comm;
     }
 
-    private ExecutorService findAvailableExecutor(){
-        Map<ExecutorService,Comm> tmp;
-        synchronized(this.executors) {
-            tmp = new HashMap<>(executors);
-        }
-        Optional<ExecutorService> optExecutor =
-                tmp.keySet().stream().filter(x->tmp.get(x)==null).findFirst();
-        return optExecutor.orElseGet(Executors::newSingleThreadExecutor);
-    }
+
 
     private ExecutorService findAssignedExecutor(Comm comm){
         Map<ExecutorService,Comm> tmp;
         synchronized(this.executors) {
             tmp = new HashMap<>(executors);
         }
-        Optional<ExecutorService> optExecutor =
-                tmp.keySet().stream().filter(x->tmp.get(x).equals(comm)).findFirst();
-        return optExecutor.orElse(null);
+        return tmp.keySet()
+                .stream()
+                .filter(x->tmp.get(x)==comm).
+                findFirst().
+                orElseGet(()->{
+                        ExecutorService executor = Executors.newSingleThreadExecutor();
+                        synchronized(this.executors){
+                            this.executors.put(executor,comm);
+                        }
+                        return executor;
+                });
     }
 
     /**
@@ -244,7 +246,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
      */
     private boolean loadGame(Comm comm) {
         String id=null;
-        boolean available = false;
+        boolean available = false,valid;
         comm.sendMsg(MsgCreator.changePhaseMsg(Phase.JOIN));
         while(!available) {
             comm.sendMsg(MsgCreator.chooseMsg());
@@ -255,33 +257,35 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
             }
             synchronized (this.games) {
                 if (!this.memorized.contains(id) || this.games.containsKey(id)) {
+                    valid = false;
                     System.out.println(memorized);
                     comm.sendMsg(MsgCreator.confirmMsg(false, "id not memorized"));
                 }else{
-                    available = true;
+                    valid = true;
                 }
             }
-        }
-        available = false;
-        while(!available) {
-            this.loadLocks.putIfAbsent(id, new Object());
-            synchronized (this.loadLocks.get(id)) {
-                if (this.loadingGames.containsKey(id)) {
-                    LoadLogic logic = loadingGames.get(id);
-                    if (logic.isFull()) {
-                        comm.sendMsg(MsgCreator.confirmMsg(false, "full lobby"));
-                    } else {
-                        logic.addRecord(comm);
-                        available = true;
-                    }
-                } else {
-                    try {
-                        LoadLogic logic = new LoadLogic(this,id);
-                        this.loadingGames.put(id, logic);
-                        logic.addRecord(comm);
-                        available = true;
-                    } catch (IOException e) {
-                        //TODO HANDLE
+            if(valid){
+                this.loadLocks.putIfAbsent(id, new Object());
+                synchronized (this.loadLocks.get(id)) {
+                    if (this.loadingGames.containsKey(id)) {
+                        LoadLogic logic = loadingGames.get(id);
+                        if (logic.isFull()) {
+                            comm.sendMsg(MsgCreator.confirmMsg(false, "full lobby"));
+                        } else {
+                            logic.addRecord(comm);
+                            available = true;
+                        }
+                    }else{
+                        try{
+                            LoadLogic logic = new LoadLogic(this,id);
+                            this.loadingGames.put(id, logic);
+                            logic.addRecord(comm);
+                            available = true;
+                        } catch (IOException e) {
+                            new ProjectLogger(getClass().getSimpleName()).
+                                    log("logs/serverLog.txt",Level.INFO,"Can't open selected game",e);
+                            comm.sendMsg(MsgCreator.confirmMsg(false, "problem loading game"));
+                        }
                     }
                 }
 
@@ -322,8 +326,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
             fw.flush();
             fw.close();
         }catch(IOException e) {
-            //TODO LOG FILE
-            System.out.println("Can't save game");
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/serverLog.txt",Level.INFO,"Can't save game",e);
         }
     }
 
@@ -340,7 +344,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
             fw.write(id+"\n");
             fw.flush();
         }catch(IOException e){
-            //TODO LOG FILE
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/serverLogs.txt",Level.WARNING,"Can't find the memorized games",e);
         }
     }
 
@@ -396,7 +401,8 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
                 bw.close();
                 Files.delete(Paths.get(id+"_saved.json"));
             }catch(IOException e){
-                //TODO LOG
+                new ProjectLogger(getClass().getSimpleName()).
+                        log("logs/serverLog.txt",Level.WARNING,"Can't delete game file",e);
             }
         }
     }

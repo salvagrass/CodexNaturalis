@@ -1,11 +1,14 @@
 package it.polimi.ingsw.controller.connection;
 
+import it.polimi.ingsw.util.ProjectLogger;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 /**
  * Extends Comm to implement a socket connection.
@@ -49,9 +52,9 @@ public class SocketComm extends Comm {
    * Waits for a Client's command and handles it.
    */
   private void waitMsg() {
-    //TODO CHANGE THIS WHILE LOOP
     String s;
-    while(!this.clientCrashed.get()){
+    boolean keepGoing = true;
+    while(!this.clientCrashed.get() && keepGoing){
       try{
         synchronized(this.in) {
           s = in.nextLine();
@@ -68,7 +71,9 @@ public class SocketComm extends Comm {
           default -> super.setChosen(s);
         }
       }catch(NoSuchElementException e){
-        //TODO LOG FILE
+        new ProjectLogger(getClass().getSimpleName()).
+                log("logs/commLog.txt",Level.INFO,"Socket either closed or unable to retrieve data",e);
+        keepGoing = false;
       }
     }
   }
@@ -92,6 +97,7 @@ public class SocketComm extends Comm {
     synchronized(this.ackFlag){
       if(!this.ackFlag.get()){
         this.clientCrashed.set(true);
+        stopPing();
         close();
         this.handler.handleCrash(this);
         return;
@@ -104,7 +110,6 @@ public class SocketComm extends Comm {
   /**
    * Sends a PING message and handles the acknowledgment.
    * If the acknowledgment flag is not set, the client is considered crashed.
-   * @throws IOException if there's an issue with sending the message.
    */
   @Override
   public void close(){
@@ -113,8 +118,8 @@ public class SocketComm extends Comm {
       this.out.close();
       this.socket.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      System.out.println("Can't close the connection");
+      new ProjectLogger(getClass().getSimpleName()).
+              log("logs/commLog.txt",Level.WARNING,"Can't open popup",e);
     }
   }
 }

@@ -71,9 +71,9 @@ public class CommonGroundTest {
         catch (InvalidDrawException e){
             try{ground.draw(3);}
             catch (InvalidDrawException d){return;}
-            catch (InvalidSelectionException d){}
+            catch (InvalidSelectionException ignored){}
         }
-        catch (InvalidSelectionException d){}
+        catch (InvalidSelectionException ignored){}
         fail();
     }
     /**

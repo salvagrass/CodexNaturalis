@@ -171,7 +171,8 @@ public class Player {
             hand[1] = ground.draw(0);
             hand[2] = ground.draw(3);
             return new DrawableCard[] {hand[0], hand[1], hand[2]};
-        } catch (Exception e) {
+        } catch (Exception ignored) {
+            //CANT HAPPEN
             return null;
         }
     }

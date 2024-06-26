@@ -7,11 +7,13 @@ import it.polimi.ingsw.model.item.card.StartingCard;
 import it.polimi.ingsw.model.item.objective.Objective;
 import it.polimi.ingsw.util.PawnColor;
 import it.polimi.ingsw.util.Phase;
+import it.polimi.ingsw.util.ProjectLogger;
 import it.polimi.ingsw.view.coreview.CardView;
 import it.polimi.ingsw.view.coreview.ObjectiveView;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 /**
  * A class that handles the setup of a game.
@@ -68,7 +70,6 @@ class SetUpLogic {
             if(this.turnOrder.isEmpty()){
                 this.turnOrder.addAll(this.record.keySet());
                 List<String> names = new ArrayList<>(turnOrder.size());
-                //TODO REVISE
                 for(Comm iterComm:turnOrder){
                     String name = nameToComm.keySet().stream().filter(x-> nameToComm.get(x) == iterComm).findAny().orElse(null);
                     names.add(name);
@@ -220,7 +221,10 @@ class SetUpLogic {
 
                     this.wait();
                 } catch (InterruptedException e) {
-                    //TODO log fileSystem.out.println()
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
+                    //TODO INFORM THE PLAYERS?
+                    throw new RuntimeException(e);
                 }
                 set = new HashSet<>(this.record.values());
             }

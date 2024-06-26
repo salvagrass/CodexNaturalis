@@ -6,6 +6,7 @@ import it.polimi.ingsw.controller.connection.Comm;
 import it.polimi.ingsw.model.gameplane.Player;
 import it.polimi.ingsw.model.item.card.Card;
 import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.util.ProjectLogger;
 import it.polimi.ingsw.util.json.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.util.json.CardSerializeLogic;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class LoadLogic implements CrashHandler {
@@ -88,6 +90,8 @@ public class LoadLogic implements CrashHandler {
                 try {
                     this.names.wait();
                 } catch (InterruptedException e) {
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
                     // TODO I COULD SEND YOU BACK TO THE MENU
                     throw new RuntimeException(e);
                 }

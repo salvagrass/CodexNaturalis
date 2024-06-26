@@ -34,8 +34,8 @@ public class RMIComm extends Comm implements RemoteComm {
         if(client!=null) {
             try {
                 this.client.handleMsgRemote(msg);
-            } catch (RemoteException e) {
-                System.out.println("Client crashed");
+            } catch (RemoteException ignored) {
+                //THE REMOTE EXCEPTION IS ALREADY HANDLED IN PING
             }
         }
     }
@@ -50,6 +50,7 @@ public class RMIComm extends Comm implements RemoteComm {
         try {
             this.client.handleMsgRemote("PING");
         } catch (RemoteException e) {
+            stopPing();
             close();
             this.handler.handleCrash(this);
             this.clientCrashed.set(true);

@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.userclient;
 
 import it.polimi.ingsw.controller.serverfunction.MsgCreator;
 import it.polimi.ingsw.util.Phase;
+import it.polimi.ingsw.util.ProjectLogger;
 import it.polimi.ingsw.view.UserView;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 public class ClientSocket extends Client{
   private Socket socket;
@@ -53,8 +55,9 @@ public class ClientSocket extends Client{
       this.in = new Scanner(socket.getInputStream());
       this.out = new PrintWriter(socket.getOutputStream());
     } catch (IOException e) {
-      //TODO log file
-      throw new RuntimeException();
+      new ProjectLogger(getClass().getSimpleName()).
+              log("logs/clientLog.txt",Level.SEVERE,"Can't connect to the server",e);
+      throw new RuntimeException(e);
     }
     scheduled.scheduleAtFixedRate(this::waitForPing,0,15, TimeUnit.SECONDS);
     new Thread(this::listener).start();
@@ -98,7 +101,8 @@ public class ClientSocket extends Client{
       try{
         handleMsg(this.in.nextLine());
       }catch(IllegalStateException | NoSuchElementException e){
-        //TODO LOG FILE
+        new ProjectLogger(getClass().getSimpleName()).
+                log("logs/clientLog.txt",Level.INFO,"Closed connection",e);
       }
     }
   }
@@ -164,7 +168,8 @@ public class ClientSocket extends Client{
       out.close();
       socket.close();
     }catch(IOException e){
-      //TODO LOG FILE CANT CLOSE THE SOCKET
+      new ProjectLogger(getClass().getSimpleName()).
+              log("logs/clientLog.txt",Level.WARNING,"Can't close the socket",e);
     }
   }
 }

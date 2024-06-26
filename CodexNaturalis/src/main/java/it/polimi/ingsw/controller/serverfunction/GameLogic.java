@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.item.card.DrawableCard;
 import it.polimi.ingsw.model.item.card.GoldCard;
 import it.polimi.ingsw.model.item.card.ResourceCard;
 import it.polimi.ingsw.model.item.objective.Objective;
+import it.polimi.ingsw.util.ProjectLogger;
 import it.polimi.ingsw.util.json.ObjectiveSerializeLogic;
 import it.polimi.ingsw.util.Phase;
 import it.polimi.ingsw.util.Symbol;
@@ -26,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 public class GameLogic implements CrashHandler {
     private final String id;
     private boolean cardPlaced, cardDrawn;
-    private CommonGround ground;
+    private final CommonGround ground;
     private Comm currPlayer;
     private SetUpLogic setUp;
     private boolean endGame = false;
@@ -60,8 +62,10 @@ public class GameLogic implements CrashHandler {
         try{
             ground = new CommonGround();
         } catch (IOException e) {
-            //TODO log file
-            System.out.println("file corrupted");
+            new ProjectLogger(getClass().getSimpleName()).
+                    log("logs/serverLog.txt",Level.WARNING,"Can't load selected game",e);
+            //TODO MAYBE INFORM THE PLAYERS
+            throw new RuntimeException(e);
         }
     }
 
@@ -108,7 +112,6 @@ public class GameLogic implements CrashHandler {
      * @param comm The connection to the specific client.
      */
     public void addPlayer(Comm comm) {
-        comm.startPing();
         Player player = this.setUp.addPlayer(comm, ground);
         this.players.put(comm, player);
         this.setUp.setReady(comm);
@@ -160,7 +163,10 @@ public class GameLogic implements CrashHandler {
             try {
                 Comm.sendBroadcast(MsgCreator.loadBoardMsg(this.id,this.turnOrder.indexOf(comm)),this.turnOrder);
             } catch (IOException e) {
-                //TODO HANDLE THIS
+                new ProjectLogger(getClass().getSimpleName()).
+                        log("logs/serverLog.txt",Level.WARNING,"Can't load selected game",e);
+                //TODO MAYBE INFORM THE PLAYERS
+                throw new RuntimeException(e);
             }
         }
         gameFlow();
@@ -251,8 +257,8 @@ public class GameLogic implements CrashHandler {
             try {
                 this.endGame = this.endGame || players.get(this.turnOrder.get(i)).getPoints() >= winPoints ||
                     (ground.isEmpty(0) && ground.isEmpty(1));
-            } catch (InvalidSelectionException e) {
-                System.out.println("can't occur");
+            } catch (InvalidSelectionException ignored) {
+                //this exception can't occur
             }
         }
         this.currPlayer = this.turnOrder.getFirst();
@@ -274,7 +280,10 @@ public class GameLogic implements CrashHandler {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e); //TODO: HANDLE EXCEPTION
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
+                    //TODO INFORM THE PLAYERS?
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -283,7 +292,10 @@ public class GameLogic implements CrashHandler {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e); //TODO: HANDLE EXCEPTION
+                    new ProjectLogger(getClass().getSimpleName()).
+                            log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
+                    //TODO INFORM THE PLAYERS?
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -311,7 +323,6 @@ public class GameLogic implements CrashHandler {
      */
     public void placeCard(Comm comm, String msg) {
         String[] s = msg.split(";");
-        //TODO REVISE THIS
         int idx = Integer.parseInt(s[1]);
         int x = Integer.parseInt(s[2]);
         int y = Integer.parseInt(s[3]);
@@ -462,6 +473,8 @@ public class GameLogic implements CrashHandler {
             this.server.submitClient(iter);
         }
     }
+
+
 
     /**
      * Sets up the game logic by sending broadcast messages to update the ground view.

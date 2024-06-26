@@ -123,7 +123,6 @@ public class GameController extends Controller{
                 for(Node node : this.leaderboard.getChildren()){
                     if(((Label)node).getText().matches(change.getKey() + ": \\d*")){
                         ((Label)node).setText(change.getKey() + ": " + change.getValueAdded());
-                        node.setStyle("-fx-text-fill: black; -fx-font-family: 'BlackChancery';");
                     }
                 }
             }
@@ -235,6 +234,7 @@ public class GameController extends Controller{
         this.dragStart = true;
         this.colors = colors;
         this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name));
+        this.leaderboard.lookup("#label"+this.currPlayer).setStyle("-fx-text-fill: " + this.colors.get(this.currPlayer).color + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, grey, 8, 0.4, 0, 0)");
         this.currIdx.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == (int)newVal) && this.currPlayer.equals(name)));
         currPlayer.addListener((observable, oldVal, newVal) -> {
             this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && newVal.equals(name));
@@ -277,6 +277,7 @@ public class GameController extends Controller{
             label.setId("label" + s);
             label.setFont(new Font(25));
             label.setTextAlignment(TextAlignment.RIGHT);
+            label.setStyle("-fx-text-fill: black; -fx-font-family: 'BlackChancery';");
             label.setOnMouseClicked(e -> switchBoard(turnOrder.indexOf(s)));
             this.leaderboard.getChildren().add(label);
 
