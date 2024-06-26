@@ -30,6 +30,13 @@ public class ChatLogic {
     private final Label notification;
     private String name;
 
+    /**
+     * Creates a new ChatLogic instance.
+     *
+     * @param game The GameController instance.
+     * @param chats The ObservableList of messages.
+     * @param turnOrder The ObservableList of turn order.
+     */
     public ChatLogic(GameController game, ObservableList<Message> chats, ObservableList<String> turnOrder){
         this.game = game;
         this.users = new ComboBox<>();
@@ -57,6 +64,11 @@ public class ChatLogic {
         this.notification = new Label();
     }
 
+    /**
+     * Creates a chat interface within a StackPane.
+     *
+     * @param stack The StackPane to add the chat interface to.
+     */
     public void createChat(StackPane stack){
         VBox messages = new VBox();
         this.chats.addListener((ListChangeListener<Message>) change -> Platform.runLater(() -> updMsgs(change, messages)));
@@ -118,6 +130,11 @@ public class ChatLogic {
         });
     }
 
+    /**
+     * Adjusts the height of a TextArea based on its content.
+     *
+     * @param textArea The TextArea to adjust.
+     */
     private void adjustTextAreaHeight(TextArea textArea) {
         Text text = new Text(textArea.getText());
         text.setFont(textArea.getFont());
@@ -127,6 +144,12 @@ public class ChatLogic {
         textArea.setPrefHeight(Math.max(newHeight, 24));
     }
 
+    /**
+     * Updates the messages in the chat interface based on changes detected by the ListChangeListener.
+     *
+     * @param change   The change event containing added messages.
+     * @param messages The VBox container for displaying messages.
+     */
     private void updMsgs(ListChangeListener.Change<? extends Message> change, VBox messages) {
         while(change.next()){
             if (change.wasAdded()) {
@@ -139,6 +162,12 @@ public class ChatLogic {
         }
     }
 
+    /**
+     * Adds a message to the chat interface and displays it in the VBox container.
+     *
+     * @param messages The VBox container for displaying messages.
+     * @param m        The Message object to add.
+     */
     private void addMsg(VBox messages, Message m){
         String msg = m.sender() + ": " + m.msg();
         Label label = new Label(msg);
@@ -147,6 +176,12 @@ public class ChatLogic {
         showVolatileMessage(this.notification, msg);
     }
 
+    /**
+     * Sends a chat message in the chat interface.
+     *
+     * @param chat  The TextArea containing the chat message.
+     * @param value The value associated with the chat message.
+     */
     private void sendChatMsg(TextArea chat, String value) {
         String text = chat.getText();
         if(text.isEmpty()){
@@ -156,6 +191,12 @@ public class ChatLogic {
         chat.clear();
     }
 
+    /**
+     * Changes the chat display based on the selected user.
+     *
+     * @param messages The VBox container for displaying messages.
+     * @param user     The user whose chat messages to display (or "All" for all users).
+     */
     private void changeChat(VBox messages, String user){
         List<Message> msgs;
         if(user.equals("All")){
@@ -171,6 +212,12 @@ public class ChatLogic {
         }
     }
 
+    /**
+     * Displays a volatile message on the given label for a specified duration.
+     *
+     * @param messageLabel The label where the message will be displayed.
+     * @param msg          The message to display.
+     */
     public void showVolatileMessage(Label messageLabel, String msg) {
         messageLabel.setText(msg);
         Timeline timeline = new Timeline(new KeyFrame(
@@ -181,6 +228,11 @@ public class ChatLogic {
         timeline.play();
     }
 
+    /**
+     * Sets the name of an object and removes it from the 'users' collection.
+     *
+     * @param name The new name to assign.
+     */
     public void setName(String name){
         this.name = name;
         this.users.getItems().remove(name);

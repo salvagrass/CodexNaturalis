@@ -7,6 +7,15 @@ import java.lang.reflect.Type;
 
 public class CardSerializeLogic implements JsonDeserializer<Card>,JsonSerializer<Card>{
 
+    /**
+     * Deserialize a JSON representation of a card into a Card object.
+     *
+     * @param jsonElement The JSON data to deserialize.
+     * @param type The type of the target object (e.g., StartingCard, ResourceCard).
+     * @param jsonDeserializationContext The context for deserialization.
+     * @return A Card object representing the deserialized data.
+     * @throws JsonParseException If the type is not defined.
+     */
     @Override
     public Card deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject object = jsonElement.getAsJsonObject();
@@ -22,6 +31,14 @@ public class CardSerializeLogic implements JsonDeserializer<Card>,JsonSerializer
         return (new Gson()).fromJson(jsonElement,rtr);
     }
 
+    /**
+     * Serialize a Card object into its JSON representation.
+     *
+     * @param card The Card object to serialize.
+     * @param type The type of the target object (e.g., StartingCard, ResourceCard).
+     * @param jsonSerializationContext The context for serialization.
+     * @return A JsonElement representing the serialized data.
+     */
     @Override
     public JsonElement serialize(Card card, Type type, JsonSerializationContext jsonSerializationContext) {
         Gson gson = new Gson();

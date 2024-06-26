@@ -28,6 +28,15 @@ public class BoardLogic {
     private int xStart, yStart;
     private boolean mainBoard;
 
+    /**
+     * Initializes a new instance of the `BoardLogic` class.
+     *
+     * @param rows The number of rows in the grid.
+     * @param cols The number of columns in the grid.
+     * @param num The number of items in the inventory.
+     * @param boxes A list of `VBox` objects representing game boxes.
+     * @param gameController The `GameController` instance.
+     */
     public BoardLogic(int rows, int cols, int num, List<VBox> boxes, GameController gameController){
         this.gridPane = createGrid(rows, cols);
         this.gridPane.setUserData(true);
@@ -44,6 +53,13 @@ public class BoardLogic {
         this.gc = gameController;
     }
 
+    /**
+     * Creates a new `GridPane` with the specified number of rows and columns.
+     *
+     * @param rows The number of rows in the grid.
+     * @param cols The number of columns in the grid.
+     * @return A new `GridPane` instance.
+     */
     private GridPane createGrid(int rows, int cols){
         GridPane gp = new GridPane();
         gp.visibleProperty().addListener((observable, oldVal, newVal) -> gp.setMouseTransparent(!newVal));
@@ -59,6 +75,12 @@ public class BoardLogic {
         return gp;
     }
 
+    /**
+     * Creates a new `VBox` representing the inventory.
+     *
+     * @param idx The index of the inventory.
+     * @return A new `VBox` instance representing the inventory.
+     */
     private VBox createInventory(int idx){
         HBox[] hBoxes = new HBox[7];
         List<Symbol> s = Arrays.stream(Symbol.values()).filter(x -> x != Symbol.EMPTY && x != Symbol.NOTAVAILABLE).toList();
@@ -83,16 +105,38 @@ public class BoardLogic {
         return v;
     }
 
+    /**
+     * Adds a card to the grid at the specified position.
+     *
+     * @param card The `CardView` to add.
+     * @param x The x-coordinate of the position.
+     * @param y The y-coordinate of the position.
+     */
     public void addCard(CardView card, int x, int y){
         int j = this.yStart + y;
         int i = this.xStart + x;
         addImage(i, j, new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + card.getId() + ".png"))));
     }
 
+    /**
+     * Places an image at the specified position.
+     *
+     * @param i The row index.
+     * @param j The column index.
+     * @param card The image to be placed.
+     */
     public void placeCard(int i, int j, Image card){
         this.lastPlaced = addImage(i, j, card);
     }
 
+    /**
+     * Adds an image to the specified position in the grid.
+     *
+     * @param i The row index.
+     * @param j The column index.
+     * @param card The image to be added.
+     * @return The VBox containing the added image.
+     */
     private VBox addImage(int i, int j, Image card){
         VBox v = new VBox();
         v.setAlignment(Pos.CENTER);
@@ -117,6 +161,12 @@ public class BoardLogic {
         return v;
     }
 
+    /**
+     * Expands the grid layout by adding rows or columns if necessary.
+     *
+     * @param i The row index.
+     * @param j The column index.
+     */
     private void expand(int i, int j){
         if(i == 1){
             addRowAbove();
@@ -130,6 +180,10 @@ public class BoardLogic {
         }
     }
 
+    /**
+     * Adds a row above the current grid layout.
+     * If the grid is the main board, it also scrolls horizontally and adds VBox elements.
+     */
     private void addRowAbove(){
         boolean startVbox = (Boolean) this.gridPane.getUserData();
         List<RowConstraints> constraints = this.gridPane.getRowConstraints();
@@ -151,6 +205,10 @@ public class BoardLogic {
         this.xStart++;
     }
 
+    /**
+     * Adds a row below the current grid layout.
+     * If the grid is the main board, it also adds VBox elements to the new row.
+     */
     private void addRowBelow(){
         boolean startVbox = (Boolean) this.gridPane.getUserData();
         int start,end;
@@ -172,6 +230,10 @@ public class BoardLogic {
         }
     }
 
+    /**
+     * Adds a column on the left of the current grid layout.
+     * If the grid is the main board, it also adds VBox elements to the new column.
+     */
     private void addColumnLeft(){
         boolean startVbox = (Boolean) this.gridPane.getUserData();
         List<ColumnConstraints> constraints = this.gridPane.getColumnConstraints();
@@ -193,7 +255,10 @@ public class BoardLogic {
         this.yStart++;
     }
 
-
+    /**
+     * Adds a column on the right of the current grid layout.
+     * If the grid is the main board, it also adds VBox elements to the new column.
+     */
     private void addColumnRight(){
         boolean startVbox = (Boolean) this.gridPane.getUserData();
         int start,end;
@@ -215,6 +280,12 @@ public class BoardLogic {
         }
     }
 
+    /**
+     * Adds a VBox to the gridPane at the specified row and column.
+     *
+     * @param i The row index.
+     * @param j The column index.
+     */
     private void addVbox(int i, int j){
         VBox v = new VBox();
         this.boxes.add(v);
@@ -223,6 +294,10 @@ public class BoardLogic {
         this.gridPane.add(v, j, i);
     }
 
+    /**
+     * Adds VBox (vertical boxes) to the gridPane for the entire board.
+     * The boxes are added in a checkerboard pattern.
+     */
     private void addBoardVBoxes(){
         int rows = this.gridPane.getRowCount();
         int cols = this.gridPane.getColumnCount();
@@ -233,6 +308,12 @@ public class BoardLogic {
         }
     }
 
+    /**
+     * Updates the inventory display for a specific turn index.
+     *
+     * @param turnIdx The index of the turn.
+     * @param inventory A map containing symbols and their corresponding counts.
+     */
     public void updInventory(int turnIdx, Map<Symbol, Integer> inventory) {
         for(Symbol s : inventory.keySet()){
             HBox h = (HBox) this.inventory.lookup("#" + turnIdx + s.name());
@@ -246,10 +327,19 @@ public class BoardLogic {
         }
     }
 
+    /**
+     * Sets the last placed VBox (vertical box) to the specified value.
+     *
+     * @param newVal The new VBox to set as the last placed.
+     */
     public void setLastPlaced(VBox newVal){
         this.lastPlaced = newVal;
     }
 
+    /**
+     * Clears the contents of the last placed VBox and adds it back to the list of boxes.
+     * If the last placed VBox is null, no action is taken.
+     */
     public void clearLastPlaced() {
         if(this.lastPlaced != null){
             VBox v = this.lastPlaced;
@@ -258,22 +348,47 @@ public class BoardLogic {
         }
     }
 
+    /**
+     * Gets the GridPane associated with this object.
+     *
+     * @return The GridPane instance.
+     */
     public GridPane getGridPane(){
         return this.gridPane;
     }
 
+    /**
+     * Get the inventory.
+     *
+     * @return The VBox instance.
+     */
     public VBox getInventory(){
         return this.inventory;
     }
 
+    /**
+     * Gets the starting X-coordinate associated with this object.
+     *
+     * @return The starting X-coordinate.
+     */
     public int getXStart(){
         return this.xStart;
     }
 
+    /**
+     * Gets the y-coordinate start value.
+     *
+     * @return The y-coordinate start value.
+     */
     public int getYStart() {
         return yStart;
     }
 
+    /**
+     * Sets the main board flag.
+     *
+     * @param mainBoard The value to set for the main board flag.
+     */
     public void setMainBoard(boolean mainBoard){
         this.mainBoard = mainBoard;
         if(mainBoard){
@@ -281,6 +396,11 @@ public class BoardLogic {
         }
     }
 
+    /**
+     * Sets the visibility of the grid pane and inventory.
+     *
+     * @param b The visibility flag (true to show, false to hide).
+     */
     public void setVisible(boolean b) {
         this.gridPane.setVisible(b);
         this.inventory.setVisible(b);

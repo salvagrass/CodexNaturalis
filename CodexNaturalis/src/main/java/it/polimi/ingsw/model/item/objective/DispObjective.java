@@ -34,6 +34,11 @@ public class DispObjective extends Objective {
         return getPoints() * disposition.checkDisposition(board);
     }
 
+    /**
+     * Gets the disposition.
+     *
+     * @return The disposition.
+     */
     public Disposition getDisposition(){
         return this.disposition;
     }

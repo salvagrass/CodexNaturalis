@@ -35,6 +35,14 @@ public class DispositionSerializeLogic implements JsonDeserializer<Disposition>,
         return (new Gson()).fromJson(jsonElement,rtr);
     }
 
+    /**
+     * Serialize a Disposition object into its JSON representation.
+     *
+     * @param src The Disposition object to serialize.
+     * @param typeOfSrc The type of the target object (e.g., PositiveDisposition, NegativeDisposition).
+     * @param context The context for serialization.
+     * @return A JsonElement representing the serialized data.
+     */
     @Override
     public JsonElement serialize(Disposition src, Type typeOfSrc, JsonSerializationContext context) {
         Gson gson = new Gson();

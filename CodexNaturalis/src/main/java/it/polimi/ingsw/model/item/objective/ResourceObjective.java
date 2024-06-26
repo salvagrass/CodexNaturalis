@@ -43,6 +43,12 @@ public class ResourceObjective extends Objective {
         return min * getPoints();
     }
 
+    /**
+     * Gets the resources.
+     *
+     * @return A map containing the resources.
+     */
+
     public Map<Symbol, Integer> getResources() {
         return new HashMap<>(this.resources);
     }

@@ -86,14 +86,29 @@ public class LType implements Disposition {
         return countDisp;
     }
 
+    /**
+     * Gets the main color.
+     *
+     * @return The main color.
+     */
     public Symbol getMainColor() {
         return this.mainColor;
     }
 
+    /**
+     * Gets the secondary color.
+     *
+     * @return The main color.
+     */
     public Symbol getSecondaryColor() {
         return this.secondaryColor;
     }
 
+    /**
+     * Gets the first card position.
+     *
+     * @return The first card position.
+     */
     public int getFirsCardPos() {
         return this.firstCardPos;
     }

@@ -26,6 +26,10 @@ public class ColorController extends Controller {
     private Label error;
     @FXML
     private AnchorPane pane;
+
+    /**
+     * Initializes the component.
+     */
     public void initialize(){
         this.color.selectedToggleProperty().addListener((observable,oldVal,newVal) -> {
             this.submit.setDisable(newVal == null);
@@ -41,6 +45,13 @@ public class ColorController extends Controller {
         this.yellow.disableProperty().addListener((observable, oldValue, newValue) -> bindColors(this.yellow, this.yellowBackPawn, newValue));
     }
 
+    /**
+     * Binds colors to UI elements.
+     *
+     * @param button The toggle button for color selection.
+     * @param img The toggle button for image selection.
+     * @param newValue The new value for button state.
+     */
     private void bindColors(ToggleButton button, ToggleButton img, boolean newValue){
         this.submit.setDisable(button.equals(this.color.getSelectedToggle()) && newValue);
         img.setDisable(newValue);

@@ -16,19 +16,41 @@ public class DragLogic {
     private double mouseX, mouseY;
     private boolean draggable;
 
+    /**
+     * Constructs a new DragLogic instance.
+     *
+     * @param scrollPane The ScrollPane to which draggable boxes are attached.
+     */
+
     public DragLogic(ScrollPane scrollPane) {
         this.boxes = new ArrayList<>();
         this.scrollPane = scrollPane;
     }
 
+    /**
+     * Retrieves the list of VBox instances representing draggable boxes.
+     *
+     * @return The list of VBox instances.
+     */
     public List<VBox> getBoxes(){
         return this.boxes;
     }
 
+    /**
+     * Sets the draggable property for this instance.
+     *
+     * @param value The boolean value to set (true for draggable, false otherwise).
+     */
     public void setDraggable(boolean value){
         this.draggable = value;
     }
 
+    /**
+     * Makes the specified ImageView draggable within the given constraints.
+     *
+     * @param view The ImageView to make draggable.
+     * @param addImage A BiConsumer that accepts an ImageView and a VBox to associate the image with a box.
+     */
     public void makeDraggable(ImageView view, BiConsumer<ImageView, VBox> addImage) {
         view.setOnMousePressed(event -> {
             if(this.draggable){

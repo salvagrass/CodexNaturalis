@@ -15,6 +15,16 @@ public class SaveData {
     private final List<Player> turnOrder;
     private final String currPlayer;
 
+    /**
+     * Saves data.
+     *
+     * @param id The ID of the data.
+     * @param ground The common ground.
+     * @param endGame Whether it's the end of the game.
+     * @param players A map of communication channels to players.
+     * @param turnOrder The order of turns.
+     * @param currPlayer The current player.
+     */
     public SaveData(String id, CommonGround ground, boolean endGame, Map<Comm,Player> players, List<Comm> turnOrder, Comm currPlayer) {
         this.id = id;
         this.ground = ground;
@@ -26,22 +36,47 @@ public class SaveData {
         this.currPlayer = players.get(currPlayer).getNickname();
     }
 
+    /**
+     * Gets the ID of the data.
+     *
+     * @return The ID.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets the common ground.
+     *
+     * @return The common ground.
+     */
     public CommonGround getGround() {
         return ground;
     }
 
+    /**
+     * Checks whether it's the end of the game.
+     *
+     * @return `true` if it's the end of the game, otherwise `false`.
+     */
     public boolean isEndGame() {
         return endGame;
     }
 
+    /**
+     * Gets the turn order of players.
+     *
+     * @return A list of players representing the turn order.
+     */
     public List<Player> getTurnOrder() {
         return turnOrder;
     }
 
+    /**
+     * Returns the current player.
+     *
+     * @return The current player's name.
+     */
     public String getCurrPlayer() {
         return currPlayer;
     }
