@@ -1,0 +1,14 @@
+it.polimi.ingsw
+it.polimi.ingsw.controller.connection
+it.polimi.ingsw.controller.serverfunction
+it.polimi.ingsw.controller.userclient
+it.polimi.ingsw.model.gameplane
+it.polimi.ingsw.model.item.card
+it.polimi.ingsw.model.item.objective
+it.polimi.ingsw.util
+it.polimi.ingsw.util.exception
+it.polimi.ingsw.util.json
+it.polimi.ingsw.view
+it.polimi.ingsw.view.controller
+it.polimi.ingsw.view.controller.sceneutil
+it.polimi.ingsw.view.coreview
