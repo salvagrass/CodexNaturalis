@@ -53,9 +53,9 @@ public class GoldCardSymbol extends GoldCard {
     }
 
     /**
-     * Returns the symbol associated with the card.
+     * Returns the symbol used to compute the points.
      *
-     * @return The card symbol.
+     * @return Returns the symbol used to compute the points.
      */
     public Symbol getSym() {
         return this.sym;

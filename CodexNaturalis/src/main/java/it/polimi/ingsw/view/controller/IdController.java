@@ -5,6 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+/**
+ * Controller for the Id scene.
+ */
 public class IdController extends Controller{
     @FXML
     private Button submit;
@@ -15,6 +18,8 @@ public class IdController extends Controller{
 
     /**
      * Initializes the controller by setting up event listeners and handling user input.
+     * If the getId TextField contains an invalid Id it disables the submit button.<br/>
+     * Valid id: 6 alphanumeric characters.
      */
     public void initialize(){
         this.getId.textProperty().addListener((observable, oldVal, newVal) -> {
@@ -30,14 +35,14 @@ public class IdController extends Controller{
     }
 
     /**
-     * Scans the user text input.
+     * Submits the user text input.
      */
     public void submit() {
         this.gui.scanInput(this.getId.getText());
     }
 
     /**
-     * Scans the exit input and clears any relevant data.
+     * Submits the desire to return to the menu.
      */
     public void exit() {
         this.gui.scanInput("exit");

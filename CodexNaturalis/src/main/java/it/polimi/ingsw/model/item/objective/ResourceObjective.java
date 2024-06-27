@@ -44,11 +44,10 @@ public class ResourceObjective extends Objective {
     }
 
     /**
-     * Gets the resources.
+     * Gets the resources used by the objective to compute points.
      *
-     * @return A map containing the resources.
+     * @return A map containing the resources used by the objective to compute points.
      */
-
     public Map<Symbol, Integer> getResources() {
         return new HashMap<>(this.resources);
     }

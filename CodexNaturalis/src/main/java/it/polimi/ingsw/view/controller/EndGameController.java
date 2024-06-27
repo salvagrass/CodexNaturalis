@@ -9,6 +9,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller for the EndGame scene.
+ */
 public class EndGameController extends Controller{
     @FXML
     private Label message;
@@ -40,7 +43,7 @@ public class EndGameController extends Controller{
     }
 
     /**
-     * Changes the game phase.
+     * Allows the GUI to change phase in order to change scene.
      */
     public void changePhase(){
         this.gui.changePhase();

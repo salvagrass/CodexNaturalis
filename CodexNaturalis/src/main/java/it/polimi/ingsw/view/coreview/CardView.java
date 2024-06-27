@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A class representing a view of the card
- * ---------------------
- * | GOLD          3 P |
- * |-------------------|
- * | F       R       W |
- * |         R         |
- * | M       R       B |
- * |-------------------|
- * |       W W F       |
- * ---------------------
+ * A class representing a view of the card<br/>
+ * ---------------------<br/>
+ * | GOLD 3 P |<br/>
+ * |-------------------|<br/>
+ * | F       R       W |<br/>
+ * |         R         |<br/>
+ * | M       R       B |<br/>
+ * |-------------------|<br/>
+ * |       W W F       |<br/>
+ * ---------------------<br/>
  */
 public class CardView implements ItemView{
 
@@ -264,6 +264,10 @@ public class CardView implements ItemView{
         return showAsciiArt(temp);
     }
 
+    /**
+     * Retrieves the face id of the card view.
+     * @return The id of the face of the card view.
+     */
     @Override
     public String getId() {
         return this.face ? this.frontId : this.backId;

@@ -60,7 +60,7 @@ public class DiagonalType implements Disposition {
     }
 
     /**
-     * Returns the color associated with the object.
+     * Returns the color of the diagonal disposition.
      *
      * @return The object's color.
      */

@@ -15,7 +15,10 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class JavaFxTest extends Application {
+/**
+ * GUI main.
+ */
+public class GUIMain extends Application {
     public GUI gui;
     public static void main(String[] args){
         ProjectLogger pj = new ProjectLogger("Main");

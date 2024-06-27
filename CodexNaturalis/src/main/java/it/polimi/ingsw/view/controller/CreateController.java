@@ -6,6 +6,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 
+/**
+ * Controller for the Create scene.
+ */
 public class CreateController extends Controller {
     @FXML
     Button submit;
@@ -18,7 +21,8 @@ public class CreateController extends Controller {
 
     /**
      * Initializes the component.
-     * When the user enters a valid ID, the submit button is enabled.
+     * When the user enters a valid ID the submit button is enabled.<br/>
+     * Valid ID: 6 alphanumerics characters.
      */
     public void initialize(){
         this.getId.textProperty().addListener((observable,oldVal,newVal)->{
@@ -34,7 +38,7 @@ public class CreateController extends Controller {
     }
 
     /**
-     * Exits the component.
+     * Submits the desire to return to the menu.
      */
     public void exit(){
         this.gui.scanInput("exit");
@@ -58,7 +62,7 @@ public class CreateController extends Controller {
     }
 
     /**
-     * Confirms an action based on the provided parameters.
+     * Confirms the creation of the game based on the provided parameters.
      * Displays an error message if the confirmation value is false.
      *
      * @param confirmValue The confirmation value (true or false).

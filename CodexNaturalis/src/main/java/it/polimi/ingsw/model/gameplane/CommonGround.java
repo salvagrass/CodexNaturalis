@@ -154,7 +154,6 @@ public class CommonGround {
     /**
      * Initializes the ground resource and gold cards by drawing from the decks.
      * Sets two resource cards and two gold cards for the ground.
-     *
      */
     private void setGroundCards(){
         this.groundResCards = new ResourceCard[2];
@@ -169,7 +168,7 @@ public class CommonGround {
 
     /**
      * Checks if the correspondent deck is empty.
-     * @param sel the integer used for selecting a deck.
+     * @param sel the integer used for selecting a deck: 0 = Resources Deck; 1 = Gold Deck.
      * @return true if the deck is empty, false otherwise.
      * @throws InvalidSelectionException if sel doesn't correspond to any deck.
      */

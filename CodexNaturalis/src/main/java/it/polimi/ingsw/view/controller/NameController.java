@@ -5,6 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+/**
+ * Submit the name choice.
+ */
 public class NameController extends Controller {
     @FXML
     Button submit;
@@ -15,7 +18,8 @@ public class NameController extends Controller {
 
     /**
      * Initializes the components and event listeners,
-     * enabling or disabling the `submit` button based on the input.
+     * enabling or disabling the `submit` button based on the input.<br/>
+     * Valid input: 1 to 8 alphanumeric characters.
      */
     public void initialize(){
         this.getName.textProperty().addListener((observable,oldVal,newVal)->{
@@ -39,7 +43,7 @@ public class NameController extends Controller {
     }
 
     /**
-     * Scans the inputted text.
+     * Submits the inputted text.
      */
     public void submit() {
         this.gui.scanInput(this.getName.getText());

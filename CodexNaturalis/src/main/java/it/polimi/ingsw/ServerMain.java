@@ -8,10 +8,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 /**
- * Hello world!
- *
+ * Server main.
  */
-public class App {
+public class ServerMain {
     public static void main( String[] args ) throws Exception
     {
         ProjectLogger pj = new ProjectLogger("Main");

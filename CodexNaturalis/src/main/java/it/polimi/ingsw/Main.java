@@ -1,8 +1,10 @@
 package it.polimi.ingsw;
-import it.polimi.ingsw.JavaFxTest;
 
+/**
+ * JAR main support.
+ */
 public class Main {
     public static void main(String[] args){
-        JavaFxTest.main(args);
+        GUIMain.main(args);
     }
 }

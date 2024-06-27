@@ -22,7 +22,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class CLI extends UserView{
+/**
+ * Class that handles TUI.
+ */
+public class TUI extends UserView{
     private final Scanner in;
     private String command;
     private final PriorityQueue<Phase> phaseQueue;
@@ -33,10 +36,9 @@ public class CLI extends UserView{
 
 
     /**
-     * Creates a new CLI instance.
-     * Initializes the phase queue, colors, players in the lobby, input scanner, turn order, leaderboard, and chat list.
+     * Creates a new TUI instance.
      */
-    public CLI() {
+    public TUI() {
         super();
         this.phaseQueue = new PriorityQueue<>((firstPhase, secondPhase) -> {
             if(firstPhase == Phase.SERVERCRASHED){
@@ -119,7 +121,6 @@ public class CLI extends UserView{
      *
      * @param capacity the new capacity value.
      */
-
     @Override
     public void setCapacity(int capacity) {
         this.capacity = capacity;
@@ -213,7 +214,7 @@ public class CLI extends UserView{
     }
 
     /**
-     * Waits for a change in the phase and updates the current phase accordingly.
+     * Waits for a change phase and updates the current phase accordingly.
      */
     private void waitChangePhase(){
         synchronized (this.phaseQueue) {
@@ -277,7 +278,7 @@ public class CLI extends UserView{
     }
 
     /**
-     * Displays the menu options for creating, joining, or loading a game,
+     * Displays the menu options for creating, joining, loading a game or exit the menu,
      * and waits for the relative input from the user.
      */
     private void showMenu(){
@@ -294,7 +295,8 @@ public class CLI extends UserView{
 
     /**
      * Prompts the user to create a room inserting ID and capacity.
-     * If the input does not match the required format, the user is prompted to retry.
+     * If the input does not match the required format, the user is prompted to retry.<br/>
+     * Valid input: "6 alphanumeric characters" and a digit between 2 and 4.
      */
     private void create() {
         String constraint = "ID: 6 alphanumeric characters - Capacity: 2-4 players";
@@ -311,7 +313,8 @@ public class CLI extends UserView{
 
     /**
      * Prompts the user to join a room inserting the ID
-     * If the input does not match the required format, the user is prompted to retry.
+     * If the input does not match the required format, the user is prompted to retry.<br/>
+     * Valid input: 6 alphanumeric characters.
      */
     private void join() {
         String constraint = "6 alphanumeric characters";
@@ -328,7 +331,8 @@ public class CLI extends UserView{
 
     /**
      * Prompts the user to insert the player name.
-     * If the input does not match the required format, the user is prompted to retry.
+     * If the input does not match the required format, the user is prompted to retry.<br/>
+     * Valid input: 1 to 8 alphanumeric characters.
      */
     private void chooseName(){
         String constraint = "1 to 8 alphabetical characters";
@@ -345,6 +349,7 @@ public class CLI extends UserView{
 
     /**
      * Prompts the user to choose the starting card face.
+     * Valid input: front or back.
      */
     private void chooseStartingFace() {
         System.out.println(CardView.showAsciiArt(this.starts));
@@ -397,7 +402,8 @@ public class CLI extends UserView{
 
     /**
      * Prompts the player to choose an objective card and sets it.
-     * If the input does not match the required format, the user is prompted to retry.
+     * If the input does not match the required format, the user is prompted to retry.<br/>
+     * Valid input: a digit between 1 and 2.
      */
     private void chooseObjective() {
         System.out.println(ObjectiveView.showAsciiArt(this.scrtObjs));
@@ -475,7 +481,7 @@ public class CLI extends UserView{
     }
 
     /**
-     * Handles user commands related to displaying game information and flipping cards.
+     * Handles user commands.
      *
      * @param cmd The array of command tokens.
      */
@@ -840,7 +846,6 @@ public class CLI extends UserView{
 
     /**
      * Scans input, considering the current phase.
-     * If the phase is CLIENTCRASHED, no action is taken.
      *
      * @param toScan The input string to scan.
      */

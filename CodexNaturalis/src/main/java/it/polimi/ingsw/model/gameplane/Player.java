@@ -77,7 +77,7 @@ public class Player {
     /**
      * Retrieves the color of the player's pawn.
      *
-     * @return The color of the pawn (e.g., RED, BLUE, GREEN).
+     * @return The color of the pawn.
      */
     public PawnColor getPawnColor(){
         return this.pawnColor;
@@ -145,7 +145,7 @@ public class Player {
      * Draws a card from the common ground and adds it to the player's hand.
      *
      * @param ground The common ground from which to draw the card.
-     * @param sel The index of the selected deck to draw from.
+     * @param sel The index of the selected deck to draw from: 0 = Resource Deck; 1 = Gold Deck.
      */
     public DrawableCard draw(CommonGround ground, int sel) throws InvalidSelectionException, InvalidDrawException {
         int i;
@@ -172,7 +172,7 @@ public class Player {
             hand[2] = ground.draw(3);
             return new DrawableCard[] {hand[0], hand[1], hand[2]};
         } catch (Exception ignored) {
-            //CANT HAPPEN
+            //CAN'T HAPPEN
             return null;
         }
     }

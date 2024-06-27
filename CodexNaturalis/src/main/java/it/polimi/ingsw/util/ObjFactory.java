@@ -18,7 +18,6 @@ import java.util.Objects;
 /**
  * Class that implements the factory method to create a list of objectives
  */
-
 public class ObjFactory extends ItemFactory<Objective> {
 
     /**

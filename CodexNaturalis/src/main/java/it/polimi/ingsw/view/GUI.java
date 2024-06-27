@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
+/**
+ * Class that handles GUI.
+ */
 public class GUI extends UserView{
     private final Map<GameScene, Scene> scenes;
     private final Map<Scene, Controller> sceneToController;
@@ -60,7 +63,7 @@ public class GUI extends UserView{
     }
 
     /**
-     * Fills the colors list by adding all available pawn colors from the PawnColor enum.
+     * Fills the colors list by adding all possible pawn colors from the PawnColor enum.
      */
     public void fillColors(){
         this.colors.addAll(Arrays.stream(PawnColor.values()).toList());
@@ -100,7 +103,7 @@ public class GUI extends UserView{
     }
 
     /**
-     * Sets the current phase and changes to it.
+     * Sets the current phase.
      *
      * @param phase The new phase to set.
      * @param items Optional item views associated with the phase.
@@ -118,7 +121,7 @@ public class GUI extends UserView{
      * @param confirmMsg   The confirmation message to display.
      */
     @Override
-    public void sendConfirm(boolean confirmValue,String confirmMsg){
+    public void sendConfirm(boolean confirmValue, String confirmMsg){
         synchronized (this){
             Platform.runLater(()->this.currController.confirm(confirmValue, confirmMsg));
         }
@@ -126,7 +129,7 @@ public class GUI extends UserView{
 
     /**
      * Changes the current phase.
-     * If the current phase is the ENDGAME one, sets the future phase as the one passed to it.
+     * If the current phase is the ENDGAME one, sets the future phase as the one passed to it in order to reach that phase when necessary.
      *
      * @param phase The new phase to set.
      */
@@ -140,7 +143,7 @@ public class GUI extends UserView{
     }
 
     /**
-     * Changes the current phase.
+     * Changes the current phase using the future phase attribute.
      */
     public void changePhase() {
         if(this.futurePhase != null){
@@ -322,7 +325,13 @@ public class GUI extends UserView{
     /**
      * Updates the ground view with the specified card at the given index.
      *
-     * @param idx The index representing the type of item being updated
+     * @param idx The index representing the type of item being updated:<br/>
+     *            0: resource deck<br/>
+     *            1: first resource card<br/>
+     *            2: second resource card<br/>
+     *            3: gold deck<br/>
+     *            4: first gold card<br/>
+     *            5: second gold card<br/>
      * @param card The Card being placed.
      */
     public void updGroundView(int idx,CardView card){
@@ -348,7 +357,7 @@ public class GUI extends UserView{
     }
 
     /**
-     * Updates the player's hand view with the specified card.
+     * Updates the player's hand view with the specified card in the last used idx.
      *
      * @param card The CardView to update in the hand.
      */
@@ -362,7 +371,7 @@ public class GUI extends UserView{
     /**
      * Updates the available colors of the pawns.
      *
-     * @param newColors A set of new pawn colors.
+     * @param newColors A set of available pawn colors.
      */
     @Override
     public void updColors(Set<PawnColor> newColors){
@@ -461,7 +470,7 @@ public class GUI extends UserView{
     }
 
     /**
-     * Loads the board view with the specified parameters.
+     * Loads the board view specified.
      *
      * @param idx        The index of the board.
      * @param boardView  The board view containing placed cards, card order, and inventory.
@@ -477,14 +486,14 @@ public class GUI extends UserView{
     }
 
     /**
-     * Sets an index.
+     * Sets the index of the last hand's card placed.
      */
     public void setIdx(){
         this.idx = this.tmpIdx;
     }
 
     /**
-     * Sets a certain objective.
+     * Sets the secret objective based on the scrtObjs attrib at idx position.
      *
      * @param idx Index of the objective.
      */

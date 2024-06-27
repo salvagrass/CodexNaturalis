@@ -10,24 +10,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+/**
+ * Class used to log exceptions on a log file.
+ */
 public class ProjectLogger {
     private final Logger logger;
     private static final Object lock = new Object();
 
     public ProjectLogger(String name) {
-
         this.logger = Logger.getLogger(name);
         logger.setUseParentHandlers(false);
     }
 
-    public void log(String path,Level level, String message) {
-        synchronized (lock) {
-            FileHandler fh = setFileHandler(path);
-            logger.log(level, message);
-            fh.close();
-        }
-    }
-
+    /**
+     * Record the exception event writing the message with the level importance in the path.
+     *
+     * @param path Log file's path.
+     * @param level Importance of the exception.
+     * @param message Printable comment.
+     * @param throwable The thrown exception.
+     */
     public void log(String path,Level level, String message, Throwable throwable) {
         synchronized (lock) {
             FileHandler fh = setFileHandler(path);
@@ -36,6 +38,12 @@ public class ProjectLogger {
         }
     }
 
+    /**
+     * Creates a file handler of the log file your going to write on.
+     *
+     * @param path The path of the file.
+     * @return A file handler of the log file.
+     */
     private FileHandler setFileHandler(String path) {
 
         try{
@@ -56,6 +64,11 @@ public class ProjectLogger {
         }
     }
 
+    /**
+     * Clear the log file specified.
+     *
+     * @param path Log file's path.
+     */
     public void clearFile(String path){
         try{
             Path filePath = Paths.get(path);

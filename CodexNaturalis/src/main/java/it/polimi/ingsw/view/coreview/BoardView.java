@@ -17,7 +17,7 @@ public class BoardView {
 
     /**
      * Constructor for the BoardView class.
-     * Initializes the board view and inventory.
+     * Creates a void BoardView.
      */
     public BoardView(){
         this.placedCards = new HashMap<>();
@@ -28,6 +28,14 @@ public class BoardView {
         this.yMin = 0;
     }
 
+    /**
+     * Constructor for the BoardView class.
+     * Initializes the board view and inventory.
+     *
+     * @param board Board of cards to be represented.
+     * @param inventory Map of Symbol, Integer of the User's inventory.
+     * @param cardOrder A List of card used to save the placement order.
+     */
     public BoardView(Card[][] board,Map<Symbol,Integer> inventory, List<Coord> cardOrder){
         int i,j,xDiv,yDiv;
         this.xMax = 0;
@@ -118,14 +126,26 @@ public class BoardView {
             return "Card not placed in this position\n";
     }
 
+    /**
+     * Retrieves the placed cards.
+     * @return A map of coordinates and CardViews.
+     */
     public Map<Coord, CardView> getPlacedCards(){
         return this.placedCards;
     }
 
+    /**
+     * Retrieves the inventory's view.
+     * @return A map of Symbols and integers.
+     */
     public Map<Symbol, Integer> getInventory(){
         return this.inventory;
     }
 
+    /**
+     * Retrieves the card placement order.
+     * @return A List of coord representing the placement order.
+     */
     public List<Coord> getCardOrder(){
         return this.cardOrder;
     }

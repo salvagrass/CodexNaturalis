@@ -10,6 +10,9 @@ import javafx.scene.layout.*;
 
 import java.util.Objects;
 
+/**
+ * Controller for the Rulebook scene.
+ */
 public class RulebookController extends Controller{
     @FXML
     private Pane back;
@@ -59,7 +62,6 @@ public class RulebookController extends Controller{
 
     /**
      * Advances to the next index.
-     * If the current index is less than the maximum index, increments the index by 1.
      */
     @FXML
     private void next(){
@@ -70,7 +72,6 @@ public class RulebookController extends Controller{
 
     /**
      * Regress to the previous index.
-     * If the current index is more than the minimum index, decrements the index by 1.
      */
     @FXML
     private void prev(){

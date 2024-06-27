@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the Crash scene.
+ */
 public class CrashedController extends Controller {
     private Stage stage;
     @FXML

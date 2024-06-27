@@ -111,7 +111,7 @@ public abstract class UserView {
     public abstract void playerJoined(Set<String> players);
 
     /**
-     * Sets the color of a player's pawn.
+     * Sets the color of a player's pawn in the colorsChosen attrib.
      *
      * @param player The name of the player.
      * @param color The color to assign to the player's pawn.
@@ -156,7 +156,7 @@ public abstract class UserView {
     }
 
     /**
-     * Loads an objective into the model.
+     * Loads the secret objective into the model view.
      *
      * @param objectiveView The objective view to load.
      */
@@ -239,7 +239,7 @@ public abstract class UserView {
     }
 
     /**
-     * Set the specified name.
+     * Set the user's name.
      *
      * @param name String with the name to be set.
      */

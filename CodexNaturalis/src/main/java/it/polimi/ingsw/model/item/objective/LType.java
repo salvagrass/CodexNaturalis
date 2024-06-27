@@ -105,7 +105,11 @@ public class LType implements Disposition {
     }
 
     /**
-     * Gets the first card position.
+     * Gets the position of the card not aligned with the others:<br/>
+     * 0: Nord-West<br/>
+     * 1: Nord-East<br/>
+     * 2: Sud-East<br/>
+     * 3: Sud-West
      *
      * @return The first card position.
      */

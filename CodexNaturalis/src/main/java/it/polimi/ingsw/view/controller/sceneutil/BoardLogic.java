@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A class that creates a UI game board.
+ */
 public class BoardLogic {
     private final GameController gc;
     private final GridPane gridPane;
@@ -34,7 +37,7 @@ public class BoardLogic {
      * @param rows The number of rows in the grid.
      * @param cols The number of columns in the grid.
      * @param num The number of items in the inventory.
-     * @param boxes A list of `VBox` objects representing game boxes.
+     * @param boxes A list of `VBox` used to compute the drop location of a card.
      * @param gameController The `GameController` instance.
      */
     public BoardLogic(int rows, int cols, int num, List<VBox> boxes, GameController gameController){
@@ -76,7 +79,7 @@ public class BoardLogic {
     }
 
     /**
-     * Creates a new `VBox` representing the inventory.
+     * Creates a new `VBox` containing inventory's items.
      *
      * @param idx The index of the inventory.
      * @return A new `VBox` instance representing the inventory.
@@ -109,8 +112,8 @@ public class BoardLogic {
      * Adds a card to the grid at the specified position.
      *
      * @param card The `CardView` to add.
-     * @param x The x-coordinate of the position.
-     * @param y The y-coordinate of the position.
+     * @param x The relative x-coordinate of the position.
+     * @param y The relative y-coordinate of the position.
      */
     public void addCard(CardView card, int x, int y){
         int j = this.yStart + y;
@@ -182,7 +185,7 @@ public class BoardLogic {
 
     /**
      * Adds a row above the current grid layout.
-     * If the grid is the main board, it also scrolls horizontally and adds VBox elements.
+     * If the grid is the main board, it also scrolls vertically and adds VBox elements.
      */
     private void addRowAbove(){
         boolean startVbox = (Boolean) this.gridPane.getUserData();
@@ -232,7 +235,7 @@ public class BoardLogic {
 
     /**
      * Adds a column on the left of the current grid layout.
-     * If the grid is the main board, it also adds VBox elements to the new column.
+     * If the grid is the main board, it also adds VBox elements to the new column and scroll horizontally.
      */
     private void addColumnLeft(){
         boolean startVbox = (Boolean) this.gridPane.getUserData();
@@ -295,7 +298,7 @@ public class BoardLogic {
     }
 
     /**
-     * Adds VBox (vertical boxes) to the gridPane for the entire board.
+     * Adds VBox to the gridPane for the entire board.
      * The boxes are added in a checkerboard pattern.
      */
     private void addBoardVBoxes(){
@@ -328,7 +331,7 @@ public class BoardLogic {
     }
 
     /**
-     * Sets the last placed VBox (vertical box) to the specified value.
+     * Sets the last placed VBox to the specified value.
      *
      * @param newVal The new VBox to set as the last placed.
      */

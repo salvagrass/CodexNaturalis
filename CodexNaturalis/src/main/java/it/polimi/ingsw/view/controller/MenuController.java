@@ -16,21 +16,21 @@ import java.util.logging.Level;
 public class MenuController extends Controller{
 
     /**
-     * Scans the specified input to the GUI.
+     * Submit the create choice.
      */
     public void create() {
         this.gui.scanInput("1");
     }
 
     /**
-     * Scans the specified input to the GUI.
+     * Submit the join choice.
      */
     public void join() {
         this.gui.scanInput("2");
     }
 
     /**
-     * Scans the specified input to the GUI.
+     * Submit the load choice.
      */
     public void load() {
         this.gui.scanInput("3");

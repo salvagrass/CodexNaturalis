@@ -34,6 +34,9 @@ import javafx.scene.transform.Scale;
 
 import java.util.*;
 
+/**
+ * Controller for the Game scene.
+ */
 public class GameController extends Controller{
     @FXML
     private ImageView resDeck, goldDeck, res1, res2, gold1, gold2;
@@ -105,7 +108,7 @@ public class GameController extends Controller{
     }
 
     /**
-     * Handles the successful card placement confirmation.
+     * Handles card placement and drawn confirmation.
      *
      * @param confirmValue The confirmation value (true or false).
      * @param confirmMsg   The confirmation message.
@@ -194,8 +197,8 @@ public class GameController extends Controller{
      *
      * @param turnIdx   The index of the current turn.
      * @param card      The card to be added to the board.
-     * @param x         The x-coordinate for placing the card.
-     * @param y         The y-coordinate for placing the card.
+     * @param x         The relative x-coordinate for placing the card.
+     * @param y         The relative y-coordinate for placing the card.
      * @param inventory A map representing the player's inventory.
      */
     public void updBoardView(int turnIdx, CardView card, int x, int y, Map<Symbol,Integer> inventory){
@@ -209,7 +212,7 @@ public class GameController extends Controller{
      * Updates the inventory display for a specific turn index.
      *
      * @param turnIdx   The index of the current turn.
-     * @param inventory A map representing the player's inventory.
+     * @param inventory A map representing the new player's inventory.
      */
     private void updInventory(int turnIdx, Map<Symbol, Integer> inventory) {
         this.boards.get(turnIdx).updInventory(turnIdx, inventory);
@@ -238,7 +241,7 @@ public class GameController extends Controller{
     }
 
     /**
-     * Handles the double click action to flip cards based on user interaction.
+     * Flips cards based on user interaction.
      * If the primary mouse button is clicked twice, the corresponding card is flipped.
      *
      * @param mouseEvent the MouseEvent triggered by the user interaction
@@ -275,7 +278,7 @@ public class GameController extends Controller{
     }
 
     /**
-     * Resets the specified ScrollPane view to the coordinates passed.
+     * Scroll the board in order to have the specified cell in the center.
      *
      * @param scrollPane the ScrollPane to be scrolled
      * @param gridPane the GridPane containing the cells

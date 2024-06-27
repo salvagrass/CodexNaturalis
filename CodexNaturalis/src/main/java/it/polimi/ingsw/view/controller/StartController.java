@@ -10,7 +10,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * Controller for the Start scene.
+ */
 public class StartController extends Controller {
     @FXML
     private TextField address;
@@ -38,7 +40,7 @@ public class StartController extends Controller {
     }
 
     /**
-     * Opens a communications link to the resource referenced by this URL, if such a connection has not already been established.
+     * Opens a communications link to the resource referenced by this URL.
      * If an exception occurs, an error message is displayed.
      */
     public void connect(){
