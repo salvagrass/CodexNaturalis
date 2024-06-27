@@ -26,7 +26,7 @@ public interface RemoteComm extends Remote {
     /**
      * Sets a message to be read from the server.
      * 
-     * @param msg The message we want to save.
+     * @param msg The message to send to the server.
      * @throws RemoteException If there's a connection problem.
      */
     void setMsg(String msg) throws RemoteException;
@@ -34,7 +34,7 @@ public interface RemoteComm extends Remote {
     /**
      * Sends a chat message to the server.
      *
-     * @param msg The message to send.
+     * @param msg The chat message to send.
      * @throws RemoteException If a communication error occurs.
      */
     void chat(String msg) throws RemoteException;

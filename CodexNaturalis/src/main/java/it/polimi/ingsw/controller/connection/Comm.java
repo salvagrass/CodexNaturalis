@@ -24,7 +24,6 @@ public abstract class Comm{
 
     /**
      * Creates a new instance of the `Comm` class.
-     * Initializes the `clientCrashed` field with `false`.
      */
     public Comm() {
         this.clientCrashed = new AtomicBoolean(false);
@@ -68,15 +67,16 @@ public abstract class Comm{
         }
         return s;
     }
+
     /**
-     * Clears the `chosen` field by setting it to `null`.
+     * Clears the `chosen` field
      */
     public void clean(){
         this.chosen = null;
     }
 
     /**
-     * Sets the value of the `chosen` field and notifies all waiting threads.
+     * Sets the value of the `chosen` field
      *
      * @param msg The value to set for `chosen`.
      */
@@ -118,14 +118,14 @@ public abstract class Comm{
     }
 
     /**
-     * Stops the ping execution by shutting down the associated executor.
+     * Stops the ping execution
      */
     public void stopPing(){
         pingExec.shutdownNow();
     }
 
     /**
-     * Starts the ping execution by initializing the necessary components.
+     * Starts the ping execution
      */
     public void startPing(){
         this.clientCrashed.set(false);
@@ -134,7 +134,7 @@ public abstract class Comm{
     }
 
     /**
-     * This abstract class defines the contract for ping methods.
+     * Implements the functionality for the ping method
      */
     public abstract void pingMethod();
 

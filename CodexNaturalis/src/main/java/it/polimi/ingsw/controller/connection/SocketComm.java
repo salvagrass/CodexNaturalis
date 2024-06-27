@@ -36,7 +36,7 @@ public class SocketComm extends Comm {
   }
 
   /**
-   * Sends a message over the socket.
+   * Sends a message via socket.
    *
    * @param msg The message to send.
    */
@@ -89,8 +89,11 @@ public class SocketComm extends Comm {
 
   /**
    * Sends a ping message and handles client crashes.
-   * If the acknowledgment flag is not set, marks the client as crashed,
-   * closes the connection, and notifies the handler.
+   * Sends a ping message to the client and handles potential client crashes.
+   * This method sends a "PING" message to the client and waits for a response, if the
+   * client doesn't respond in the allotted time it is assumed that  it has crashed.
+   * In such a case the method calls the crash handler handle method
+   * @see it.polimi.ingsw.controller.serverfunction.CrashHandler
    */
   @Override
   public void pingMethod(){
@@ -108,8 +111,7 @@ public class SocketComm extends Comm {
   }
 
   /**
-   * Sends a PING message and handles the acknowledgment.
-   * If the acknowledgment flag is not set, the client is considered crashed.
+   * Closes the connection with the socket
    */
   @Override
   public void close(){

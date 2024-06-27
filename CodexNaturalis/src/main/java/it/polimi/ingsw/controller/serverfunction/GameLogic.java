@@ -47,7 +47,8 @@ public class GameLogic implements CrashHandler {
     private final ExecutorService executor;
 
     /**
-     * Constructor for the GameLogic.
+     * Constructor for the GameLogic. Intended to be used for a new
+     * game
      *
      * @param server The server that created it.
      * @param size The number of players in the game.
@@ -70,15 +71,15 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * Initializes the game logic.
+     * Constructor that is used for loading existing games
      *
      * @param server     The central server managing the game.
      * @param id         The unique identifier for the game.
      * @param ground     The common ground shared by players.
-     * @param players    A map of communication channels to player objects.
-     * @param turnOrder  The list of communication channels representing the turn order.
-     * @param currPlayer The current player's communication channel.
-     * @param endGame    Indicates whether the game has ended.
+     * @param players    A map that links each comm to its player object.
+     * @param turnOrder  The list of comm representing the turn order.
+     * @param currPlayer The current player's comm.
+     * @param endGame    Indicates whether the game end condition has been reached.
      */
     public GameLogic(CentralServer server, String id, CommonGround ground, Map<Comm,Player> players,List<Comm> turnOrder, Comm currPlayer,boolean endGame){
         this.id = id;
@@ -99,7 +100,7 @@ public class GameLogic implements CrashHandler {
     /**
      * Submits a player to the game.
      *
-     * @param comm The communication object representing the player.
+     * @param comm The comm representing the player.
      */
     public void submitPlayer(Comm comm){
         executor.submit(()->addPlayer(comm));
@@ -107,7 +108,7 @@ public class GameLogic implements CrashHandler {
 
     /**
      * Handles the joining of a player and calls the gameStart method
-     * when all the players are in the "ready" state.
+     * when all the players are ready.
      *
      * @param comm The connection to the specific client.
      */
@@ -136,7 +137,7 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * Loads game data and initializes the game flow.
+     * Loads game data and when that is done calls the {@link GameLogic#gameFlow()} method
      */
     private void loadGame(){
         int points,i;
@@ -173,7 +174,7 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * Performs all the starting operations nedeed for the game
+     * Performs all the starting operations needed for the game
      */
     private void gameStart() {
         for (int i = 0; i < players.size(); i++) {
@@ -245,7 +246,9 @@ public class GameLogic implements CrashHandler {
 
     /**
      * Calls the playTurn method for every player in the game.
+     * If the end of a turn is reached calls the {@link GameLogic#saveGame()}
      *
+     * @see SaveData
      */
     private void fullTurn() {
         final int winPoints = 20;
@@ -300,7 +303,9 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * Saves the game data to a JSON file.
+     * Creates a {@link SaveData} instance and saves it to a JSON file.
+     *
+     * @see SaveData
      */
     private void saveGame(){
         Gson gson = new GsonBuilder().
@@ -403,7 +408,9 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * Adds a communication object to the SetUpLogic record.
+     * Adds a comm object to the SetUpLogic record.
+     * This method is intended to be called when a new player
+     * wants to be added to the game
      *
      * @param comm The connection to the specific client.
      */
@@ -412,7 +419,7 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * Checks if the game is already full.
+     * Checks if the game is already at full capacity.
      *
      * @return True if the game is full, False otherwise.
      */
@@ -436,9 +443,9 @@ public class GameLogic implements CrashHandler {
     }
 
 
-
     /**
-     * Closes connections and shuts down the client.
+     * Closes the current game and calls the {@link CentralServer#closeGame(String)} method.
+     * It also sets the crash handler of the comm objects to the central server
      */
     private void shutdown() {
         for (Comm comm : this.turnOrder) {
@@ -449,9 +456,9 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * Handles a crash event for a communication channel.
+     * Handles a crash event in case of a client crashing
      *
-     * @param comm The communication channel that crashed.
+     * @param comm The object used to communicate with the client that crashed.
      */
     public synchronized void handleCrash(Comm comm){
         executor.shutdownNow();
@@ -473,7 +480,7 @@ public class GameLogic implements CrashHandler {
     }
 
     /**
-     * sends the clients back to the menu in case an exception occurs
+     * Sends the clients back to the menu in case an exception occurs
      */
     public synchronized void handleException(){
         executor.shutdownNow();
@@ -497,10 +504,10 @@ public class GameLogic implements CrashHandler {
      * This method sends multiple broadcast messages containing information about the game state,
      * such as the resources and gold cards on the ground, as well as common objectives.
      * Each broadcast message is formatted as follows:
-     * UPDGROUNDVIEW;<index>;<data>
+     * UPDGROUNDVIEW;index;data <br>
      * Where:
-     * - <index>: The index indicating the type of update.
-     * - <data>: The data associated with the update.
+     * index The index indicating the type of update. <br>
+     * data The data associated with the update. <br>
      */
     private void createGroundView() {
         CardView[] resCards = {

@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
+/**
+ * Class that represents a client connected to the server via RMI
+ */
 public class ClientRMI extends Client implements ClientRemote {
   private RemoteComm comm;
   private final ExecutorService clientExecutor;

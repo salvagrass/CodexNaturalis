@@ -94,7 +94,7 @@ public class ClientSocket extends Client{
 
   /**
    * Listens for incoming messages and handles them.
-   * Stops when the connection is requested to be stopped.
+   * Stops when an exception is thrown.
    */
   private void listener(){
     while (!stopConnection.get()){
@@ -109,7 +109,7 @@ public class ClientSocket extends Client{
   }
 
   /**
-   * Sends a message to the output stream.
+   * Sends a message to the server.
    *
    * @param msg The message to send.
    */
@@ -145,7 +145,7 @@ public class ClientSocket extends Client{
   }
 
   /**
-   * Sends a chat message to the output stream.
+   * Sends a chat message to the server.
    *
    * @param msg The chat message to send.
    */

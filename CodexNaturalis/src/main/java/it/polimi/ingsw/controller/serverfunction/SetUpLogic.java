@@ -134,10 +134,10 @@ class SetUpLogic {
     }
 
     /**
-     * Handles the process of choosing a starting card orientation.
+     * Handles the process of choosing the starting card's orientation.
      *
      * @param comm The connection to the specific client.
-     * @param card The chosen orientation.
+     * @param card The starting card of that specific player.
      */
     private void chooseStartingCard(Comm comm, StartingCard card) {
         CardView faceDown = new CardView(card);

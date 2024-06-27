@@ -52,7 +52,7 @@ public class LoadLogic implements CrashHandler {
     }
 
     /**
-     * Links a player name to the communication object.
+     * Links a player object to the comm used for communicating with its current client
      *
      * @param comm The communication object.
      */
@@ -143,9 +143,9 @@ public class LoadLogic implements CrashHandler {
     }
 
     /**
-     * Handles a crash event for the given communication object.
+     * Handles a crash event in case of a client crashing
      *
-     * @param comm The communication object that crashed.
+     * @param comm The object used to communicate with the client that crashed.
      */
     public synchronized void handleCrash(Comm comm){
         executor.shutdownNow();

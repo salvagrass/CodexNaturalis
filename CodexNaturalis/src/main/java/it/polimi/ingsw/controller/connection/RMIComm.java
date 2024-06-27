@@ -42,8 +42,10 @@ public class RMIComm extends Comm implements RemoteComm {
 
     /**
      * Sends a ping message to the server.
-     * If a communication error occurs, the method closes the connection,
-     * handles the crash, and sets the clientCrashed flag.
+     * If a communication error occurs, the method closes the connection and
+     * tells the handler to handle the crash
+     *
+     * @see it.polimi.ingsw.controller.serverfunction.CrashHandler
      */
     @Override
     public void pingMethod() {
@@ -58,10 +60,10 @@ public class RMIComm extends Comm implements RemoteComm {
     }
 
     /**
-     * Sets the message.
+     * Sets the message to be read from the server.
      *
      * @param msg The message to set.
-     * @throws RemoteException If there's a remote exception.
+     * @throws RemoteException If a remote exception occurs.
      */
     public void setMsg(String msg) throws RemoteException{
         setChosen(msg);
@@ -90,7 +92,7 @@ public class RMIComm extends Comm implements RemoteComm {
     /**
      * Sends a chat message.
      *
-     * @param msg The message to send.
+     * @param msg The message to be sent.
      * @throws RemoteException If there's a remote exception.
      */
     public void chat(String msg) throws RemoteException{

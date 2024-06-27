@@ -31,6 +31,10 @@ public abstract class Client{
     this.gson = new Gson();
   }
 
+  /**
+   * Handles the messages coming from the server
+   * @param message the message to be handled
+   */
   public void handleMsg(String message) {
     String[] commands = message.split("\\|");
     for (String command : commands) {
@@ -116,11 +120,42 @@ public abstract class Client{
     }
   }
 
-
+  /**
+   * Sends a message to the server
+   * @param msg the message to be sent
+   */
   abstract void sendMsg(String msg);
+
+  /**
+   * Closes the client connection to the server
+   */
   abstract void closeConnection();
+
+  /**
+   * Sends to the server a request to place a card in the specified position
+   * @param idx the idx of the card in the hand of the player
+   * @param x the x-coordinate of the game board where the card is to be placed
+   * @param y the y-coordinate of the game board where the card is to be placed
+   * @param face the chosen orientation of the card to be placed. {@code true} if the face is up,
+   * {@code false} if the face is down
+   */
   public abstract void placeCard(int idx,int x,int y,boolean face);
+
+  /**
+   * Sends to the server a request to draw a card from the common ground
+   * @param idx the index of the card to be drawn
+   */
   public abstract void drawCard(int idx);
+
+  /**
+   * Sends a chat message to the server
+   * @param msg the formatted msg that will be interpreted by the server
+   */
   public abstract void sendChatMessage(String msg);
+
+  /**
+   * Connects the client to the server with the specified address
+   * @param address the address of the server
+   */
   public abstract void connect(String address);
 }

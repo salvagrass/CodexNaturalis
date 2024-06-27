@@ -55,6 +55,11 @@ public class MsgCreator {
                 + ";" + y + ";" + gson.toJson(card, CardView.class) + ";" + gson.toJson(inventory));
     }
 
+    /**
+     * Creates the string to inform the client that the colors available to choose have been changed
+     * @param colors the new set of colors available to choose
+     * @return the string to be sent to the client
+     */
     public static String updColorMsg(Set<PawnColor> colors){
         return "UPDCOLORS;" + gson.toJson(colors);
     }
@@ -62,7 +67,7 @@ public class MsgCreator {
     /**
      * Creates a message to send the players' turn order.
      * 
-     * @param names The orderd list of nicknames.
+     * @param names The ordered list of nicknames.
      * @return The message created.
      */
     public static String turnOrderMsg(List<String> names) {
@@ -79,6 +84,14 @@ public class MsgCreator {
         return "CREATEHANDVIEW;" + gson.toJson(hand, CardView[].class);
     }
 
+    /**
+     * Creates a string to inform the client of the created ground view
+     * @param resCards the resource cards on the ground
+     * @param goldCards the gold cards on the ground
+     * @param objs the objectives on the ground
+     * @return the string created
+     */
+
     public static String createGroundViewMsg(CardView[] resCards,CardView[] goldCards,ObjectiveView[] objs){
         String items = gson.toJson(resCards, CardView[].class);
         items += ";" + gson.toJson(goldCards,CardView[].class);
@@ -89,7 +102,7 @@ public class MsgCreator {
     /**
      * Creates a message with the leaderboard.
      * 
-     * @param leaderboard The cards in the player's hand.
+     * @param leaderboard A map containing each player nickname and its position
      * @return The message created.
      */
     public static String leadeboardMsg(Map<String, Integer> leaderboard) {
@@ -97,7 +110,7 @@ public class MsgCreator {
     }
 
     /**
-     * Creates a message to update the hand status.
+     * Creates a message to update the hand view.
      * 
      * @param card The card that has been drawn.
      * @return The message created.
@@ -107,7 +120,8 @@ public class MsgCreator {
     }
 
     /**
-     * Creates a message containing updated points.
+     * Creates a message containing the new points of the player
+     * identified with that idx in the turn order.
      * 
      * @param idx    The index of the player whose points should be updated.
      * @param points The updated points.
@@ -120,7 +134,7 @@ public class MsgCreator {
     /**
      * Creates a message to confirm an action.
      * 
-     * @param value True if the action succeded, False otherwise.
+     * @param value {@code true} if the action succeded,{@code false} otherwise.
      * @return The message created.
      */
     public static String confirmMsg(boolean value,String info) {
@@ -130,8 +144,8 @@ public class MsgCreator {
     /**
      * Creates a message containing the updated ground state.
      * 
-     * @param idx  The index of the board item to be updated.
-     * @param item The new item on the board value.
+     * @param idx  The index of the ground item to be updated.
+     * @param item The new view of the item on the ground.
      * @return The message created.
      */
     public static String updGroundViewMsg(int idx, CardView item) {
@@ -139,7 +153,7 @@ public class MsgCreator {
     }
 
     /**
-     * Creates a message string with the format "NAME;{name}".
+     * Creates a message with the name of the player added to the game
      *
      * @param name The name to include in the message.
      * @return The formatted message string.
@@ -149,9 +163,10 @@ public class MsgCreator {
     }
 
     /**
-     * Creates a message string with the format "CAPACITY;{cap}".
+     * Creates a message informing the client of the number of players
+     * that will be playing in the game
      *
-     * @param cap The capacity value to include in the message.
+     * @param cap The capacity of the game.
      * @return The formatted message string.
      */
     public static String capacityMsg(int cap) {
@@ -159,9 +174,9 @@ public class MsgCreator {
     }
 
     /**
-     * Creates a message string with the format "JOINED;{names}".
+     * Creates a message informing the client of the players who joined the game
      *
-     * @param names A set of names to include in the message.
+     * @param names the nicknames of the players that joined the game
      * @return The formatted message string.
      */
     public static String joinedMsg(Set<String> names) {
@@ -190,17 +205,17 @@ public class MsgCreator {
     }
 
     /**
-     * Loads a hidden object message.
+     * Sends to the client the secret objective the player picked in the saved game
      *
-     * @param objective The objective to load.
-     * @return A formatted hidden object message.
+     * @param objective The picked objective.
+     * @return The formatted message string.
      */
     public static String loadHiddenObjMsg(Objective objective){
         return "LOADHIDDENOBJ;" + gson.toJson(new ObjectiveView(objective),ObjectiveView.class);
     }
 
     /**
-     * Loads a game board message.
+     * Creates a message that informs the client of its game board in the saved game
      *
      * @param id The identifier for the saved game.
      * @param index The index of the player whose board is being loaded.
@@ -273,7 +288,7 @@ public class MsgCreator {
      * Creates a formatted message indicating the chosen color for a player.
      *
      * @param player The player's name.
-     * @param color  The chosen color (e.g., RED, BLUE, GREEN).
+     * @param color  The chosen color (e.g., RED, BLUE, GREEN, YELLOW).
      * @return A formatted message with the chosen color and player name.
      */
     public static String colorChosenMsg(String player, PawnColor color){

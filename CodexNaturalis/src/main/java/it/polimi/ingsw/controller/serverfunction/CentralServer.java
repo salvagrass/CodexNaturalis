@@ -22,7 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 /**
- * A class that waits for players to connect, creates a Comm object for each one, and sends them to a game lobby.
+ * Class that represents the main server of the app, dispatches the various client
+ * based on their request
  */
 public class CentralServer extends UnicastRemoteObject implements RemoteServer,CrashHandler{
     private final int port;
@@ -87,9 +88,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
     /**
-     * Joins a client to the communication system.
-     * Creates an RMIComm instance for the given client, starts pinging,
-     * and assigns an executor to handle communication.
+     * Joins an RMI Client to the server
      *
      * @param client The client to join.
      * @return The communication instance for the joined client.
@@ -105,7 +104,12 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
 
-
+    /**
+     * Finds the executor assigned to the comm passed as a parameter
+     * if there isn't one, it creates it and links it to the comm
+     * @param comm the comm to be linked to the executor
+     * @return the executor associated with that comm
+     */
     private ExecutorService findAssignedExecutor(Comm comm){
         Map<ExecutorService,Comm> tmp;
         synchronized(this.executors) {
@@ -126,7 +130,6 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
 
     /**
      * Asks the client which action they want to perform and handles the corresponding operation,
-     * including joining the game if the client chooses to create one.
      *
      * @param comm The connection to the specific client.
      */
@@ -194,7 +197,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
     /**
-     * Connects a client with a game.
+     * Connects a client to a game.
      *
      * @param comm The connection to the specific client.
      */
@@ -299,7 +302,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
     /**
-     * Adds a game.
+     * Adds the game to the ones currently memorized in the server
      *
      * @param id The unique identifier for the game.
      * @param gc The GameLogic instance representing the game.
@@ -332,7 +335,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
     /**
-     * Adds a game ID to the list of memorized games and saves it to a text file.
+     * Adds a game ID to the list of memorized games and saves the id to a text file.
      *
      * @param id The unique identifier for the game.
      */
@@ -350,7 +353,7 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
     /**
-     * Submits a client communication for processing.
+     * Submits a client to the server based on its executor.
      *
      * @param comm The communication object representing the client request.
      */
@@ -360,9 +363,14 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
     /**
-     * Removes a game from the collection based on its ID.
-     *
+     * Removes a game from the list of currently active games on the server.
+     * <p>
+     * This method removes the game identified by the given unique identifier (`id`)
+     * from the active games list. However, it does not remove the game from the list
+     * of memorized games. To remove the game from the memorized games list, use
+     * the {@link CentralServer#closeGame(String)} method.
      * @param id The unique identifier of the game to be removed.
+     * @see CentralServer#closeGame(String)
      */
     void removeGame(String id){
         synchronized(this.games){
@@ -373,7 +381,11 @@ public class CentralServer extends UnicastRemoteObject implements RemoteServer,C
     }
 
     /**
-     * Closes a game based on its ID.
+     * Closes a currently active game on the server.
+     * This method eliminates all objects and resources related to the game
+     * identified by the given unique identifier (`id`). This includes removing
+     * the game from the active games list, clearing any associated data structures,
+     * and deleting the save files for that game.
      *
      * @param id The unique identifier of the game to be closed.
      */
