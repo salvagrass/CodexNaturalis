@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.util.GameScene;
+import it.polimi.ingsw.util.ProjectLogger;
 import it.polimi.ingsw.view.GUI;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -17,6 +18,9 @@ import java.util.Objects;
 public class JavaFxTest extends Application {
     public GUI gui;
     public static void main(String[] args){
+        ProjectLogger pj = new ProjectLogger("Main");
+        pj.clearFile("logs/clientLog.txt");
+        pj.clearFile("logs/commLog.txt");
         launch(args);
     }
 

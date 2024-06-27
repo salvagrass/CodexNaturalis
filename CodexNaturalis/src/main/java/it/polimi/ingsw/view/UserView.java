@@ -32,9 +32,14 @@ public abstract class UserView {
     String toSend;
     int idx, tmpIdx;
     final AtomicBoolean waitForPlayers;
+
     final Object toSendlock;
-    final Object waitPhaseLock;
     final Object currPlayerLock;
+    final Object modelLock;
+    final Object colorLock;
+    final Object leaderboardLock;
+    final Object chatLock;
+    final Object lobbyLock;
     
 
     public UserView() {
@@ -43,10 +48,14 @@ public abstract class UserView {
         this.positions = new HashMap<>();
         this.toSend = null;
         this.waitForPlayers = new AtomicBoolean(false);
-        this.toSendlock = new Object();
-        this.waitPhaseLock = new Object();
-        this.currPlayerLock = new Object();
         this.colorsChosen = new HashMap<>();
+        this.toSendlock = new Object();
+        this.currPlayerLock = new Object();
+        this.modelLock = new Object();
+        this.colorLock = new Object();
+        this.leaderboardLock = new Object();
+        this.chatLock = new Object();
+        this.lobbyLock = new Object();
     }
 
     public void connect(boolean type) throws RemoteException {
@@ -71,7 +80,7 @@ public abstract class UserView {
     }
 
     public void setCapacity(int capacity){
-        synchronized(this.modelView){
+        synchronized(this.modelLock){
             this.modelView.allocateBoards(capacity);
         }
     }
@@ -83,19 +92,19 @@ public abstract class UserView {
     }
 
     public void updColors(Set<PawnColor> newColors){
-        synchronized(this.colors){
+        synchronized(this.colorLock){
             this.colors.retainAll(newColors);
         }
     }
 
     public void setHand(List<CardView> hand){
-        synchronized(this.modelView){
+        synchronized(this.modelLock){
             this.modelView.setHand(hand);
         }
     }
 
     public void createGroundView(CardView[] resCards, CardView[] goldCards, ObjectiveView[] objs){
-        synchronized(this.modelView){
+        synchronized(this.modelLock){
             this.modelView.setGround(new GroundView(resCards,goldCards,objs));
         }
     }
@@ -110,7 +119,7 @@ public abstract class UserView {
 
     public void setNames(List<String> turnOrder){
         this.turnOrder.addAll(turnOrder);
-        synchronized(this.leaderboard){
+        synchronized(this.leaderboardLock){
             for(String name : turnOrder){
                 this.leaderboard.put(name,0);
             }
@@ -118,25 +127,25 @@ public abstract class UserView {
     }
 
     public void updHandView(CardView card){
-        synchronized(this.modelView){
+        synchronized(this.modelLock){
             this.modelView.updHand(card,this.idx);
         }
     }
 
     public void updGroundView(int idx,CardView card){
-        synchronized(this.modelView){
+        synchronized(this.modelLock){
             this.modelView.updGround(idx,card);
         }
     }
 
     public void updBoardView(int turnIdx, CardView card, int x, int y, Map<Symbol,Integer> inventory){
-        synchronized(this.modelView){
+        synchronized(this.modelLock){
             this.modelView.getBoard(turnIdx).updBoardView(card,x,y,inventory);
         }
     }
 
     public void updPoints(int turnIdx,int newPoints){
-        synchronized(this.leaderboard){
+        synchronized(this.leaderboardLock){
             this.leaderboard.put(this.turnOrder.get(turnIdx),newPoints);
         }
     }
@@ -148,7 +157,7 @@ public abstract class UserView {
     public abstract void setCurrPlayer(String currPlayer);
 
     public void addChatMessage(Message msg) {
-        synchronized(this.chats){
+        synchronized(this.chatLock){
             this.chats.add(msg);
         }
     }

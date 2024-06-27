@@ -141,7 +141,7 @@ public class CLI extends UserView{
 
     @Override
     public void playerJoined(Set<String> players){
-        synchronized (this.playersInLobby) {
+        synchronized (this.lobbyLock) {
             this.playersInLobby.addAll(players);
             if(this.waitForPlayers.get() && this.playersInLobby.size() < this.capacity){
                 System.out.println("Waiting for players\nRemaining: " + (this.capacity-this.playersInLobby.size()));
@@ -280,7 +280,7 @@ public class CLI extends UserView{
 
     private void chooseColor() {
         Set<String> copy;
-        synchronized(this.colors){
+        synchronized(this.colorLock){
             copy = this.colors.stream().map(Enum::name).collect(Collectors.toSet());
         }
         System.out.print(copy+"\nChoose color: ");
@@ -290,7 +290,7 @@ public class CLI extends UserView{
             color = in.nextLine();
         }
         sendUntilConfirm(color,"",(x)->{
-            synchronized (this.colors) {
+            synchronized (this.colorLock) {
                 try{
                     return this.colors.contains(PawnColor.valueOf(x.toUpperCase()));
                 }catch(IllegalArgumentException e){
@@ -382,22 +382,22 @@ public class CLI extends UserView{
                 }
                 switch(cmd[1]){
                     case "hand" -> {
-                        synchronized (this.modelView) {
+                        synchronized (this.modelLock) {
                             System.out.print(CardView.showAsciiArt(this.modelView.getHand()));
                         }
                     }
                     case "objective" -> {
-                        synchronized (this.modelView) {
+                        synchronized (this.modelLock) {
                             System.out.print(ObjectiveView.showAsciiArt(this.modelView.getSecrObj()));
                         }
                     }
                     case "ground" -> {
-                        synchronized (this.modelView) {
+                        synchronized (this.modelLock) {
                             System.out.print(this.modelView.getGround().asciiGround());
                         }
                     }
                     case "card" -> {
-                        synchronized (this.modelView) {
+                        synchronized (this.modelLock) {
                             try {
                                 int userIdx;
                                 int x,y;
@@ -420,7 +420,7 @@ public class CLI extends UserView{
                         }
                     }
                     case "board" -> {
-                        synchronized(this.modelView){
+                        synchronized(this.modelLock){
                             try {
                                 if(cmd.length == 2){
                                     System.out.println(this.modelView.getBoard(this.turnOrder.indexOf(this.name)).asciiBoard());
@@ -436,7 +436,7 @@ public class CLI extends UserView{
                         }
                     }
                     case "leaderboard" -> {
-                        synchronized (this.leaderboard) {
+                        synchronized (this.leaderboardLock) {
                             List<String> tmp = this.leaderboard.keySet().stream()
                                 .sorted(Comparator.comparingInt(x->leaderboard.get(x)).reversed())
                                 .toList();
@@ -472,7 +472,7 @@ public class CLI extends UserView{
                     System.out.println("Command not supported");
                     return;
                 }
-                synchronized (this.chats) {
+                synchronized (this.chatLock) {
                     if(cmd[1].equals("All")){
                         printChat(this.chats.stream().filter(x -> x.receiver().equals("All")).toList());
                     }else if(!cmd[1].equals(this.name)){

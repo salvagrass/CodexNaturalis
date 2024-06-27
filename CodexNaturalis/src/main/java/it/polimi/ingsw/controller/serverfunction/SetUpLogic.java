@@ -28,6 +28,8 @@ class SetUpLogic {
     private final Set<PawnColor> availableColors;
     private final Map<String, Comm> nameToComm;
     private final List<Comm> turnOrder;
+    private final CommonGround ground;
+    final Object setUpLock = new Object();
 
     /**
      * Constructor for the setUpLogic.
@@ -35,22 +37,22 @@ class SetUpLogic {
      * @param num The number of players in the game.
      * @param turnOrder An empty list that will be updated during execution.
      */
-    SetUpLogic(int num, List<Comm> turnOrder){
+    SetUpLogic(int num, List<Comm> turnOrder,CommonGround ground){
         this.record = new ConcurrentHashMap<>();
         this.nameToComm = new HashMap<>();
         this.availableColors = new HashSet<>(List.of(PawnColor.values()));
         this.numPlayers=num;
         this.turnOrder = turnOrder;
+        this.ground = ground;
     }
 
     /**
      * Handles the joining of a player.
      *
      * @param comm The connection to the specific client.
-     * @param ground CommonGround of the game.
      * @return The player created.
      */
-    public Player addPlayer(Comm comm, CommonGround ground) {
+    public Player addPlayer(Comm comm) {
         Map<String,Comm> tmp;
         String msg;
         StartingCard card;
@@ -62,8 +64,8 @@ class SetUpLogic {
         }
         msg = MsgCreator.joinedMsg(tmp.keySet());
         Comm.sendBroadcast(msg,new ArrayList<>(tmp.values()));
-        synchronized (this) {
-            this.notifyAll();
+        synchronized (this.setUpLock) {
+            this.setUpLock.notifyAll();
             this.waitStart(State.STARTING);
         }
         synchronized (this.turnOrder){
@@ -78,13 +80,13 @@ class SetUpLogic {
             }
         }
         synchronized(this.turnOrder){
-            card = ground.getRandomStartingCard();
+            card = this.ground.getRandomStartingCard();
         }
         chooseStartingCard(comm, card);
         record.put(comm, State.COLOR);
         PawnColor color = chooseColor(comm, playerName);
         record.put(comm, State.OBJECTIVE);
-        Objective obj = chooseObjective(comm,ground);
+        Objective obj = chooseObjective(comm);
         Player player = new Player(playerName, obj, color);
         player.placeStartingCard(card);
         msg = MsgCreator.updBoardMsg(turnOrder.indexOf(comm),0,0, new CardView(card),
@@ -188,10 +190,10 @@ class SetUpLogic {
      * @param comm The connection to the specific client.
      * @return The chosen objective.
      */
-    private Objective chooseObjective(Comm comm, CommonGround ground) {
+    private Objective chooseObjective(Comm comm) {
         Objective[] objs;
-        synchronized (ground) {
-            objs = new Objective[] { ground.getRandomObjective(), ground.getRandomObjective()};
+        synchronized (this.ground) {
+            objs = new Objective[] { this.ground.getRandomObjective(), this.ground.getRandomObjective()};
         }
         ObjectiveView[] objViews = new ObjectiveView[]{
             new ObjectiveView(objs[0]),
@@ -214,12 +216,11 @@ class SetUpLogic {
      * @param s The required state.
      */
     private void waitStart(State s) {
-        synchronized (this) {
+        synchronized (this.setUpLock) {
             Set<State> set = new HashSet<>(this.record.values());
             while (this.record.size() != this.numPlayers || !(set.contains(s) && set.size() == 1)) {
                 try {
-
-                    this.wait();
+                    this.setUpLock.wait();
                 } catch (InterruptedException e) {
                     new ProjectLogger(getClass().getSimpleName()).
                             log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);

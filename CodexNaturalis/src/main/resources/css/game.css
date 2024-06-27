@@ -18,7 +18,7 @@
 
 #scroll .viewport {
     -fx-background-image: url(../graphics/bg2.jpg);
-    -fx-background-size: auto;
+    -fx-background-size: cover;
     -fx-background-repeat: repeat;
     -fx-background-position: top left;
 }

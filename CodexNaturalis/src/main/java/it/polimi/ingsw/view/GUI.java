@@ -19,6 +19,7 @@ import javafx.collections.ObservableSet;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -190,6 +191,9 @@ public class GUI extends UserView{
                 Platform.runLater(()->{
                     setNewGame();
                     Stage s = new Stage();
+                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook16.png"))));
+                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
+                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook64.png"))));
                     s.initModality(Modality.APPLICATION_MODAL);
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setTitle("A client crashed");
@@ -204,6 +208,9 @@ public class GUI extends UserView{
                 Platform.runLater(()->{
                     setNewGame();
                     Stage s = new Stage();
+                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook16.png"))));
+                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
+                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook64.png"))));
                     s.initModality(Modality.APPLICATION_MODAL);
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setTitle("Server crashed");
@@ -233,7 +240,7 @@ public class GUI extends UserView{
     @Override
     public void playerJoined(Set<String> players){
         Platform.runLater(()-> {
-            synchronized (this.playersInLobby) {
+            synchronized (this.lobbyLock) {
                 this.playersInLobby.addAll(players);
             }
         });

@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -34,11 +35,8 @@ public class MenuController extends Controller{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/closeGame.fxml"));
             Parent root = loader.load();
 
-            Stage popupStage = new Stage();
-            popupStage.setResizable(false);
+            Stage popupStage = createPopUpStage("Quit");
             popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setTitle("Quit");
-
             ConfirmQuitController controller = loader.getController();
             controller.setStage(popupStage);
             controller.setGUI(this.gui);
@@ -53,12 +51,21 @@ public class MenuController extends Controller{
     }
 
     public void rules() throws IOException {
-        Stage stage = new Stage();
-        stage.setResizable(false);
+        Stage stage = createPopUpStage("Rules");
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/rulebook.fxml")));
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);
 
         stage.showAndWait();
+    }
+
+    private Stage createPopUpStage(String title){
+        Stage popUpStage = new Stage();
+        popUpStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
+        popUpStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
+        popUpStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook64.png"))));
+        popUpStage.setResizable(false);
+        popUpStage.setTitle(title);
+        return popUpStage;
     }
 }

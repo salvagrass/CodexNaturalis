@@ -155,8 +155,6 @@ public class CommonGround {
      * Initializes the ground resource and gold cards by drawing from the decks.
      * Sets two resource cards and two gold cards for the ground.
      *
-     * @throws InvalidSelectionException If an invalid selection occurs during drawing.
-     * @throws InvalidDrawException If an invalid draw occurs.
      */
     private void setGroundCards(){
         this.groundResCards = new ResourceCard[2];

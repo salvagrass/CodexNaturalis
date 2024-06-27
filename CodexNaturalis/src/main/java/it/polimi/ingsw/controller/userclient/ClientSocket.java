@@ -103,6 +103,7 @@ public class ClientSocket extends Client{
       }catch(IllegalStateException | NoSuchElementException e){
         new ProjectLogger(getClass().getSimpleName()).
                 log("logs/clientLog.txt",Level.INFO,"Closed connection",e);
+        stopConnection.set(true);
       }
     }
   }
@@ -164,9 +165,9 @@ public class ClientSocket extends Client{
       executor.shutdownNow();
       scheduled = Executors.newSingleThreadScheduledExecutor();
       executor = Executors.newSingleThreadExecutor();
+      socket.close();
       in.close();
       out.close();
-      socket.close();
     }catch(IOException e){
       new ProjectLogger(getClass().getSimpleName()).
               log("logs/clientLog.txt",Level.WARNING,"Can't close the socket",e);

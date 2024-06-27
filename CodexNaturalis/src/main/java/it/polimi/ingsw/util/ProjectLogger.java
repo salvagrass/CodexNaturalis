@@ -1,5 +1,6 @@
 package it.polimi.ingsw.util;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +51,22 @@ public class ProjectLogger {
             this.logger.addHandler(fh);
             fh.setFormatter(new SimpleFormatter());
             return fh;
+        }catch(IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void clearFile(String path){
+        try{
+            Path filePath = Paths.get(path);
+            Path dirPath = filePath.getParent();
+
+            if (dirPath != null && !Files.exists(dirPath)) {
+                Files.createDirectories(dirPath);
+            }else{
+                FileWriter fw = new FileWriter(path);
+                fw.close();
+            }
         }catch(IOException e){
             throw new RuntimeException(e);
         }

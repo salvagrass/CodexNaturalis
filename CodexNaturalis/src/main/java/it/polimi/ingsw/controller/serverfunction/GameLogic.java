@@ -55,12 +55,12 @@ public class GameLogic implements CrashHandler {
     public GameLogic(CentralServer server, String id, int size) {
         this.turnOrder = new ArrayList<>();
         this.executor = Executors.newFixedThreadPool(size);
-        this.setUp = new SetUpLogic(size, this.turnOrder);
         this.server = server;
         this.id = id;
         players = new ConcurrentHashMap<>();
         try{
             ground = new CommonGround();
+            this.setUp = new SetUpLogic(size, this.turnOrder,this.ground);
         } catch (IOException e) {
             new ProjectLogger(getClass().getSimpleName()).
                     log("logs/serverLog.txt",Level.WARNING,"Can't load selected game",e);
@@ -112,10 +112,10 @@ public class GameLogic implements CrashHandler {
      * @param comm The connection to the specific client.
      */
     public void addPlayer(Comm comm) {
-        Player player = this.setUp.addPlayer(comm, ground);
+        Player player = this.setUp.addPlayer(comm);
         this.players.put(comm, player);
         this.setUp.setReady(comm);
-        synchronized (this.setUp) {
+        synchronized (this.setUp.setUpLock) {
             Set<String> names = this.players.values().stream().map(Player::getNickname).collect(Collectors.toSet());
             Comm.sendBroadcast(MsgCreator.joinedMsg(names), this.turnOrder);
             if (this.currPlayer == null) {
@@ -123,7 +123,7 @@ public class GameLogic implements CrashHandler {
                 this.setUp.waitReady();
                 gameStart();
             } else {
-                this.setUp.notifyAll();
+                this.setUp.setUpLock.notifyAll();
             }
         }
     }
