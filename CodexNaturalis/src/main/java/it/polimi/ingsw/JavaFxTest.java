@@ -24,6 +24,11 @@ public class JavaFxTest extends Application {
         launch(args);
     }
 
+    /**
+     * Initializes the game GUI and sets up the main stage.
+     *
+     * @param stage The JavaFX stage to display the game GUI.
+     */
     public void start(Stage stage) {
         Map<GameScene, FXMLLoader> roots = new HashMap<>();
         stage.setOnCloseRequest(event -> {

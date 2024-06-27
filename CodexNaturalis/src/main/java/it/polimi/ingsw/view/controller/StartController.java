@@ -25,6 +25,9 @@ public class StartController extends Controller {
 
     final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    /**
+     * Initializes a listener and toggle logic.
+     */
     public void initialize(){
         this.address.textProperty().addListener((obs, oldVal, newVal)-> {
             this.connect.setDisable(newVal.isEmpty() || this.connection.getSelectedToggle() == null);
@@ -34,6 +37,10 @@ public class StartController extends Controller {
         Platform.runLater(()->this.back.requestFocus());
     }
 
+    /**
+     * Opens a communications link to the resource referenced by this URL, if such a connection has not already been established.
+     * If an exception occurs, an error message is displayed.
+     */
     public void connect(){
         try {
             this.gui.connect(((RadioButton)this.connection.getSelectedToggle()).getText().equals("Socket"));

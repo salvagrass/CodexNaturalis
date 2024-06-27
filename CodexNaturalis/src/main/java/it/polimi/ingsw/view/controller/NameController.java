@@ -13,6 +13,10 @@ public class NameController extends Controller {
     @FXML
     Label error;
 
+    /**
+     * Initializes the components and event listeners,
+     * enabling or disabling the `submit` button based on the input.
+     */
     public void initialize(){
         this.getName.textProperty().addListener((observable,oldVal,newVal)->{
             submit.setDisable(!newVal.matches("^[a-zA-Z]{1,8}$"));
@@ -26,15 +30,28 @@ public class NameController extends Controller {
         });
     }
 
+    /**
+     * Clears the input field and disables the submit button.
+     */
     public void clear(){
         this.getName.clear();
         this.submit.setDisable(true);
     }
 
+    /**
+     * Scans the inputted text.
+     */
     public void submit() {
         this.gui.scanInput(this.getName.getText());
     }
 
+    /**
+     * Confirms an action based on the provided parameters.
+     * Displays an error message if the confirmation value is false.
+     *
+     * @param confirmValue The confirmation value (true or false).
+     * @param confirmMsg   The message to display.
+     */
     @Override
     public void confirm(boolean confirmValue,String confirmMsg){
         if(!confirmValue){

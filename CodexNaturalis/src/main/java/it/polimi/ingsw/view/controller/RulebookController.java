@@ -21,6 +21,9 @@ public class RulebookController extends Controller{
     private final int minIdx = 1;
     private final int maxIdx = 6;
 
+    /**
+     * Initializes the logic of the component and its elements.
+     */
     public void initialize(){
         this.idx = new SimpleIntegerProperty();
         this.idx.addListener((obs, oldVal, newVal) -> {
@@ -37,6 +40,11 @@ public class RulebookController extends Controller{
         this.idx.set(this.minIdx);
     }
 
+    /**
+     * Changes the background image of the component.
+     *
+     * @param addr The address (resource path) of the image file.
+     */
     private void changeBackGround(String addr){
         Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(addr)));
         BackgroundImage img = new BackgroundImage(
@@ -49,6 +57,10 @@ public class RulebookController extends Controller{
         this.back.setBackground(new Background(img));
     }
 
+    /**
+     * Advances to the next index.
+     * If the current index is less than the maximum index, increments the index by 1.
+     */
     @FXML
     private void next(){
         if(this.idx.get() < this.maxIdx){
@@ -56,6 +68,10 @@ public class RulebookController extends Controller{
         }
     }
 
+    /**
+     * Regress to the previous index.
+     * If the current index is more than the minimum index, decrements the index by 1.
+     */
     @FXML
     private void prev(){
         if(this.idx.get() > this.minIdx){

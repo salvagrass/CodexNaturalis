@@ -31,7 +31,11 @@ public class CLI extends UserView{
     private int capacity;
 
 
-    
+
+    /**
+     * Creates a new CLI instance.
+     * Initializes the phase queue, colors, players in the lobby, input scanner, turn order, leaderboard, and chat list.
+     */
     public CLI() {
         super();
         this.phaseQueue = new PriorityQueue<>((firstPhase, secondPhase) -> {
@@ -57,10 +61,20 @@ public class CLI extends UserView{
         this.chats = new LinkedList<>();
     }
 
+    /**
+     * Starts the game.
+     *
+     * @throws RemoteException if a remote communication error occurs.
+     */
     public void startGame() throws RemoteException{
         connectMenu();
     }
 
+    /**
+     * Connects to the server after choosing the desired connection type.
+     *
+     * @throws RemoteException if a remote communication error occurs.
+     */
     private void connectMenu() throws RemoteException {
         boolean stay;
         String connection;
@@ -87,6 +101,11 @@ public class CLI extends UserView{
         }while(stay);
     }
 
+    /**
+     * Sets the current player.
+     *
+     * @param currPlayer the name of the current player.
+     */
     @Override
     public void setCurrPlayer(String currPlayer){
         synchronized (this.currPlayerLock) {
@@ -95,17 +114,35 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Sets the capacity of the lobby.
+     *
+     * @param capacity the new capacity value.
+     */
+
     @Override
     public void setCapacity(int capacity) {
         this.capacity = capacity;
         super.setCapacity(capacity);
     }
 
+    /**
+     * Sets the command string and notifies all waiting threads.
+     *
+     * @param msg the new command value.
+     */
     private synchronized void setCommand(String msg){
         this.command = msg;
         this.notifyAll();
     }
 
+    /**
+     * Retrieves a command string, waiting up to the specified timeout.
+     *
+     * @param timeoutMillis The maximum time to wait for a command in milliseconds.
+     * @return The retrieved command, or `null` if the timeout is exceeded.
+     * @throws TimeoutException If the timeout is exceeded.
+     */
     private synchronized String getCommand(int timeoutMillis) throws TimeoutException{
         while(this.command==null){
             try {
@@ -124,6 +161,12 @@ public class CLI extends UserView{
         return tmp;
     }
 
+    /**
+     * Retrieves a command string, blocking until a command is available.
+     * Throws an exception if the thread is interrupted.
+     *
+     * @return The retrieved command.
+     */
     private synchronized String getCommand(){
         while(this.command==null){
             try {
@@ -139,6 +182,11 @@ public class CLI extends UserView{
         return tmp;
     }
 
+    /**
+     * Handles the event when players join the lobby.
+     *
+     * @param players The set of player names who joined.
+     */
     @Override
     public void playerJoined(Set<String> players){
         synchronized (this.lobbyLock) {
@@ -149,6 +197,12 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Sets the current phase and processes associated items.
+     *
+     * @param phase The new phase to set.
+     * @param items The associated items.
+     */
     @Override
     public void setCurrPhase(Phase phase, ItemView... items) {
         synchronized(this.phaseQueue){
@@ -158,6 +212,9 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Waits for a change in the phase and updates the current phase accordingly.
+     */
     private void waitChangePhase(){
         synchronized (this.phaseQueue) {
             while (this.phaseQueue.isEmpty()) {
@@ -180,6 +237,10 @@ public class CLI extends UserView{
         changePhase(this.currPhase);
     }
 
+    /**
+     * Waits until the confirmation value is set to true.
+     * If the thread is interrupted while waiting, a RuntimeException is thrown.
+     */
     public void waitConfirm(){
         synchronized(this.phaseQueue){
             if(this.phaseQueue.peek()==Phase.CLIENTCRASHED){
@@ -200,6 +261,13 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Sends a confirmation message with the specified confirms.
+     * After sending the confirmation, it notifies all threads waiting.
+     *
+     * @param confirmValue The confirmation value (true or false).
+     * @param confirmMsg   The confirmation message.
+     */
     @Override
     public void sendConfirm(boolean confirmValue,String confirmMsg){
         super.sendConfirm(confirmValue, confirmMsg);
@@ -208,6 +276,10 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Displays the menu options for creating, joining, or loading a game,
+     * and waits for the relative input from the user.
+     */
     private void showMenu(){
         System.out.println("1)Create Game\n2)Join Game\n3)Load Game");
         System.out.print("Insert choice: ");
@@ -220,6 +292,10 @@ public class CLI extends UserView{
         waitChangePhase();
     }
 
+    /**
+     * Prompts the user to create a room inserting ID and capacity.
+     * If the input does not match the required format, the user is prompted to retry.
+     */
     private void create() {
         String constraint = "ID: 6 alphanumeric characters - Capacity: 2-4 players";
         String regex = "^(exit)|([a-zA-Z0-9]{6}\\s[2-4])$";
@@ -232,7 +308,11 @@ public class CLI extends UserView{
         sendUntilConfirm(input, constraint, (x) -> x.matches(regex));
         waitChangePhase();
     }
-    
+
+    /**
+     * Prompts the user to join a room inserting the ID
+     * If the input does not match the required format, the user is prompted to retry.
+     */
     private void join() {
         String constraint = "6 alphanumeric characters";
         String regex = "^(exit)|([a-zA-Z0-9]{6})";
@@ -246,6 +326,10 @@ public class CLI extends UserView{
         waitChangePhase();
     }
 
+    /**
+     * Prompts the user to insert the player name.
+     * If the input does not match the required format, the user is prompted to retry.
+     */
     private void chooseName(){
         String constraint = "1 to 8 alphabetical characters";
         String regex = "^[a-zA-Z]{1,8}$";
@@ -259,6 +343,9 @@ public class CLI extends UserView{
         waitChangePhase();
     }
 
+    /**
+     * Prompts the user to choose the starting card face.
+     */
     private void chooseStartingFace() {
         System.out.println(CardView.showAsciiArt(this.starts));
         System.out.print("Choose your starting card face (back, front): ");
@@ -273,11 +360,18 @@ public class CLI extends UserView{
         waitChangePhase();
     }
 
+    /**
+     * Sets the waiting for players flag as true.
+     */
     private void waitPlayers(){
         this.waitForPlayers.set(true);
         waitChangePhase();
     }
 
+    /**
+     * Prompts user to choose the pawn color.
+     * Blocks players from choosing an already taken color, asking to retry.
+     */
     private void chooseColor() {
         Set<String> copy;
         synchronized(this.colorLock){
@@ -300,7 +394,11 @@ public class CLI extends UserView{
         });
         waitChangePhase();
     }
-    
+
+    /**
+     * Prompts the player to choose an objective card and sets it.
+     * If the input does not match the required format, the user is prompted to retry.
+     */
     private void chooseObjective() {
         System.out.println(ObjectiveView.showAsciiArt(this.scrtObjs));
         System.out.print("Choose your objective (1, 2): ");
@@ -316,6 +414,9 @@ public class CLI extends UserView{
         waitChangePhase();
     }
 
+    /**
+     * Manages the game flow, including player turns, input handling, and phase transitions.
+     */
     private void gameFlow() {
         AtomicBoolean stay = new AtomicBoolean(true);
         boolean inserted = true;
@@ -373,6 +474,11 @@ public class CLI extends UserView{
         waitChangePhase();
     }
 
+    /**
+     * Handles user commands related to displaying game information and flipping cards.
+     *
+     * @param cmd The array of command tokens.
+     */
     private synchronized void handleCommand(String[] cmd){
         switch (cmd[0]) {
             case "show" -> {
@@ -507,6 +613,11 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Reads and prints the contents of a file located in the "/util" directory.
+     *
+     * @param file The name of the file to read.
+     */
     private void printFile(String file) {
         try {
             InputStream inputStream = getClass().getResourceAsStream("/util/" + file + ".txt");
@@ -523,6 +634,11 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Reads the help information from a resource file and prints the relevant content for the specified command.
+     *
+     * @param cmd The command for which help information is requested.
+     */
     private void printHelpCmd(String cmd) {
         try {
             InputStream inputStream = getClass().getResourceAsStream("/util/help.txt");
@@ -548,6 +664,9 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Displays the winner and leaderboard information based on the game leaderboard.
+     */
     private void showWinner() {
         synchronized(this.positions){
             while(this.positions.isEmpty()){
@@ -577,6 +696,10 @@ public class CLI extends UserView{
         waitChangePhase();
     }
 
+    /**
+     * Places a card on the game board based on user inputted coordinates and card choice.
+     * Checks for valid user input.
+     */
     private void placeCard(){
         int idx,x,y;
         System.out.print("IDX: ");
@@ -615,6 +738,10 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Draws a card from chosen based on user input.
+     * Reads the card index from the console and validates it.
+     */
     private void drawCard(){
         System.out.print("IDX: ");
         String index = getCommand();
@@ -630,6 +757,13 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Sends the input until it is confirmed based on the provided constraint.
+     *
+     * @param input      The input to send.
+     * @param constraint The constraint for validating the input.
+     * @param t          The predicate to test the input against the constraint.
+     */
     private void sendUntilConfirm(String input, String constraint, Predicate<String> t) {
         String constraintMsg = constraint.isEmpty() ? constraint : "(" + constraint + ")";
         synchronized (this.confirmValue) {
@@ -647,6 +781,11 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Handles phase changes in the game.
+     *
+     * @param phase The new phase to transition to.
+     */
     @Override
     public void changePhase(Phase phase) {
         if(this.waitForPlayers.get()){
@@ -670,6 +809,11 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Notifies about a crash (either client or server) and handles the appropriate actions.
+     *
+     * @param phase The phase indicating the type of crash (CLIENTCRASHED or SERVERCRASHED).
+     */
     private void notifyCrashed(Phase phase){
         String msg = phase == Phase.CLIENTCRASHED ? "A player has crashed\nPress enter and return to menu" :
                 "The server has crashed\nPress enter and return to connection screen";
@@ -694,6 +838,12 @@ public class CLI extends UserView{
         }
     }
 
+    /**
+     * Scans input, considering the current phase.
+     * If the phase is CLIENTCRASHED, no action is taken.
+     *
+     * @param toScan The input string to scan.
+     */
     @Override
     public void scanInput(String toScan){
         synchronized(this.phaseQueue){
@@ -704,12 +854,21 @@ public class CLI extends UserView{
         super.scanInput(toScan);
     }
 
+    /**
+     * Prints the chat messages along with their senders.
+     *
+     * @param msgs The list of chat messages to display.
+     */
     private void printChat(List<Message> msgs) {
         for(Message msg : msgs){
             System.out.println(msg.sender() + ": " + msg.msg());
         }
     }
 
+    /**
+     * Cleans the view by invoking the superclass's cleanView method and resetting
+     * the current player and capacity.
+     */
     @Override
     public void cleanView(){
         super.cleanView();

@@ -15,6 +15,14 @@ public class EndGameController extends Controller{
     @FXML
     private VBox leaderboard;
 
+    /**
+     * Displays the final results of a game.
+     *
+     * @param name      The name of the player.
+     * @param colors    A map of player names to their corresponding pawn colors.
+     * @param positions A map of player names to their positions.
+     * @param points    A map of player names to their points.
+     */
     public void show(String name, Map<String, PawnColor> colors, Map<String, Integer> positions, Map<String, Integer> points){
         if(positions.get(name) == 1){
             this.message.setText("Winner");
@@ -31,6 +39,9 @@ public class EndGameController extends Controller{
         }
     }
 
+    /**
+     * Changes the game phase.
+     */
     public void changePhase(){
         this.gui.changePhase();
     }

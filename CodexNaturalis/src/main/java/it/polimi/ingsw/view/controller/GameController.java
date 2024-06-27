@@ -63,6 +63,9 @@ public class GameController extends Controller{
     private final double scaleIncrement = 0.1;
     private Map<String, PawnColor> colors;
 
+    /**
+     * Initializes the game components and sets up event listeners.
+     */
     public void initialize(){
         this.resDeck.imageProperty().addListener((observable, oldVal, newVal) -> this.resDeck.setOnMouseClicked(newVal == null ? null : this.resDeck.getOnMouseClicked()));
         this.res1.imageProperty().addListener((observable, oldVal, newVal) -> this.res1.setOnMouseClicked(newVal == null ? null : this.resDeck.getOnMouseClicked()));
@@ -101,6 +104,12 @@ public class GameController extends Controller{
         this.dragLogic.makeDraggable(this.hand2, this::addCard);
     }
 
+    /**
+     * Handles the successful card placement confirmation.
+     *
+     * @param confirmValue The confirmation value (true or false).
+     * @param confirmMsg   The confirmation message.
+     */
     @Override
     public void confirm(boolean confirmValue,String confirmMsg){
         if(confirmValue){
@@ -118,6 +127,12 @@ public class GameController extends Controller{
         this.boards.get(this.myIdx).setLastPlaced(null);
     }
 
+    /**
+     * Binds the current player to the leaderboard.
+     *
+     * @param currPlayer The current player represented as a StringProperty.
+     * @param points     An ObservableMap associating player names (keys) with their points (values), representing the leaderboard.
+     */
     public void bind(StringProperty currPlayer, ObservableMap<String, Integer> points){
         currPlayer.addListener((observable, oldVal, newVal) -> this.currPlayer = newVal);
         points.addListener((MapChangeListener<String, Integer>) change -> Platform.runLater(()->{
@@ -131,6 +146,12 @@ public class GameController extends Controller{
         }));
     }
 
+    /**
+     * Updates the view for a specific card in the hand.
+     *
+     * @param idx  The index of the card view (0, 1, or 2).
+     * @param card The CardView representing the card.
+     */
     public void updHandView(int idx, CardView card){
         switch(idx){
             case 0 -> {
@@ -148,6 +169,12 @@ public class GameController extends Controller{
         }
     }
 
+    /**
+     * Updates the view for a specific item on the ground (e.g., resources, gold, or objects).
+     *
+     * @param idx  The index of the item view (0 to 7).
+     * @param item The ItemView representing the item.
+     */
     public void updGroundView(int idx, ItemView item){
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + item.getId() + ".png")));
         switch(idx){
@@ -162,6 +189,15 @@ public class GameController extends Controller{
         }
     }
 
+    /**
+     * Updates the board view based on the provided parameters, updating the inventory and placing a card at the specified coordinates.
+     *
+     * @param turnIdx   The index of the current turn.
+     * @param card      The card to be added to the board.
+     * @param x         The x-coordinate for placing the card.
+     * @param y         The y-coordinate for placing the card.
+     * @param inventory A map representing the player's inventory.
+     */
     public void updBoardView(int turnIdx, CardView card, int x, int y, Map<Symbol,Integer> inventory){
         updInventory(turnIdx, inventory);
         if(turnIdx!=myIdx || !dragStart) {
@@ -169,10 +205,22 @@ public class GameController extends Controller{
         }
     }
 
+    /**
+     * Updates the inventory display for a specific turn index.
+     *
+     * @param turnIdx   The index of the current turn.
+     * @param inventory A map representing the player's inventory.
+     */
     private void updInventory(int turnIdx, Map<Symbol, Integer> inventory) {
         this.boards.get(turnIdx).updInventory(turnIdx, inventory);
     }
 
+    /**
+     * Handles the drawing of cards based on the user's choice.
+     * If the current player is not the active player, no action is taken.
+     *
+     * @param mouseEvent the MouseEvent triggered by the user interaction
+     */
     public void draw(MouseEvent mouseEvent) {
         if(!this.currPlayer.equals(this.names.get(this.myIdx))){
             return;
@@ -189,6 +237,12 @@ public class GameController extends Controller{
         this.gui.drawCard(idx);
     }
 
+    /**
+     * Handles the double click action to flip cards based on user interaction.
+     * If the primary mouse button is clicked twice, the corresponding card is flipped.
+     *
+     * @param mouseEvent the MouseEvent triggered by the user interaction
+     */
     public void flip(MouseEvent mouseEvent) {
         if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
             switch(((ImageView) mouseEvent.getSource()).getId()){
@@ -199,6 +253,12 @@ public class GameController extends Controller{
         }
     }
 
+    /**
+     * Adds a card to the game board based on the location chosen.
+     *
+     * @param card the ImageView representing the card to be added
+     * @param v the VBox container where the card is placed
+     */
     private void addCard(ImageView card, VBox v){
         int i = GridPane.getRowIndex(v);
         int j = GridPane.getColumnIndex(v);
@@ -214,6 +274,14 @@ public class GameController extends Controller{
         bl.placeCard(i, j, card.getImage());
     }
 
+    /**
+     * Resets the specified ScrollPane view to the coordinates passed.
+     *
+     * @param scrollPane the ScrollPane to be scrolled
+     * @param gridPane the GridPane containing the cells
+     * @param x the row index of the target cell
+     * @param y the column index of the target cell
+     */
     private void scrollToCenter(ScrollPane scrollPane, GridPane gridPane, int x, int y) {
         double cellWidth = gridPane.getWidth() / gridPane.getColumnCount();
         double cellHeight = gridPane.getHeight() / gridPane.getRowCount();
@@ -228,10 +296,23 @@ public class GameController extends Controller{
         scrollPane.setVvalue(scrollY / (gridPane.getHeight() - scrollPane.getViewportBounds().getHeight()));
     }
 
+    /**
+     * Sends a chat message to the specified receiver.
+     *
+     * @param msg      The message to send.
+     * @param receiver The recipient of the message.
+     */
     public void sendChatMsg(String msg, String receiver){
         this.gui.sendChatMsg(msg, receiver);
     }
 
+    /**
+     * Initializes game-related logic when the game starts.
+     *
+     * @param currPlayer The current player represented by a StringProperty.
+     * @param name       The name of the player.
+     * @param colors     A map of player names to their corresponding pawn colors.
+     */
     public void gameStart(StringProperty currPlayer, String name, Map<String, PawnColor> colors){
         this.dragStart = true;
         this.colors = colors;
@@ -245,6 +326,11 @@ public class GameController extends Controller{
         });
     }
 
+    /**
+     * Switches to a different game board identified by the specified index.
+     *
+     * @param idx The index of the board to switch to.
+     */
     public void switchBoard(int idx){
         this.boards.get(this.currIdx.get()).setVisible(false);
         this.currIdx.set(idx);
@@ -257,10 +343,22 @@ public class GameController extends Controller{
         });
     }
 
+    /**
+     * Sets the secret objective image based on the specified ObjectiveView.
+     *
+     * @param obj The ObjectiveView containing information about the secret objective.
+     */
     public void setSecretObj(ObjectiveView obj){
         this.scrtObj.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/" + obj.getId() + ".png"))));
     }
 
+    /**
+     * Sets the player's name and initializes game-related logic.
+     *
+     * @param name       The name of the player.
+     * @param turnOrder  An ObservableList containing the turn order of players.
+     * @param chats      An ObservableList containing chat messages.
+     */
     public void setName(String name, ObservableList<String> turnOrder,ObservableList<Message> chats){
         this.chat = new ChatLogic(this, chats, turnOrder);
         this.name.setText(name);
@@ -271,6 +369,11 @@ public class GameController extends Controller{
         this.name.requestFocus();
     }
 
+    /**
+     * Adds boards to the game based on the specified turn order.
+     *
+     * @param turnOrder A list of player names representing the order of turns.
+     */
     private void addBoards(List<String> turnOrder){
         int rows = 7, cols = 7;
         for(String s : turnOrder){
@@ -292,6 +395,13 @@ public class GameController extends Controller{
         this.chat.createChat(this.stack);
     }
 
+    /**
+     * Scrolls the content within a GridPane both vertically and horizontally.
+     *
+     * @param pane     The GridPane to scroll.
+     * @param numRows  The number of rows to scroll vertically.
+     * @param numCols  The number of columns to scroll horizontally.
+     */
     public void scroll(GridPane pane, int numRows, int numCols) {
         //Vertical
         double cellHeight = pane.getHeight() / pane.getRowCount();

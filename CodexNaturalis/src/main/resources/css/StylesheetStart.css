@@ -2,6 +2,10 @@
     src: url(../fonts/Canterbury.ttf);
 }
 
+@font-face {
+    src: url(../fonts/BLKCHCRY.ttf);
+}
+
 #back {
     -fx-background-image: url(../graphics/bg1.png);
     -fx-background-size: stretch;
@@ -26,4 +30,20 @@
     -fx-import: "Canterbury.ttf";
     -fx-font-family: 'Canterbury', serif;
     -fx-font-size: 50px;
+}
+
+#rmi {
+    -fx-font-family: 'BlackChancery';
+}
+
+#socket {
+    -fx-font-family: 'BlackChancery';
+}
+
+#address {
+    -fx-background-color: #F0E9D8;
+    -fx-font-family: 'BlackChancery';
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
 }

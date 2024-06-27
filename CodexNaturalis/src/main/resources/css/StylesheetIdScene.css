@@ -2,6 +2,10 @@
     src: url(../fonts/Canterbury.ttf);
 }
 
+@font-face {
+    src: url(../fonts/BLKCHCRY.ttf);
+}
+
 #background {
     -fx-background-image: url(../graphics/bg1.png);
     -fx-background-size: stretch;
@@ -33,4 +37,12 @@
 
 #backButton:hover {
     -fx-background-color: #ebd980;
+}
+
+#getId {
+    -fx-background-color: #F0E9D8;
+    -fx-font-family: 'BlackChancery';
+    -fx-border-color: black;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
 }

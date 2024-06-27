@@ -21,7 +21,11 @@ public class ModelView {
     this.handView = new LinkedList<>();
   }
 
-
+  /**
+   * Set up the common ground.
+   *
+   * @param view the common ground to be set.
+   */
   public void setGround(GroundView view){
     this.ground = view;
   }

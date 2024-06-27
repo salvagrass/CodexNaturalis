@@ -15,9 +15,9 @@
       <cursor>
          <Cursor fx:constant="HAND" />
       </cursor></Button>
-   <TextField fx:id="address" alignment="CENTER" layoutX="320.0" layoutY="250.0" text="localhost" />
+   <TextField fx:id="address" alignment="CENTER" layoutX="303.0" layoutY="250.0" text="localhost" />
    <Label fx:id="error" layoutX="350.0" layoutY="305.0" text="CAN'T CONNECT" textFill="RED" visible="false" />
-   <RadioButton layoutX="433.0" layoutY="285.0" mnemonicParsing="false" text="RMI" AnchorPane.rightAnchor="322.0">
+   <RadioButton id="rmi" layoutX="433.0" layoutY="285.0" mnemonicParsing="false" text="RMI" AnchorPane.rightAnchor="322.0">
       <toggleGroup>
          <ToggleGroup fx:id="connection" />
       </toggleGroup>
@@ -25,7 +25,7 @@
          <Cursor fx:constant="HAND" />
       </cursor>
    </RadioButton>
-   <RadioButton layoutX="319.0" layoutY="285.0" mnemonicParsing="false" text="Socket" toggleGroup="$connection">
+   <RadioButton id="socket" layoutX="319.0" layoutY="285.0" mnemonicParsing="false" text="Socket" toggleGroup="$connection">
       <cursor>
          <Cursor fx:constant="HAND" />
       </cursor></RadioButton>

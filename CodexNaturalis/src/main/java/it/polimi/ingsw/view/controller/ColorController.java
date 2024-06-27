@@ -57,6 +57,11 @@ public class ColorController extends Controller {
         img.setDisable(newValue);
     }
 
+    /**
+     * Binds radio buttons to an ObservableSet of PawnColor.
+     *
+     * @param colors The ObservableSet of PawnColor to bind to.
+     */
     public void bind(ObservableSet<PawnColor> colors){
         bindRadioButtonDisableProperty(this.red, "RED", colors);
         bindRadioButtonDisableProperty(this.blue, "BLUE", colors);
@@ -64,15 +69,33 @@ public class ColorController extends Controller {
         bindRadioButtonDisableProperty(this.yellow, "YELLOW", colors);
     }
 
+    /**
+     * Binds the disable property of a ToggleButton to an ObservableSet of PawnColor.
+     *
+     * @param toggle   The ToggleButton to bind.
+     * @param colorId  The ID of the PawnColor to check.
+     * @param colors   The ObservableSet of PawnColor to use for binding.
+     */
     private void bindRadioButtonDisableProperty(ToggleButton toggle, String colorId, ObservableSet<PawnColor> colors) {
         BooleanBinding disableBinding = Bindings.createBooleanBinding(() -> !colors.contains(PawnColor.valueOf(colorId)), colors);
         toggle.disableProperty().bind(disableBinding);
     }
+
+    /**
+     * Submits the ID of the selected ToggleButton.
+     */
     public void submit() {
         ToggleButton sel = (ToggleButton) color.getSelectedToggle();
         this.gui.scanInput(sel.getId());
     }
 
+    /**
+     * Confirms an action based on the provided parameters.
+     * Displays an error message if the confirmation value is false.
+     *
+     * @param confirmValue The confirmation value (true or false).
+     * @param confirmMsg   The message to display.
+     */
     @Override
     public void confirm(boolean confirmValue,String confirmMsg){
         if(!confirmValue){

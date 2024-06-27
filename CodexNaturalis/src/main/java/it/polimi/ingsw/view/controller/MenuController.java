@@ -14,22 +14,40 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class MenuController extends Controller{
+
+    /**
+     * Scans the specified input to the GUI.
+     */
     public void create() {
         this.gui.scanInput("1");
     }
 
+    /**
+     * Scans the specified input to the GUI.
+     */
     public void join() {
         this.gui.scanInput("2");
     }
 
+    /**
+     * Scans the specified input to the GUI.
+     */
     public void load() {
         this.gui.scanInput("3");
     }
 
+    /**
+     * Opens the quit popup.
+     */
     public void exit() {
         Platform.runLater(this::openPopup);
     }
 
+    /**
+     * Opens a modal popup window for quitting the application.
+     *
+     * @throws RuntimeException if there's an issue loading the FXML or creating the popup.
+     */
     private void openPopup() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/closeGame.fxml"));
@@ -50,6 +68,11 @@ public class MenuController extends Controller{
         }
     }
 
+    /**
+     * Displays a modal popup window showing the game rules.
+     *
+     * @throws IOException if there's an issue loading the FXML or creating the popup.
+     */
     public void rules() throws IOException {
         Stage stage = createPopUpStage("Rules");
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/rulebook.fxml")));
@@ -59,6 +82,12 @@ public class MenuController extends Controller{
         stage.showAndWait();
     }
 
+    /**
+     * Creates and configures a new JavaFX Stage for displaying a popup window.
+     *
+     * @param title The title to set for the popup window.
+     * @return A new Stage configured with the specified title and icon.
+     */
     private Stage createPopUpStage(String title){
         Stage popUpStage = new Stage();
         popUpStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));

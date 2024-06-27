@@ -9,12 +9,25 @@ public class CrashedController extends Controller {
     @FXML
     private Label title;
 
+    /**
+     * Sets the stage for this object.
+     *
+     * @param stage The stage to set.
+     */
     public void setStage(Stage stage){
         this.stage = stage;
     }
 
+    /**
+     * Closes the stage.
+     */
     public void back(){ this.stage.close(); }
 
+    /**
+     * Sets the text of the label.
+     *
+     * @param message The new text to set.
+     */
     public void setTitle(String message) {
         this.title.setText(message);
     }

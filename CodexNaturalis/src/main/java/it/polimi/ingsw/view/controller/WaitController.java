@@ -13,6 +13,14 @@ public class WaitController extends Controller{
     @FXML
     private Label ready;
     private int capacity;
+
+    /**
+     * Binds the capacity and players properties.
+     * Updates the UI to display the list of players and the current player count.
+     *
+     * @param capacity The maximum capacity for players.
+     * @param players  The set of players.
+     */
     public void bind(IntegerProperty capacity, ObservableSet<String> players){
         players.addListener((SetChangeListener<String>) change -> {
             if (change.wasAdded()) {

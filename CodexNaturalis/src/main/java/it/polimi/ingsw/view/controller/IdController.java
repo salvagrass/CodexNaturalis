@@ -12,6 +12,10 @@ public class IdController extends Controller{
     private TextField getId;
     @FXML
     private Label error;
+
+    /**
+     * Initializes the controller by setting up event listeners and handling user input.
+     */
     public void initialize(){
         this.getId.textProperty().addListener((observable, oldVal, newVal) -> {
             this.submit.setDisable(!newVal.matches("^[a-zA-Z0-9]{6}$"));
@@ -24,20 +28,37 @@ public class IdController extends Controller{
             }
         });
     }
+
+    /**
+     * Scans the user text input.
+     */
     public void submit() {
         this.gui.scanInput(this.getId.getText());
     }
 
+    /**
+     * Scans the exit input and clears any relevant data.
+     */
     public void exit() {
         this.gui.scanInput("exit");
         clear();
     }
 
+    /**
+     * Clears the input field and disables the submit button.
+     */
     public void clear(){
         this.getId.clear();
         this.submit.setDisable(true);
     }
 
+    /**
+     * Confirms an action based on the provided parameters.
+     * Displays an error message if the confirmation value is false.
+     *
+     * @param confirmValue The confirmation value (true or false).
+     * @param confirmMsg   The message to display.
+     */
     @Override
     public void confirm(boolean confirmValue,String confirmMsg){
         if(!confirmValue){
