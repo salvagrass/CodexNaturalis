@@ -76,6 +76,8 @@ public class GameController extends Controller{
         this.names = new ArrayList<>(4);
         this.dragStart = false;
         this.colors = new HashMap<>();
+        this.leaderboard.getStylesheets().add("/css/game.css");
+        this.leaderboard.getStyleClass().add("leaderboard");
 
         this.scroll.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.isControlDown()) {
@@ -234,11 +236,11 @@ public class GameController extends Controller{
         this.dragStart = true;
         this.colors = colors;
         this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && currPlayer.get().equals(name));
-        this.leaderboard.lookup("#label"+this.currPlayer).setStyle("-fx-text-fill: " + this.colors.get(this.currPlayer).color + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, grey, 8, 0.4, 0, 0)");
+        this.leaderboard.lookup("#label"+this.currPlayer).setStyle("-fx-text-fill: " + this.colors.get(this.currPlayer).color + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, #e7e7e7, 8, 0.4, 0, 0);");
         this.currIdx.addListener((observable, oldVal, newVal) -> this.dragLogic.setDraggable((this.myIdx == (int)newVal) && this.currPlayer.equals(name)));
         currPlayer.addListener((observable, oldVal, newVal) -> {
             this.dragLogic.setDraggable((this.myIdx == this.currIdx.get()) && newVal.equals(name));
-            this.leaderboard.lookup("#label"+newVal).setStyle("-fx-text-fill: " + this.colors.get(newVal).color + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, grey, 8, 0.4, 0, 0)");
+            this.leaderboard.lookup("#label"+newVal).setStyle("-fx-text-fill: " + this.colors.get(newVal).color + "; -fx-font-family: 'BlackChancery'; -fx-effect: dropshadow(gaussian, #e7e7e7, 8, 0.4, 0, 0);");
             this.leaderboard.lookup("#label"+oldVal).setStyle("-fx-text-fill: black; -fx-font-family: 'BlackChancery';");
         });
     }

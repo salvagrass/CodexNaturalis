@@ -77,7 +77,8 @@ public class ChatLogic {
         scroll.setPrefHeight(300);
         scroll.setPannable(true);
         VBox.setVgrow(scroll, Priority.ALWAYS);
-        messages.setStyle("-fx-background-color: #F0E9D8");
+        messages.setStyle("-fx-background-color: #F0E9D8; -fx-font-family: 'BlackChancery'");
+        scroll.setStyle("-fx-background: #F0E9D8");
 
         TextArea chat = new TextArea();
         chat.setPrefWidth(300);

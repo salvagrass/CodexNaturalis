@@ -16,8 +16,14 @@
     -fx-background-size: stretch;
 }
 
-#field {
+#scroll .viewport {
     -fx-background-image: url(../graphics/bg2.jpg);
-    -fx-background-size: stretch;
+    -fx-background-size: auto;
     -fx-background-repeat: repeat;
+    -fx-background-position: top left;
+}
+
+.leaderboard{
+    -fx-font-family: 'BlackChancery';
+    -fx-effect: dropshadow(gaussian, #e7e7e7, 8, 0.4, 0, 0);
 }
