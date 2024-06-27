@@ -184,12 +184,12 @@ public class GameBoard {
     }
 
 
-    //TODO: Possibility to optimize the method
     /**
      * Method used for reallocating the game board when an edge is reached
      * The board expands symmetrically around its center
      */
 
+    //Possibility to optimize the method
     private void expandBoard(){
         //deltaSize has to be even to keep a single middle cell in the matrix
         final int deltaSize = 10;

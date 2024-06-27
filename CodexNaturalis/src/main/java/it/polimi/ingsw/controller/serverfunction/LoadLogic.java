@@ -92,7 +92,6 @@ public class LoadLogic implements CrashHandler {
                 } catch (InterruptedException e) {
                     new ProjectLogger(getClass().getSimpleName()).
                             log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
-                    // TODO I COULD SEND YOU BACK TO THE MENU
                     throw new RuntimeException(e);
                 }
             }

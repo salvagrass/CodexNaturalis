@@ -83,7 +83,6 @@ public abstract class Client{
           Map<Symbol, Integer> inventory = this.gson.fromJson(dictate[5], new TypeToken<Map<Symbol, Integer>>() {
           }.getType());
           this.userView.updBoardView(turnIdx, card, x, y, inventory);
-          //TODO check set token
         }
         case "UPDPOINTS" -> {
           int turnIdx = Integer.parseInt(dictate[1]);

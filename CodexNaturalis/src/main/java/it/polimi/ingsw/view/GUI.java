@@ -234,12 +234,7 @@ public class GUI extends UserView{
                 this.currController = this.sceneToController.get(scene);
                 Platform.runLater(()->{
                     setNewGame();
-                    Stage s = new Stage();
-                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook16.png"))));
-                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
-                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook64.png"))));
-                    s.initModality(Modality.APPLICATION_MODAL);
-                    ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
+                    Stage s = prepareCrashedScene();
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setTitle("A client crashed");
                     s.setScene(scene);
                     s.showAndWait();
@@ -251,16 +246,22 @@ public class GUI extends UserView{
                 this.currController = this.sceneToController.get(crash);
                 Platform.runLater(()->{
                     setNewGame();
-                    Stage s = new Stage();
-                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook16.png"))));
-                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
-                    s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook64.png"))));
-                    s.initModality(Modality.APPLICATION_MODAL);
-                    ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
+                    Stage s = prepareCrashedScene();
                     ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setTitle("Server crashed");
                     s.setScene(crash);
                     s.showAndWait();
                     this.stage.setScene(scene);
+                });
+            }
+            case Phase.EXCEPTIONOCCURED -> {
+                scene = this.scenes.get(GameScene.CRASHED);
+                this.currController = this.sceneToController.get(scene);
+                Platform.runLater(()->{
+                    setNewGame();
+                    Stage s = prepareCrashedScene();
+                    ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setTitle("An exception occurred");
+                    s.setScene(scene);
+                    s.showAndWait();
                 });
             }
             case Phase.ENDGAME -> {
@@ -541,5 +542,19 @@ public class GUI extends UserView{
                     log("logs/clientLogs.txt",Level.SEVERE,"Can't load scenes",e);
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Creates a new stage in case a crash happens
+     * @return the created stage
+     */
+    private Stage prepareCrashedScene(){
+        Stage s = new Stage();
+        s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook16.png"))));
+        s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook32.png"))));
+        s.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/graphics/icons/OpenBook64.png"))));
+        s.initModality(Modality.APPLICATION_MODAL);
+        ((CrashedController)this.sceneToController.get(this.scenes.get(GameScene.CRASHED))).setStage(s);
+        return s;
     }
 }

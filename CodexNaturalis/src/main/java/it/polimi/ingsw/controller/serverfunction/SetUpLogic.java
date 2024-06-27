@@ -224,8 +224,6 @@ class SetUpLogic {
                 } catch (InterruptedException e) {
                     new ProjectLogger(getClass().getSimpleName()).
                             log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
-                    //TODO INFORM THE PLAYERS?
-                    throw new RuntimeException(e);
                 }
                 set = new HashSet<>(this.record.values());
             }

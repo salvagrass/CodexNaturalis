@@ -12,7 +12,7 @@
 
 <AnchorPane id="background" prefHeight="500.0" prefWidth="800.0" stylesheets="@../css/StylesheetCreate.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.controller.CreateController">
    <children>
-      <TextField fx:id="getId" layoutX="301.0" layoutY="183.0" prefHeight="25.0" prefWidth="195.0" promptText="ID (6 alphanumeric characters)..." />
+      <TextField fx:id="getId" alignment="CENTER" layoutX="301.0" layoutY="183.0" prefHeight="25.0" prefWidth="195.0" promptText="ID (6 alphanumeric characters)..." />
       <Button fx:id="submit" disable="true" layoutX="341.0" layoutY="333.0" mnemonicParsing="false" onAction="#getIdCapacity" text="submit">
          <font>
             <Font size="20.0" />

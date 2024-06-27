@@ -64,7 +64,7 @@ public class GameLogic implements CrashHandler {
         } catch (IOException e) {
             new ProjectLogger(getClass().getSimpleName()).
                     log("logs/serverLog.txt",Level.WARNING,"Can't load selected game",e);
-            //TODO MAYBE INFORM THE PLAYERS
+            handleException();
             throw new RuntimeException(e);
         }
     }
@@ -165,7 +165,7 @@ public class GameLogic implements CrashHandler {
             } catch (IOException e) {
                 new ProjectLogger(getClass().getSimpleName()).
                         log("logs/serverLog.txt",Level.WARNING,"Can't load selected game",e);
-                //TODO MAYBE INFORM THE PLAYERS
+                handleException();
                 throw new RuntimeException(e);
             }
         }
@@ -282,7 +282,6 @@ public class GameLogic implements CrashHandler {
                 } catch (InterruptedException e) {
                     new ProjectLogger(getClass().getSimpleName()).
                             log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
-                    //TODO INFORM THE PLAYERS?
                     throw new RuntimeException(e);
                 }
             }
@@ -294,7 +293,6 @@ public class GameLogic implements CrashHandler {
                 } catch (InterruptedException e) {
                     new ProjectLogger(getClass().getSimpleName()).
                             log("logs/serverLog.txt",Level.WARNING,"Thread interrupted while waiting",e);
-                    //TODO INFORM THE PLAYERS?
                     throw new RuntimeException(e);
                 }
             }
@@ -474,6 +472,24 @@ public class GameLogic implements CrashHandler {
         }
     }
 
+    /**
+     * sends the clients back to the menu in case an exception occurs
+     */
+    public synchronized void handleException(){
+        executor.shutdownNow();
+        Set<Comm> comms = (this.setUp==null) ? this.players.keySet() : this.setUp.getComms();
+        for(Comm iter: comms){
+            iter.setCrashHandler(this.server);
+        }
+        String msg = MsgCreator.changePhaseMsg(Phase.EXCEPTIONOCCURED);
+        Comm.sendBroadcast(msg,new ArrayList<>(comms));
+        this.server.removeGame(this.id);
+        for(Comm iter: comms){
+            //CLEAN THE PENDING MESSAGES
+            iter.clean();
+            this.server.submitClient(iter);
+        }
+    }
 
 
     /**
