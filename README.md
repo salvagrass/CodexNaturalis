@@ -47,4 +47,5 @@ Important Notes:
 
     For proper functioning in RMI, it may be necessary to disable all network adapters from the control panel except for the current one.
     The project has been tested only on Windows 10 and 11. The TUI.jar and server.jar should work without problems on any other OS with Java 21 installed, while proper functioning of the GUI.jar on any other OS is not guaranteed.
+    Every JAR file saves files on the disk for logging purposes. However, we especially recommend putting the server.jar in its own dedicated directory to avoid clutter, as it also stores saved games.
       
